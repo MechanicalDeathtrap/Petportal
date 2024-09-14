@@ -1,0 +1,49 @@
+@import "src/mixins/mixins.sass"
+@import "src/colors/colors.sass"
+
+.header
+  padding: 17px 35px 18px 40px
+  display: flex
+  justify-content: space-between
+
+.mainLogoContainer
+
+
+.userAvatar
+  width: 44px
+  height: 44px
+  border-radius: 40px
+  overflow: hidden
+  max-width: max-content
+  cursor: pointer
+
+.headerNavigation
+  display: flex
+  align-items: center
+
+.headerNavigationList, .headerButtonsList, .profileButtons
+  @include flexAndGap(35px)
+  align-items: center
+
+.headerNavigationList
+  &__navigationLink
+    @include fontSettings(20px, 600, normal)
+    transition: color 0.5s
+  &__navigationLink:hover
+    color: $remark-text-grey
+
+.headerButtonsList
+  &__notificationIcon path
+    transition: fill 0.5s
+  &__notificationIcon:hover path
+    fill: $remark-text-grey
+  &__messageIcon path
+    transition: stroke 0.5s
+  &__messageIcon:hover path
+    stroke: $remark-text-grey
+
+.mainLogoIcon
+  width: 150.9px
+  height: 44px
+
+
