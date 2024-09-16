@@ -1,0 +1,64 @@
+@import "src/mixins/mixins.sass"
+@import "src/colors/colors.sass"
+
+.footer
+  background-color: $main-blue
+  padding: 37px 0 33px 36px
+  color: white
+  flex-direction: column
+  @include flexAndGap(80px)
+
+  &__logo-and-contacts
+    @include flexAndGap(330px)
+
+  &__main-logo-icon path
+    fill: white
+  &__main-logo-icon
+    width: 150.9px
+    height: 44px
+  &__contacts
+    margin-top: 24px
+    @include flexAndGap(60px)
+
+  &__list-header
+    @include fontSettings(20px, 700)
+
+  &__list-item
+    @include fontSettings(20px, 400)
+
+  &__messengers-list
+    @include flexAndGap(16px)
+
+  &__messengers
+    flex-direction: column
+    align-items: center
+    @include flexAndGap(24px)
+
+  &__contacts-list, &__legal-entities-contacts-list
+    flex-direction: column
+    @include flexAndGap(20px)
+
+  &__copyright-and-links
+    @include flexAndGap(240px)
+
+  &__copyright
+    @include fontSettings(20px,500)
+
+  &__links-list
+    @include flexAndGap(44px)
+    @include fontSettings(20px,700)
+
+  &__list-link
+    color: white
+    transition: color 0.5s
+
+  &__list-link:hover
+    color: rgb(white, 0.5)
+
+  &__list-link-icon
+    transition: fill 2s
+
+  &__list-link-icon:hover path
+    fill: rgb(white, 0.3)
+
+
