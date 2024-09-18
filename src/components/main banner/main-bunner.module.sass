@@ -1,0 +1,30 @@
+@import "src/mixins/mixins.sass"
+@import "src/colors/colors.sass"
+
+.main-banner
+  position: relative
+
+  &__main-image-container_darkening
+    background-color: #000000
+
+  &__main-heading
+    //padding: 271px 0 317px 193px
+    position: relative
+
+  &__main-image
+    opacity: 30%
+    width: 100vw
+
+  &__main-heading
+    line-height: 80px
+    text-transform: uppercase
+    color: white
+    position: absolute
+    top: 302px
+    bottom: 317px
+    left: 193px
+    right: 680px
+    @include fontSettings(60px, 800)
+
+  &__main-heading_highlighted
+    color: $main-blue
