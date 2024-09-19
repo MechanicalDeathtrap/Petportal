@@ -1,0 +1,28 @@
+@import "src/colors/colors.sass"
+@import "src/mixins/mixins.sass"
+
+.about-us
+  background-color: $main-blue
+
+  &__container
+    flex-direction: column
+    align-items: center
+    padding: 89px 0 210px 0
+    @include flexAndGap(86px)
+
+  &__heading
+    line-height: 105px
+    color: $heading-white
+    @include fontSettings(72px, 600)
+
+  &__info
+    padding: 0 251px 0 251px
+    @include flexAndGap(100px)
+
+  &__first-part-info, &__second-part-info
+    @include flexAndGap(30px)
+
+  &__first-part-icon + p, &__second-part-icon + p
+    color: $heading-white
+    hyphens: auto
+    @include fontSettings(25px, 400)
