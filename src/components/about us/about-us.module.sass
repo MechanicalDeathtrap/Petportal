@@ -3,26 +3,33 @@
 
 .about-us
   background-color: $main-blue
+  padding-bottom: 110px
 
   &__container
     flex-direction: column
     align-items: center
-    padding: 89px 0 210px 0
-    @include flexAndGap(86px)
+    padding: 66px 0 124.5px 0
+    @include flexAndGap(75px)
 
   &__heading
     line-height: 105px
     color: $heading-white
-    @include fontSettings(72px, 600)
+    @include fontSettings(54px, 600)
 
   &__info
     padding: 0 251px 0 251px
     @include flexAndGap(100px)
 
   &__first-part-info, &__second-part-info
-    @include flexAndGap(30px)
+    @include flexAndGap(22.5px)
 
-  &__first-part-icon + p, &__second-part-icon + p
+  &__first-part-info, &__second-part-info
+    letter-spacing: 1px
     color: $heading-white
     hyphens: auto
-    @include fontSettings(25px, 400)
+    @include fontSettings(18px, 400)
+
+  &__first-part-icon, &__second-part-icon
+    width: 70px
+    height: auto
+

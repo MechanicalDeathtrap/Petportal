@@ -3,31 +3,31 @@
 
 .footer
   background-color: $main-blue
-  padding: 37px 0 33px 36px
+  padding: 27px 0 25.7px 27px
   color: white
   flex-direction: column
-  @include flexAndGap(80px)
+  @include flexAndGap(60px)
 
   &__logo-and-contacts
-    @include flexAndGap(330px)
+    @include flexAndGap(239px)
 
   &__main-logo-icon path
     fill: white
   &__main-logo-icon
-    width: 150.9px
+    width: 137.7px
     height: 44px
   &__contacts
-    margin-top: 24px
+    margin-top: 18px
     @include flexAndGap(60px)
 
   &__list-header
-    @include fontSettings(20px, 700)
+    @include fontSettings(16px, 700)
 
   &__list-item
-    @include fontSettings(20px, 400)
+    @include fontSettings(14px, 400)
 
   &__messengers-list
-    @include flexAndGap(16px)
+    @include flexAndGap(12px)
 
   &__messengers
     flex-direction: column
@@ -42,11 +42,11 @@
     @include flexAndGap(240px)
 
   &__copyright
-    @include fontSettings(20px,500)
+    @include fontSettings(14px,500)
 
   &__links-list
     @include flexAndGap(44px)
-    @include fontSettings(20px,700)
+    @include fontSettings(16px,700)
 
   &__list-link
     color: white
@@ -61,4 +61,6 @@
   &__list-link-icon:hover path
     fill: rgb(white, 0.3)
 
-
+  &__list-link-icon
+    width: 61.5px
+    height: auto

@@ -1,0 +1,29 @@
+@import "src/mixins/mixins.sass"
+
+.for-whom
+  &__first-block
+    margin: 184px 0 184px 170px
+    display: flex
+    justify-content: left
+    position: relative
+
+  &__first-info div
+    flex-direction: column
+    @include flexAndGap(25px)
+
+  &__first-info
+    flex-direction: column
+    @include flexAndGap(64px)
+
+  &__first-info-heading
+    font-size: 54px
+    font-family: Rubik, sans-serif
+    width: 440px
+
+  &__first-info-heading + p
+    font-size: 19px
+
+  &__first-image
+    position: absolute
+    right: 44px
+    top: -220px

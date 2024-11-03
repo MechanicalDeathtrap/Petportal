@@ -1,15 +1,16 @@
-@import "src/mixins/mixins.sass"
-@import "src/colors/colors.sass"
+@import "/src/mixins/mixins.sass"
+@import "/src/colors/colors.sass"
 
 .header
-  padding: 17px 35px 18px 40px
+  padding: 13.5px 30px
   display: flex
   justify-content: space-between
+  font-family: Inter, sans-serif
 
 .userAvatar
-  width: 44px
-  height: 44px
-  border-radius: 40px
+  width: 33px
+  height: 33px
+  border-radius: 30px
   overflow: hidden
   max-width: max-content
   cursor: pointer
@@ -19,12 +20,12 @@
   align-items: center
 
 .headerNavigationList, .headerButtonsList, .profileButtons
-  @include flexAndGap(35px)
+  @include flexAndGap(26px)
   align-items: center
 
 .headerNavigationList
   &__navigationLink
-    @include fontSettings(20px, 600)
+    @include fontSettings(15px, 600)
     transition: color 0.5s
   &__navigationLink:hover
     color: $remark-text-grey
@@ -38,9 +39,15 @@
     transition: stroke 0.5s
   &__messageIcon:hover path
     stroke: $remark-text-grey
+  &__notificationIcon
+    width: 17px
+    height: auto
+  &__messageIcon
+    width: 21px
+    height: auto
 
 .mainLogoIcon
-  width: 150.9px
-  height: 44px
+  width: 127.5px
+  height: 33px
 
 

@@ -6,6 +6,7 @@
 
   &__main-image-container_darkening
     background-color: $banner-darkening
+    overflow: hidden
 
   &__main-heading
     //padding: 271px 0 317px 193px
@@ -14,17 +15,17 @@
   &__main-image
     opacity: 30%
     width: 100vw
+    height: auto
 
   &__main-heading
     line-height: 80px
     text-transform: uppercase
     color: $heading-white
     position: absolute
-    top: 302px
-    bottom: 317px
+    top: 240px
     left: 193px
-    right: 680px
-    @include fontSettings(60px, 800)
+    right: 510px
+    @include fontSettings(45px, 800)
 
   &__main-heading_highlighted
     color: $main-blue
