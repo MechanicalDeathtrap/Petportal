@@ -1,29 +1,88 @@
 @import "src/mixins/mixins.sass"
+@import "src/colors/colors.sass"
 
 .for-whom
+  display: flex
+  flex-direction: column
+
   &__first-block
-    margin: 184px 0 184px 170px
+    margin: 184px 0 193px 170px
     display: flex
     justify-content: left
     position: relative
 
-  &__first-info div
+  &__first-info div, &__second-info div
     flex-direction: column
     @include flexAndGap(25px)
 
-  &__first-info
+  &__first-info, &__second-info
     flex-direction: column
     @include flexAndGap(64px)
 
-  &__first-info-heading
+  &__first-info-heading, &__second-info-heading
     font-size: 54px
     font-family: Rubik, sans-serif
     width: 440px
 
-  &__first-info-heading + p
+  &__first-info-heading + p, &__second-info-heading + p
     font-size: 19px
 
   &__first-image
     position: absolute
     right: 44px
-    top: -220px
+    top: -230px
+
+  &__first-image, .first-image, .second-image, .third-image, .fourth-image
+    transition: ease 0.7s
+
+  &__first-image:hover, .first-image:hover, .second-image:hover, .third-image:hover, .fourth-image:hover
+    transform: scale(110%)
+
+  &__first-image > img
+    height: 781px
+
+  &__second-info-image
+    position: absolute
+
+  &__second-block
+    background-color: $main-red
+    padding: 115px 0 178px 0
+
+  &__second-info
+    position: relative
+    display: flex
+    align-items: end
+
+  &__second-info-image
+    position: absolute
+
+  &__second-info-images + div
+    @include flexAndGap(64px)
+
+  &__second-info-images + div
+    display: flex
+    align-items: start
+    margin-right: 290px
+    color: $heading-white
+    width: 440px
+
+  &__second-info-button
+    display: flex
+    justify-content: left
+
+.first-image
+  top: -25px
+  left: 0
+
+.second-image
+  top: -173px
+  left: 245px
+
+.third-image
+  left: 0
+  top: 320px
+
+.fourth-image
+  left: 274px
+  top: 280px
+

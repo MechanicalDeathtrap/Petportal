@@ -22,28 +22,32 @@ export const ForWhomBlock = () => {
         </div>
         <div className={styles["for-whom__first-image"]}>
           <img
-            src="/src/assets/img/man-with-headphones-city-working-laptop%201.png"
+            src="/src/assets/img/man-with-headphones-city-working-laptop.png"
             alt="man-image"
           />
         </div>
       </div>
       <div className={styles["for-whom__second-block"]}>
         <div className={styles["for-whom__second-info"]}>
-          <div>
-            <img src="" alt="" />
-            <img src="" alt="" />
-            <img src="" alt="" />
-            <img src="" alt="" />
+          <div className={styles["for-whom__second-info-images"]}>
+            <img className={`${styles["for-whom__second-info-image"]} ${styles["first-image"]}`} src="/src/assets/img/medium-shot-woman-with-laptop.png" alt="woman-with-phone" />
+            <img className={`${styles["for-whom__second-info-image"]} ${styles["second-image"]}`} src="/src/assets/img/medium-shot-man.png" alt="man-smiling" />
+            <img className={`${styles["for-whom__second-info-image"]} ${styles["third-image"]}`} src="/src/assets/img/medium-hot-woman-with-laptop.png" alt="woman-with-laptop" />
+            <img className={`${styles["for-whom__second-info-image"]} ${styles["fourth-image"]}`} src="/src/assets/img/young-woman-meditating-next-to-sea-while-wearing-headphones.png" alt="woman-meditating" />
           </div>
           <div>
-            <h1>Для самых талантливых</h1>
-            <p>
-              Решайте актуальные для бизнеса задачи, проявите себя в реальной
-              работе в бизнес-команде и открывайте для себя новые карьерные
-              перспективы.
-            </p>
+            <div>
+              <h1 className={styles["for-whom__second-info-heading"]}>Для самых талантливых</h1>
+              <p>
+                Решайте актуальные для бизнеса задачи, проявите себя в реальной
+                работе в бизнес-команде и открывайте для себя новые карьерные
+                перспективы.
+              </p>
+            </div>
+            <div className={styles["for-whom__second-info-button"]}>
+              <Button text={"Найти проект"} style={"white-button"} />
+            </div>
           </div>
-          <Button text={"Найти проект"} style={"white-button"} />
         </div>
       </div>
     </section>

@@ -3,13 +3,13 @@
 
 .about-us
   background-color: $main-blue
-  padding-bottom: 110px
+  padding-bottom: 120px
 
   &__container
     flex-direction: column
     align-items: center
-    padding: 66px 0 124.5px 0
-    @include flexAndGap(75px)
+    padding: 50px 0 155px 0
+    @include flexAndGap(55px)
 
   &__heading
     line-height: 105px
@@ -17,8 +17,11 @@
     @include fontSettings(54px, 600)
 
   &__info
-    padding: 0 251px 0 251px
+    justify-content: center
     @include flexAndGap(100px)
+
+  &__first-part-info > p, &__second-part-info > p
+    width: 396px
 
   &__first-part-info, &__second-part-info
     @include flexAndGap(22.5px)
