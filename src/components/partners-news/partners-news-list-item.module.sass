@@ -1,0 +1,49 @@
+@import "src/colors/colors.sass"
+@import "src/mixins/mixins.sass"
+
+.partner-news-item
+  background-color: $heading-white
+  transition: box-shadow 0.8s
+  border-radius: 30px
+  padding: 22px
+  flex-direction: column
+  max-width: 340px
+
+  @include flexAndGap(20px)
+
+  &__date,   &__main-info > p
+    font-size: 15px
+    font-weight: 300
+
+  &__main-info > h6
+    font-size: 18.7px
+
+  &__main-info
+    flex-direction: column
+    @include flexAndGap(14px)
+
+  &__date
+    color: $remark-text-grey
+
+  &__main-info > p
+    color: $text-grey
+
+  &__more-button
+    width: max-content
+    align-items: center
+    transition: color 0.8s
+    @include flexAndGap(5px)
+
+  &__more-button:hover
+    color: $remark-text-grey
+
+  &__more-button > span
+    font-size: 15px
+    font-weight: 400
+
+  &__date + div
+    flex-direction: column
+    @include flexAndGap(23px)
+
+.partner-news-item:hover
+  box-shadow: -1px 0px 44px 7px rgba($main-blue, 0.5)

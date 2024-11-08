@@ -1,5 +1,5 @@
 import styles from "./about-us.module.sass";
-import { MarqueeText } from "../running-text/marquee.tsx";
+import { MarqueeText } from "../marquee/marquee.tsx";
 
 export const AboutUs = () => {
   return (

@@ -18,7 +18,8 @@ export const ForWhomBlock = () => {
               <br /> Место найдется для каждого.
             </p>
           </div>
-          <Button text={"Создать проект"} style={"blue-button"} />
+          {/*TODO линк к проектам*/}
+          <Button link={'/'} text={"Создать проект"} style={"blue-button"} />
         </div>
         <div className={styles["for-whom__first-image"]}>
           <img
@@ -45,7 +46,7 @@ export const ForWhomBlock = () => {
               </p>
             </div>
             <div className={styles["for-whom__second-info-button"]}>
-              <Button text={"Найти проект"} style={"white-button"} />
+              <Button link={'/'} text={"Найти проект"} style={"white-button"}/>
             </div>
           </div>
         </div>
