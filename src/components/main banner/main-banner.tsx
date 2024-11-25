@@ -7,7 +7,7 @@ export const MainBanner = () => {
         <picture>
           <img
             className={styles["main-banner__main-image"]}
-            src="../../../public/img/background.png"
+            src="/img/background.png"
             alt="banner-photo"
           />
         </picture>
