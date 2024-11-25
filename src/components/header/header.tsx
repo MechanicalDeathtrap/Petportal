@@ -9,7 +9,7 @@ export const Header = () => {
   const [popperAnchorEl, setPopperAnchorEl] = useState<HTMLElement | null>(
     null,
   );
-  const [isAuthorized, setIsAuthorized] = useState(true); //SHOULD BE FALSE AT THE END
+  /*const [isAuthorized, setIsAuthorized] = useState(true); //SHOULD BE FALSE AT THE END*/
 
   const setPopperAnchorElement = (e: React.MouseEvent<HTMLElement>) =>
     setPopperAnchorEl(popperAnchorEl ? null : e.currentTarget);
