@@ -1,7 +1,7 @@
-import styles from "./partners.module.sass"
+import styles from "./partners.module.sass";
 
-export const Partners = () =>{
-  return(
+export const Partners = () => {
+  return (
     <div className={styles["partners"]}>
       <h1 className={styles["partners__heading"]}>Работаем с лучшими</h1>
       <div>
@@ -15,5 +15,5 @@ export const Partners = () =>{
         </ul>
       </div>
     </div>
-  )
-}
+  );
+};

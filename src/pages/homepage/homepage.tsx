@@ -10,8 +10,8 @@ export const HomePage = () => {
       <MainBanner />
       <AboutUs />
       <ForWhomBlock />
-      <Partners/>
-      <PartnersNewsList/>
+      <Partners />
+      <PartnersNewsList />
     </>
   );
 };

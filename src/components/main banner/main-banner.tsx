@@ -4,11 +4,13 @@ export const MainBanner = () => {
   return (
     <section className={styles["main-banner"]}>
       <div className={styles["main-banner__main-image-container_darkening"]}>
-        <img
-          className={styles["main-banner__main-image"]}
-          src="src/assets/img/background.png"
-          alt="banner-photo"
-        />
+        <picture>
+          <img
+            className={styles["main-banner__main-image"]}
+            src="src/assets/img/background.png"
+            alt="banner-photo"
+          />
+        </picture>
       </div>
       <h1 className={styles["main-banner__main-heading"]}>
         <span className={styles["main-banner__main-heading_highlighted"]}>

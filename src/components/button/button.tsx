@@ -9,10 +9,11 @@ type Props = {
 
 export const Button = (props: Props) => {
   return (
-    <button type="button" className={`${styles[props.style]} ${styles["button"]}`}>
-      <Link to={props.link}>
-        {props.text}
-      </Link>
+    <button
+      type="button"
+      className={`${styles[props.style]} ${styles["button"]}`}
+    >
+      <Link to={props.link}>{props.text}</Link>
     </button>
   );
 };

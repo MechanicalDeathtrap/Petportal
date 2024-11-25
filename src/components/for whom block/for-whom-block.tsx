@@ -19,7 +19,7 @@ export const ForWhomBlock = () => {
             </p>
           </div>
           {/*TODO линк к проектам*/}
-          <Button link={'/'} text={"Создать проект"} style={"blue-button"} />
+          <Button link={"/"} text={"Создать проект"} style={"blue-button"} />
         </div>
         <div className={styles["for-whom__first-image"]}>
           <img
@@ -31,14 +31,32 @@ export const ForWhomBlock = () => {
       <div className={styles["for-whom__second-block"]}>
         <div className={styles["for-whom__second-info"]}>
           <div className={styles["for-whom__second-info-images"]}>
-            <img className={`${styles["for-whom__second-info-image"]} ${styles["first-image"]}`} src="/src/assets/img/medium-shot-woman-with-laptop.png" alt="woman-with-phone" />
-            <img className={`${styles["for-whom__second-info-image"]} ${styles["second-image"]}`} src="/src/assets/img/medium-shot-man.png" alt="man-smiling" />
-            <img className={`${styles["for-whom__second-info-image"]} ${styles["third-image"]}`} src="/src/assets/img/medium-hot-woman-with-laptop.png" alt="woman-with-laptop" />
-            <img className={`${styles["for-whom__second-info-image"]} ${styles["fourth-image"]}`} src="/src/assets/img/young-woman-meditating-next-to-sea-while-wearing-headphones.png" alt="woman-meditating" />
+            <img
+              className={`${styles["for-whom__second-info-image"]} ${styles["first-image"]}`}
+              src="/src/assets/img/medium-shot-woman-with-laptop.png"
+              alt="woman-with-phone"
+            />
+            <img
+              className={`${styles["for-whom__second-info-image"]} ${styles["second-image"]}`}
+              src="/src/assets/img/medium-shot-man.png"
+              alt="man-smiling"
+            />
+            <img
+              className={`${styles["for-whom__second-info-image"]} ${styles["third-image"]}`}
+              src="/src/assets/img/medium-hot-woman-with-laptop.png"
+              alt="woman-with-laptop"
+            />
+            <img
+              className={`${styles["for-whom__second-info-image"]} ${styles["fourth-image"]}`}
+              src="/src/assets/img/young-woman-meditating-next-to-sea-while-wearing-headphones.png"
+              alt="woman-meditating"
+            />
           </div>
           <div>
             <div>
-              <h1 className={styles["for-whom__second-info-heading"]}>Для самых талантливых</h1>
+              <h1 className={styles["for-whom__second-info-heading"]}>
+                Для самых талантливых
+              </h1>
               <p>
                 Решайте актуальные для бизнеса задачи, проявите себя в реальной
                 работе в бизнес-команде и открывайте для себя новые карьерные
@@ -46,7 +64,11 @@ export const ForWhomBlock = () => {
               </p>
             </div>
             <div className={styles["for-whom__second-info-button"]}>
-              <Button link={'/'} text={"Найти проект"} style={"white-button"}/>
+              <Button
+                link={"/projects"}
+                text={"Найти проект"}
+                style={"white-button"}
+              />
             </div>
           </div>
         </div>
