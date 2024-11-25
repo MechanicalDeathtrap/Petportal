@@ -7,10 +7,10 @@ export const Partners = () => {
       <div>
         <ul className={styles["partners__list"]}>
           <li>
-            <img src="/src/assets/img/surface1.png" alt="sberbank-logo" />
+            <img src="/img/surface1.png" alt="sberbank-logo" />
           </li>
           <li>
-            <img src="/src/assets/img/IU_logo%201.png" alt="innopolis-logo" />
+            <img src="/img/IU_logo%201.png" alt="innopolis-logo" />
           </li>
         </ul>
       </div>

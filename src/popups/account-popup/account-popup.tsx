@@ -9,7 +9,7 @@ export const AccountPopup = () => {
         <picture>
           <img
             className={styles["account-popup__account-image"]}
-            src="/src/assets/img/blank-avatar.png"
+            src="/img/blank-avatar.png"
             alt="profile-photo"
           />
         </picture>

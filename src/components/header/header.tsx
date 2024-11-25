@@ -114,7 +114,7 @@ export const Header = () => {
               {/*TODO смена картинки на пользовательскую*/}
               <img
                 className={styles.userAvatar}
-                src="/src/assets/img/blank-avatar.png"
+                src="/img/blank-avatar.png"
                 alt="blank-avatar-image"
               />
             </button>

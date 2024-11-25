@@ -23,7 +23,7 @@ export const ForWhomBlock = () => {
         </div>
         <div className={styles["for-whom__first-image"]}>
           <img
-            src="/src/assets/img/man-with-headphones-city-working-laptop.png"
+            src="/img/man-with-headphones-city-working-laptop.png"
             alt="man-image"
           />
         </div>
@@ -33,22 +33,22 @@ export const ForWhomBlock = () => {
           <div className={styles["for-whom__second-info-images"]}>
             <img
               className={`${styles["for-whom__second-info-image"]} ${styles["first-image"]}`}
-              src="/src/assets/img/medium-shot-woman-with-laptop.png"
+              src="/img/medium-shot-woman-with-laptop.png"
               alt="woman-with-phone"
             />
             <img
               className={`${styles["for-whom__second-info-image"]} ${styles["second-image"]}`}
-              src="/src/assets/img/medium-shot-man.png"
+              src="/img/medium-shot-man.png"
               alt="man-smiling"
             />
             <img
               className={`${styles["for-whom__second-info-image"]} ${styles["third-image"]}`}
-              src="/src/assets/img/medium-hot-woman-with-laptop.png"
+              src="/img/medium-hot-woman-with-laptop.png"
               alt="woman-with-laptop"
             />
             <img
               className={`${styles["for-whom__second-info-image"]} ${styles["fourth-image"]}`}
-              src="/src/assets/img/young-woman-meditating-next-to-sea-while-wearing-headphones.png"
+              src="/img/young-woman-meditating-next-to-sea-while-wearing-headphones.png"
               alt="woman-meditating"
             />
           </div>
