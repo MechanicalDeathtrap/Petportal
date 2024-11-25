@@ -13,7 +13,7 @@ export const Header = () => {
 
   const setPopperAnchorElement = (e: React.MouseEvent<HTMLElement>) =>
     setPopperAnchorEl(popperAnchorEl ? null : e.currentTarget);
-  const toggleAuthorization = () => setIsAuthorized((prevState) => !prevState);
+  /*const toggleAuthorization = () => setIsAuthorized((prevState) => !prevState);*/
 
   return (
     <>
