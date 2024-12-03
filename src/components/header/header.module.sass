@@ -28,7 +28,9 @@
     @include fontSettings(15px, 600)
     transition: color 0.5s
   &__navigationLink:hover
-    color: $remark-text-grey
+    color: $header-hover-light-blue
+  &__navigationLink--active
+    color: $main-blue
 
 .headerButtonsList
   &__notificationIcon path
@@ -49,5 +51,8 @@
 .mainLogoIcon
   width: 127.5px
   height: 33px
+
+.bottomLine
+  border-bottom: 2px solid $main-blue
 
 
