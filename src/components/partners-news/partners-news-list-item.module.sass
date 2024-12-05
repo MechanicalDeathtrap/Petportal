@@ -2,7 +2,7 @@
 @import "src/mixins/mixins.sass"
 
 .partner-news-item
-  background-color: $heading-white
+  background-color: $background-white
   transition: box-shadow 0.8s
   border-radius: 30px
   padding: 22px
@@ -23,10 +23,10 @@
     @include flexAndGap(14px)
 
   &__date
-    color: $remark-text-grey
+    color: $text-secondary-color
 
   &__main-info > p
-    color: $text-grey
+    color: $text-primary-color
 
   &__more-button
     width: max-content
@@ -35,7 +35,7 @@
     @include flexAndGap(5px)
 
   &__more-button:hover
-    color: $remark-text-grey
+    color: $text-secondary-color
 
   &__more-button > span
     font-size: 15px
@@ -46,4 +46,4 @@
     @include flexAndGap(23px)
 
 .partner-news-item:hover
-  box-shadow: -1px 0px 44px 7px rgba($main-blue, 0.5)
+  box-shadow: -1px 0px 44px 7px rgba($primary-color, 0.5)

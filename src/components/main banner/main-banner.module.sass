@@ -5,7 +5,7 @@
   position: relative
 
   &__main-image-container_darkening
-    background-color: $banner-darkening
+    background-color: $overlay-color
     overflow: hidden
 
   &__main-heading
@@ -19,7 +19,7 @@
   &__main-heading
     line-height: 100px
     text-transform: uppercase
-    color: $heading-white
+    color: $background-white
     position: absolute
     top: 230px
     left: 143px
@@ -28,24 +28,24 @@
     cursor: default
 
   &__main-heading_highlighted
-    color: $main-blue
+    color: $primary-color
 
   &__main-heading_highlighted:hover
     animation: pulse 6s infinite
 
 @keyframes pulse
   0%
-    color: $main-blue
+    color: $primary-color
 
   25%
-    color: $main-gradient-color
+    color: $secondary-color
 
   50%
-    color: $main-red
+    color: $accent-color
 
   75%
-    color: $main-gradient-color
+    color: $secondary-color
 
   100%
-    color: $main-blue
+    color: $primary-color
 

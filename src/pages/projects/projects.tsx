@@ -1,9 +1,11 @@
-import { Filters } from "../../components/filters/filters.tsx";
+import { AsideFilters } from "../../components/filters/aside-filters.tsx";
+import { Catalogue } from "../../components/catalogue/catalogue.tsx";
 
 export const Projects = () => {
   return (
-    <>
-      <Filters />
-    </>
+    <div style={{display: "flex"}}>
+      <AsideFilters />
+      <Catalogue/>
+    </div>
   );
 };

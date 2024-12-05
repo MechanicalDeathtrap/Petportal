@@ -1,0 +1,17 @@
+@import "/src/mixins/mixins.sass"
+@import "/src/colors/colors.sass"
+
+.select
+  & :global(.MuiSelect-select)
+    padding: 5px 9.3px
+    font-size: 15px
+
+  & :global(.MuiOutlinedInput-notchedOutline:active, .MuiOutlinedInput-notchedOutline:focus)
+    border: none
+
+  & :global(.MuiOutlinedInput-notchedOutline)
+    border-radius: 15px
+
+  & :global(.MuiOutlinedInput-input)
+    color: $filter-color
+    font-style: normal

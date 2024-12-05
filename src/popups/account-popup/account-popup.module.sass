@@ -8,7 +8,7 @@
   width: 100%
   border-radius: 15px
   padding: 14px 16.5px 10.5px 16.5px
-  background-color: $heading-white
+  background-color: $background-white
   flex-direction: column
   @include flexAndGap(27px)
 
@@ -32,10 +32,10 @@
   &__account-names span
     font-size: 15px
     font-weight: 400
-    color: rgba($banner-darkening, 0.5)
+    color: rgba($overlay-color, 0.5)
 
   &__go-to-account-button
-    border: 1px solid rgba($banner-darkening, 0.15)
+    border: 1px solid rgba($overlay-color, 0.15)
     border-radius: 50px
     padding: 7.5px 0
     width: 100%
@@ -43,7 +43,7 @@
     transition: background-color 0.7s
 
   &__go-to-account-button:hover
-    background-color: rgba($banner-darkening, 0.15)
+    background-color: rgba($overlay-color, 0.15)
     border: 1px solid transparent
 
   &__buttons
@@ -59,15 +59,15 @@
     @include flexAndGap(10.5px)
 
   &__list-item:hover
-    background-color: rgba($banner-darkening, 0.15)
+    background-color: rgba($overlay-color, 0.15)
 
   &__list-item--bordered
-    border: 1px solid rgba($banner-darkening, 0.15)
+    border: 1px solid rgba($overlay-color, 0.15)
     border-right: none
     border-left: none
 
   &__list-item--border-bottom
-    border-bottom: 1px solid rgba($banner-darkening, 0.15)
+    border-bottom: 1px solid rgba($overlay-color, 0.15)
 
   &__list-item--border-top
-    border-top: 1px solid rgba($banner-darkening, 0.15)
+    border-top: 1px solid rgba($overlay-color, 0.15)
