@@ -3,9 +3,9 @@ import { Catalogue } from "../../components/catalogue/catalogue.tsx";
 
 export const Projects = () => {
   return (
-    <div style={{display: "flex"}}>
+    <div style={{ display: "flex" }}>
       <AsideFilters />
-      <Catalogue/>
+      <Catalogue />
     </div>
   );
 };

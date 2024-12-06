@@ -12,23 +12,25 @@ export const Header = () => {
   /*const [isAuthorized, setIsAuthorized] = useState(true); //SHOULD BE FALSE AT THE END*/
   const isAuthorized = true;
 
-
-  const [path, setPath] = useState("None")
+  const [path, setPath] = useState("None");
   const location = useLocation();
 
-  useEffect(() =>{
+  useEffect(() => {
     const currentPath = () => {
-      switch(location.pathname){
-        case "/": setPath("About us")
-          break
-        case "/projects": setPath("Projects")
-          break
-        case "/createProject": setPath("Create Project")
-          break
+      switch (location.pathname) {
+        case "/":
+          setPath("About us");
+          break;
+        case "/projects":
+          setPath("Projects");
+          break;
+        case "/createProject":
+          setPath("Create Project");
+          break;
       }
-    }
+    };
     currentPath();
-  }, [path, location])
+  }, [path, location]);
 
   const setPopperAnchorElement = (e: React.MouseEvent<HTMLElement>) =>
     setPopperAnchorEl(popperAnchorEl ? null : e.currentTarget);
@@ -62,41 +64,53 @@ export const Header = () => {
             <li>
               <Link
                 className={`${styles["headerNavigationList__navigationLink"]} ${
-                  (path === "About us") ? styles["headerNavigationList__navigationLink--active"] : ""
+                  path === "About us"
+                    ? styles["headerNavigationList__navigationLink--active"]
+                    : ""
                 }`}
                 to="/"
               >
                 О нас
               </Link>
-              {(path === "About us") ?
-                <div className={styles.bottomLine}></div> : <></>
-              }
+              {path === "About us" ? (
+                <div className={styles.bottomLine}></div>
+              ) : (
+                <></>
+              )}
             </li>
             <li>
               <Link
                 className={`${styles["headerNavigationList__navigationLink"]} ${
-                  (path === "Projects") ? styles["headerNavigationList__navigationLink--active"] : ""
+                  path === "Projects"
+                    ? styles["headerNavigationList__navigationLink--active"]
+                    : ""
                 }`}
                 to="/projects"
               >
                 Проекты
               </Link>
-              {(path === "Projects") ?
-                <div className={styles.bottomLine}></div> : <></>
-              }
+              {path === "Projects" ? (
+                <div className={styles.bottomLine}></div>
+              ) : (
+                <></>
+              )}
             </li>
             <li>
               <Link
                 className={`${styles["headerNavigationList__navigationLink"]} ${
-                  (path === "Create project") ? styles["headerNavigationList__navigationLink--active"] : ""
+                  path === "Create project"
+                    ? styles["headerNavigationList__navigationLink--active"]
+                    : ""
                 }`}
                 to="/"
               >
                 Создать проект
               </Link>
-              {(path === "Create project") ?
-                <div className={styles.bottomLine}></div> : <></>
-              }
+              {path === "Create project" ? (
+                <div className={styles.bottomLine}></div>
+              ) : (
+                <></>
+              )}
             </li>
           </ul>
         </nav>

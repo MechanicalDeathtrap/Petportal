@@ -1,9 +1,5 @@
-import styles from "./catalogue.module.sass"
+import styles from "./catalogue.module.sass";
 
-export const Catalogue = () =>{
-  return(
-    <section className={styles["catalogue"]}>
-
-    </section>
-  )
-}
+export const Catalogue = () => {
+  return <section className={styles["catalogue"]}></section>;
+};
