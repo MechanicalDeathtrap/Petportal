@@ -1,0 +1,52 @@
+@import "/src/mixins/mixins"
+@import "/src/colors/colors"
+
+.select
+
+  &--small
+    width: 105px
+
+  &--big
+    width: 227px
+
+  //& :global(.MuiOutlinedInput-notchedOutline)
+    & :global(.Mui-focused)
+      border: none !important
+
+  & :global(.MuiSelect-select )
+    padding: 5px 9.3px
+    font-size: 15px
+
+  & :global(.MuiOutlinedInput-notchedOutline)
+    border-radius: 15px
+    border: 0.75px solid $border-color
+
+  & :global(.MuiOutlinedInput-input)
+    color: $filter-color
+
+  & :global(.MuiOutlinedInput-input > em)
+    font-family: Inter, sans-serif
+    font-style: normal
+    font-size: 15px
+
+  & :global(.MuiSelect-icon)
+    display: none
+
+  &::after
+    content: ''
+    position: absolute
+    top: 50%
+    right: 10px
+    transform: translateY(-50%)
+    width: 15px
+    height: 15px
+    background: url('/public/img/selector-arrow.svg') no-repeat center center
+    background-size: contain
+    pointer-events: none
+
+  & :global(.MuiChip-root)
+    height: auto
+    border: 0.75px solid $border-color
+
+  & :global(.MuiChip-label)
+    font-family: Inter, sans-serif

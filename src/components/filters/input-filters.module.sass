@@ -1,0 +1,19 @@
+@import "/src/mixins/mixins.sass"
+@import "/src/colors/colors.sass"
+
+.filter-form
+  display: flex
+  justify-content: space-between
+
+  &__input
+    border: 0.75px solid $border-color
+    border-radius: 15px
+    padding: 5px 9px
+    @include flexAndGap(10px)
+
+.filter-form input
+  width: 60px
+  color: $filter-color
+
+.filter-form span
+  color: $filter-color
