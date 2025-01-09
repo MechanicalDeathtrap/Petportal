@@ -1,0 +1,28 @@
+@import "/src/mixins/mixins.sass"
+@import "/src/colors/colors.sass"
+
+.searchbar
+  align-items: center
+  background-color: $background-white
+  padding: 0 16px
+  border-radius: 22.5px
+  border: 0.75px solid $border-color
+  box-shadow: 0 3px 3px 0 $shadow-color
+  @include flexAndGap(14px)
+
+  &__form
+    width: 40.8vw
+
+  &__form input
+    width: 100%
+    height: 48px
+
+  &__form input::-webkit-input-placeholder
+    color: $filter-color
+    font-size: 20px
+
+  &__search-button
+    height: 20px
+
+  &__erase-button
+    height: 16px

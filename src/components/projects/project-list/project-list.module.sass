@@ -1,0 +1,20 @@
+@import "/src/mixins/mixins"
+
+.project-list
+  flex-direction: column
+  @include flexAndGap(15px)
+
+  &__project
+    width: max-content
+    height: 273px
+
+.project-list h2
+  font-family: Inter, sans-serif
+  font-size: 22.5px
+  font-weight: 500
+
+.project-list > ul
+  flex-wrap: wrap
+  justify-content: space-between
+  @include flexAndGap(37.5px)
+
