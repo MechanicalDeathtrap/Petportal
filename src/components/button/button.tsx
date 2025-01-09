@@ -6,14 +6,17 @@ type Props = {
   style: string;
   link: string;
 };
-
 export const Button = (props: Props) => {
   return (
-    <button
-      type="button"
-      className={`${styles[props.style]} ${styles["button"]}`}
-    >
-      <Link to={props.link}>{props.text}</Link>
-    </button>
-  );
+
+    <Link to={props.link}>
+      <button
+        type="button"
+        className={`${styles[props.style]} ${styles["button"]}`}
+      >
+        {props.text}
+      </button>
+    </Link>
+)
+  ;
 };
