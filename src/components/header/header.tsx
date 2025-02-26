@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import { ParentPopup } from "../../popups/parent-popup.tsx";
 import { Button } from "../button/button.tsx";
 import { AccountPopup } from "../../popups/account-popup/account-popup.tsx";
+import { NotificationPopup } from "../../popups/notifications-popup/notification-popup.tsx";
 
 export const Header = () => {
-  const [popperAnchorEl, setPopperAnchorEl] = useState<HTMLElement | null>(
-    null,
-  );
+  const [accountPopperAnchorEl, setAccountPopperAnchorEl] = useState<HTMLElement | null>(null,);
+  const [notificationPopperAnchorEl, setNotificationPopperAnchorEl] = useState<HTMLElement | null>(null,);
   /*const [isAuthorized, setIsAuthorized] = useState(true); //SHOULD BE FALSE AT THE END*/
   const isAuthorized = true;
 
@@ -32,8 +32,15 @@ export const Header = () => {
     currentPath();
   }, [path, location]);
 
-  const setPopperAnchorElement = (e: React.MouseEvent<HTMLElement>) =>
-    setPopperAnchorEl(popperAnchorEl ? null : e.currentTarget);
+  const togglePopperAnchorElement = ( e: React.MouseEvent<HTMLElement>, type: "account" | "notification" ) => {
+    if (type === "account") {
+      setAccountPopperAnchorEl((prev) => (prev ? null : e.currentTarget));
+      if (notificationPopperAnchorEl) setNotificationPopperAnchorEl((prev) => (prev ? null : e.currentTarget));
+    } else {
+      setNotificationPopperAnchorEl((prev) => (prev ? null : e.currentTarget));
+      if (accountPopperAnchorEl) setAccountPopperAnchorEl((prev) => (prev ? null : e.currentTarget));
+    }
+  };
   /*const toggleAuthorization = () => setIsAuthorized((prevState) => !prevState);*/
 
   return (
@@ -117,7 +124,7 @@ export const Header = () => {
         <div className={styles.profileButtons}>
           <ul className={styles.headerButtonsList}>
             <li>
-              <Link to="/" className={styles.notificationsButton}>
+              <button type='button' className={styles.notificationsButton} onClick={(e) => togglePopperAnchorElement(e,'notification')}>
                 <svg
                   className={styles.headerButtonsList__notificationIcon}
                   xmlns="http://www.w3.org/2000/svg"
@@ -133,7 +140,7 @@ export const Header = () => {
                     fill="black"
                   />
                 </svg>
-              </Link>
+              </button>
             </li>
             <li>
               <button type="button">
@@ -157,7 +164,7 @@ export const Header = () => {
             </li>
           </ul>
           {isAuthorized ? (
-            <button type="button" onClick={setPopperAnchorElement}>
+            <button type="button" onClick={(e) => togglePopperAnchorElement(e,'account')}>
               {/*TODO смена картинки на пользовательскую*/}
               <img
                 className={styles.userAvatar}
@@ -176,8 +183,12 @@ export const Header = () => {
       <ParentPopup
         popup={AccountPopup()}
         id="account-menu-popup"
-        anchorEl={popperAnchorEl}
+        anchorEl={accountPopperAnchorEl}
       />
+      <ParentPopup
+      popup={NotificationPopup()}
+      id="notifications-popup"
+      anchorEl={notificationPopperAnchorEl}/>
     </>
   );
 };
