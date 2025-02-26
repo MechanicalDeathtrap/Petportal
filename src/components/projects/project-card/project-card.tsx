@@ -1,8 +1,12 @@
 import styles from "../project-card/project-card.module.sass";
 import { Link } from "react-router-dom";
+import { Project } from "../project";
 
+interface ProjectCardProps {
+  project: Project; // Используем интерфейс Project
+} 
 
-export const ProjectCard = () =>{
+export const ProjectCard = ({ project }: ProjectCardProps) =>{
   return(
     <Link to={'/'} >
       <div className={styles["project-card"]}>{/*TODO достать всё из бэка */}
@@ -21,17 +25,16 @@ export const ProjectCard = () =>{
           </ul>
         </div>
         <div className={`${styles["project-card__main-info"]} ${styles["margin-sides"]}`}>
-          <h2>Составление документации для рабочей API, а также разработка сайта для блаблаблаблаблаблаблабалбалабла
-            типа много текста проверим css </h2>
+          <h2>{project.name}</h2>
           <ul className={styles["project-card__main-info-list"]}>
             <li> Сроки работы:
-              <span>20 минут</span>
+              <span>{project.deadline}</span>
             </li>
             <li>Бюджет:
               <span>1 337 000 р</span>
             </li>
             <li> Приём заявок:
-              <span>1 неделя</span>
+              <span>{project.applyingDeadline}</span>
             </li>
           </ul>
         </div>
