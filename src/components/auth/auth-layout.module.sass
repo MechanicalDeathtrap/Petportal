@@ -1,0 +1,169 @@
+@import "/src/mixins/mixins.sass"
+@import "/src/colors/colors.sass"
+
+.authorization
+  position: relative
+  display: flex
+  justify-content: space-between
+  height: 100vh
+
+  &__logo
+    position: fixed
+    left: 15px
+    top: 15px
+
+  &__form-side
+    @include flexAndGap(19px)
+
+  &__form-side h1, &__suggest-auth-side h1
+    font-size: 37.5px
+
+  &__form-side, &__suggest-auth-side
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: center
+    margin: 0 0 0 197px  //321px
+
+  &__suggest-auth-side
+    padding-left: 92px
+    margin: 0
+    width: 37.9vw
+    background: $background-auth-gradient
+    color: $background-white
+
+  &__suggest-auth-side > div
+    flex-direction: column
+    align-items: center
+    width: 23vw
+    @include flexAndGap(20px)
+
+  &__suggest-auth-side button
+    width: 23vw
+
+  &__form
+    width: 375px
+    flex-direction: column
+    @include flexAndGap(20px)
+
+  &__text-fields
+    flex-direction: column
+    @include flexAndGap(7.5px)
+
+  &__text-fields + div
+    display: flex
+    justify-content: space-between
+
+  &__form-field::-webkit-input-placeholder
+    font-size: 15px
+    font-weight: 200
+
+  &__form-field
+    background-color: $background-input-grey
+    border-radius: 15px
+    padding: 8px 14px
+
+  &__form-field + label
+    flex-direction: column
+    @include flexAndGap(10px)
+
+  &__form-field + div
+    display: flex
+    justify-content: space-between
+
+  &__form-checkbox
+    font-size: 15px
+    color: $text-secondary-color
+    font-weight: 400
+    flex-direction: column
+    @include flexAndGap(10px)
+
+  &__form-checkbox + a
+    color: $text-secondary-color
+    transition: color 1s
+
+  &__form-checkbox + a:hover
+    color: $text-primary-color
+
+  &__form-checkbox-container
+    @include flexAndGap(10px)
+
+  &__form-checkbox-container--centered
+    align-items: center
+
+  &__form-checkbox-link
+    color: $primary-color
+
+  &__form-checkbox-input + p
+    width: fit-content
+
+  &__form-checkbox-input:checked
+    background-color: $background-input-grey
+
+  &__form-checkbox-input:checked::before
+    content: ""
+    width: 15px
+    height: 15px
+    border-radius: 4px
+    background-color: $primary-color
+    font-weight: bold
+    position: absolute
+    border: none
+    top: 50%
+    left: 50%
+    transform: translate(-50%, -50%)
+    overflow: hidden
+
+  &__forgotpasswd-container
+    width: 39.5vw
+    align-items: start
+
+  &__forgotpasswd-container p
+    color: $text-secondary-color
+
+  &__forget-password-buttons
+    display: flex
+    justify-content: space-between
+    align-items: center
+
+  &__forget-password-buttons p, &__forget-password-buttons a
+    color: $text-primary-color
+    cursor: pointer
+
+  &__message
+    background-color: $background-white
+    padding: 30px 20px
+    border-radius: 5px
+    box-shadow: 0 3px 3px 0 $shadow-color
+    position: absolute
+    bottom: 10px
+    right: 10px
+    width: 350px
+
+  &__form--error, &__form--error-checkbox
+    color: $text-error
+
+  &__message--error
+    font-weight: 600
+
+  &__form--error
+    margin-left: 15px
+    font-size: 12px
+
+  &__form--error-checkbox
+    font-size: 12px
+
+  &__form--error-margin
+    margin-top: 10px
+
+input[type="checkbox"]
+  appearance: none
+  width: 15px
+  height: 15px
+  border-radius: 4px
+  background-color: $background-input-grey
+  border: none
+  cursor: pointer
+  position: relative
+
+

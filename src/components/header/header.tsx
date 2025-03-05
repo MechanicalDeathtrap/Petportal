@@ -7,10 +7,12 @@ import { AccountPopup } from "../../popups/account-popup/account-popup.tsx";
 import { NotificationPopup } from "../../popups/notifications-popup/notification-popup.tsx";
 
 export const Header = () => {
-  const [accountPopperAnchorEl, setAccountPopperAnchorEl] = useState<HTMLElement | null>(null,);
-  const [notificationPopperAnchorEl, setNotificationPopperAnchorEl] = useState<HTMLElement | null>(null,);
+  const [accountPopperAnchorEl, setAccountPopperAnchorEl] =
+    useState<HTMLElement | null>(null);
+  const [notificationPopperAnchorEl, setNotificationPopperAnchorEl] =
+    useState<HTMLElement | null>(null);
   /*const [isAuthorized, setIsAuthorized] = useState(true); //SHOULD BE FALSE AT THE END*/
-  const isAuthorized = true;
+  const isAuthorized = false;
 
   const [path, setPath] = useState("None");
   const location = useLocation();
@@ -32,16 +34,27 @@ export const Header = () => {
     currentPath();
   }, [path, location]);
 
-  const togglePopperAnchorElement = ( e: React.MouseEvent<HTMLElement>, type: "account" | "notification" ) => {
+  const togglePopperAnchorElement = (
+    e: React.MouseEvent<HTMLElement>,
+    type: "account" | "notification",
+  ) => {
     if (type === "account") {
       setAccountPopperAnchorEl((prev) => (prev ? null : e.currentTarget));
-      if (notificationPopperAnchorEl) setNotificationPopperAnchorEl((prev) => (prev ? null : e.currentTarget));
+      if (notificationPopperAnchorEl)
+        setNotificationPopperAnchorEl((prev) =>
+          prev ? null : e.currentTarget,
+        );
     } else {
       setNotificationPopperAnchorEl((prev) => (prev ? null : e.currentTarget));
-      if (accountPopperAnchorEl) setAccountPopperAnchorEl((prev) => (prev ? null : e.currentTarget));
+      if (accountPopperAnchorEl)
+        setAccountPopperAnchorEl((prev) => (prev ? null : e.currentTarget));
     }
   };
   /*const toggleAuthorization = () => setIsAuthorized((prevState) => !prevState);*/
+
+  const resolveAuthPath = () => {
+    return isAuthorized ? "/" : "/login"; //TODO заменить / на путь к созданию проекта
+  };
 
   return (
     <>
@@ -109,7 +122,7 @@ export const Header = () => {
                     ? styles["headerNavigationList__navigationLink--active"]
                     : ""
                 }`}
-                to="/"
+                to={resolveAuthPath()}
               >
                 Создать проект
               </Link>
@@ -124,7 +137,11 @@ export const Header = () => {
         <div className={styles.profileButtons}>
           <ul className={styles.headerButtonsList}>
             <li>
-              <button type='button' className={styles.notificationsButton} onClick={(e) => togglePopperAnchorElement(e,'notification')}>
+              <button
+                type="button"
+                className={styles.notificationsButton}
+                onClick={(e) => togglePopperAnchorElement(e, "notification")}
+              >
                 <svg
                   className={styles.headerButtonsList__notificationIcon}
                   xmlns="http://www.w3.org/2000/svg"
@@ -164,7 +181,10 @@ export const Header = () => {
             </li>
           </ul>
           {isAuthorized ? (
-            <button type="button" onClick={(e) => togglePopperAnchorElement(e,'account')}>
+            <button
+              type="button"
+              onClick={(e) => togglePopperAnchorElement(e, "account")}
+            >
               {/*TODO смена картинки на пользовательскую*/}
               <img
                 className={styles.userAvatar}
@@ -173,10 +193,9 @@ export const Header = () => {
               />
             </button>
           ) : (
-            <button type="button">
-              {/*TODO link to registration*/}
-              <Button link="/" style="blue-button-header" text="Войти" />
-            </button>
+            <Link to="/login">
+              <Button type="button" style="blue-button-header" text="Войти" />
+            </Link>
           )}
         </div>
       </header>
@@ -186,9 +205,10 @@ export const Header = () => {
         anchorEl={accountPopperAnchorEl}
       />
       <ParentPopup
-      popup={NotificationPopup()}
-      id="notifications-popup"
-      anchorEl={notificationPopperAnchorEl}/>
+        popup={NotificationPopup()}
+        id="notifications-popup"
+        anchorEl={notificationPopperAnchorEl}
+      />
     </>
   );
 };

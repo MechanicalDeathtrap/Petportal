@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Button } from "../button/button.tsx";
 import styles from "./for-whom-block.module.sass";
 
@@ -19,7 +20,13 @@ export const ForWhomBlock = () => {
             </p>
           </div>
           {/*TODO линк к проектам*/}
-          <Button link={"/"} text={"Создать проект"} style={"blue-button"} />
+          <Link to="/">
+            <Button
+              type="button"
+              text={"Создать проект"}
+              style={"blue-button"}
+            />
+          </Link>
         </div>
         <div className={styles["for-whom__first-image"]}>
           <img
@@ -64,11 +71,13 @@ export const ForWhomBlock = () => {
               </p>
             </div>
             <div className={styles["for-whom__second-info-button"]}>
-              <Button
-                link={"/projects"}
-                text={"Найти проект"}
-                style={"white-button"}
-              />
+              <Link to="/projects">
+                <Button
+                  type="button"
+                  text={"Найти проект"}
+                  style={"white-button"}
+                />
+              </Link>
             </div>
           </div>
         </div>
