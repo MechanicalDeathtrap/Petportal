@@ -65,7 +65,7 @@ export const Registration = () => {
   // Имитация сервера
   const handleSubmit = async (values: RegistrationProps) => {
     const { error } = await save();
-    console.log(error);
+    console.log(values.firstName);
     switch (error) {
       case "200":
         navigate("/");

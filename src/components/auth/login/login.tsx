@@ -47,7 +47,7 @@ export const Login = () => {
   // Имитация сервера
   const handleSubmit = async (values: AuthorizationProps) => {
     const { error } = await save();
-    console.log(error);
+    console.log(values.email);
     switch (error) {
       case "200":
         navigate("/");

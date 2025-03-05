@@ -80,7 +80,6 @@ export const PasswordRecovery = () => {
 
   // Имитация сервера
   const sendEmail = async (value: emailProps) => {
-    handleEmail(value.email);
     const { error } = await save();
     console.log(error);
     switch (error) {
@@ -97,7 +96,7 @@ export const PasswordRecovery = () => {
   // Имитация сервера
   const sendCode = async (value: codeProps) => {
     const { error } = await save();
-    console.log(error);
+    console.log(value);
     switch (error) {
       case "200":
         handleNextStep();
@@ -110,7 +109,7 @@ export const PasswordRecovery = () => {
   // Имитация сервера
   const sendPassword = async (value: passwdProps) => {
     const { error } = await save();
-    console.log(error);
+    console.log(value);
     switch (error) {
       case "200":
         alert("Пароль успешно сменён! 😊"); /*TODO переделать ибо жуть*/
