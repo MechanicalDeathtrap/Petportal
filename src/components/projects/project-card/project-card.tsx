@@ -1,27 +1,35 @@
 import styles from "../project-card/project-card.module.sass";
 import { Link } from "react-router-dom";
-import { Project } from "../project";
+import { Project } from "../project-type";
 
 interface ProjectCardProps {
   project: Project; // Используем интерфейс Project
 } 
 
 export const ProjectCard = ({ project }: ProjectCardProps) =>{
+
+  const base64Image = project.avatarImageBase64 
+    ? `data:image/jpeg;base64,${project.avatarImageBase64}`
+    : '/img/default-logo.svg'; // Запасной вариант
+
   return(
     <Link to={'/'} >
       <div className={styles["project-card"]}>{/*TODO достать всё из бэка */}
         <div className={`${styles["project-card__header"]} ${styles["margin-sides"]}`}>
           <h6 className={styles["project-card__company-logo"]}>
-            <picture>
-              <img src="/img/Tatneft_Logo.svg" alt="company-logo" />
+            <picture className={styles["project-card__header"]}>
+              <img src={base64Image}  alt="company-logo"              
+                onError={(e) => {
+                  e.currentTarget.src = '/img/default-logo.svg';
+                }}/>
             </picture>
-            ОАО Татнефть
+            {project.ownerName}
           </h6>
 
           <ul className={styles["project-card__tech-stack"]}>
-            <li>Node.js</li>
-            <li>React</li>
-            <li>Redux</li>
+            {project.tags?.slice(0, 3).map((tag) => (
+              <li key={tag}>{tag}</li>
+            ))}
           </ul>
         </div>
         <div className={`${styles["project-card__main-info"]} ${styles["margin-sides"]}`}>
@@ -31,14 +39,14 @@ export const ProjectCard = ({ project }: ProjectCardProps) =>{
               <span>{project.deadline}</span>
             </li>
             <li>Бюджет:
-              <span>1 337 000 р</span>
+              <span>{project.budget}</span> {/* {сделать форматирование} */}
             </li>
             <li> Приём заявок:
               <span>{project.applyingDeadline}</span>
             </li>
           </ul>
         </div>
-        <div className={`${styles["project-card--recruiting-stage-color"]} ${styles["project-card__footer"]}`}><span>Идёт набор</span></div>
+        <div className={`${styles["project-card--recruiting-stage-color"]} ${styles["project-card__footer"]}`}><span>Идёт набор</span></div> {/* поменять в зависимости от state */}
       </div>
     </Link>
   )

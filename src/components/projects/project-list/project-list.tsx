@@ -1,6 +1,6 @@
 import styles from "./project-list.module.sass"
 import { ProjectCard } from "../project-card/project-card.tsx";
-import { Project } from "../project";
+import { Project } from "../project-type.ts";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
