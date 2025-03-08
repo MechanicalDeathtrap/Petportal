@@ -22,6 +22,21 @@ export const ProjectList = () => {
         <li className={styles["project-list__project"]}>
           <ProjectCard />
         </li>
+        <li className={styles["project-list__project"]}>
+          <ProjectCard />
+        </li>
+        <li className={styles["project-list__project"]}>
+          <ProjectCard />
+        </li>
+        <li className={styles["project-list__project"]}>
+          <ProjectCard />
+        </li>
+        <li className={styles["project-list__project"]}>
+          <ProjectCard />
+        </li>
+        <li className={styles["project-list__project"]}>
+          <ProjectCard />
+        </li>
       </ul>
     </div>
   );
