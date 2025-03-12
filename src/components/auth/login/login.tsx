@@ -14,7 +14,6 @@ type AuthorizationProps = {
 export const Login = () => {
   const [isMessageOpen, setMessageOpen] = useState(false);
   const handleMessage = () => setMessageOpen((prev) => !prev);
-
   const navigate = useNavigate();
 
   const validationSchema = Yup.object().shape({
@@ -36,26 +35,36 @@ export const Login = () => {
     rememberMe: false,
   };
 
-  // Имитация сервера
-  const save = async () => {
-    console.log("save");
-    return {
-      error: Math.random() > 0.5 ? "500" : "200",
-    };
-  };
-
-  // Имитация сервера
   const handleSubmit = async (values: AuthorizationProps) => {
-    const { error } = await save();
-    console.log(values.email);
-    switch (error) {
-      case "200":
-        navigate("/");
-        break;
+    try {
+      const response = await fetch("http://localhost:5140/api/Authorization/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: values.email,
+          password: values.password,
+        }),
+      });
 
-      case "500":
-        handleMessage();
-        break;
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || "Ошибка авторизации");
+      }
+
+      // Сохраняем токен в зависимости от rememberMe
+      if (values.rememberMe) {
+        localStorage.setItem("token", data.token);
+      } else {
+        sessionStorage.setItem("token", data.token);
+      }
+
+      navigate("/");
+    } catch (error: any) {
+      // setErrorMessage(error.message || "Произошла ошибка");
+      setMessageOpen(true);
     }
   };
 
