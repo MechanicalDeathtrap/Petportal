@@ -54,13 +54,17 @@ export const Login = () => {
         throw new Error(data.message || "Ошибка авторизации");
       }
 
-      // Сохраняем токен в зависимости от rememberMe
+      // Сохраняем токена 
+      /*     
+      
       if (values.rememberMe) {
         localStorage.setItem("token", data.token);
       } else {
         sessionStorage.setItem("token", data.token);
       }
-
+      
+      */
+      
       navigate("/");
     } catch (error: any) {
       // setErrorMessage(error.message || "Произошла ошибка");

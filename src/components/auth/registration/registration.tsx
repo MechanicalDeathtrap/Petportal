@@ -54,26 +54,34 @@ export const Registration = () => {
     acceptTerms: false,
   };
 
-  // Имитация сервера
-  const save = async () => {
-    console.log("save");
-    return {
-      error: Math.random() > 0.5 ? "500" : "200",
-    };
-  };
-
-  // Имитация сервера
   const handleSubmit = async (values: RegistrationProps) => {
-    const { error } = await save();
-    console.log(values.firstName);
-    switch (error) {
-      case "200":
-        navigate("/");
-        break;
+    try {
+      const requestBody = {
+        Name: `${values.firstName} ${values.lastName}`,
+        Email: values.email,
+        Password: values.password,
+      };
 
-      case "500":
-        handleMessage();
-        break;
+      const response = await fetch("http://localhost:5140/api/Authorization/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", 
+        body: JSON.stringify(requestBody),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Ошибка при регистрации");
+      }
+
+      // Если регистрация успешна, перенаправляем пользователя на главную страницу
+      navigate("/");
+    } catch (error: any) {
+      // setErrorMessage(error.message || "Произошла ошибка при регистрации");
+      setMessageOpen(true);
     }
   };
 
