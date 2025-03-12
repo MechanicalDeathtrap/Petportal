@@ -10,7 +10,7 @@ export const ProjectCard = ({ project }: ProjectCardProps) =>{
 
   const base64Image = project.avatarImageBase64 
     ? `data:image/jpeg;base64,${project.avatarImageBase64}`
-    : '/img/default-logo.svg'; // Запасной вариант
+    : 'public/img/blank-avatar.png'; // Запасной вариант
 
   return(
     <Link to={'/'} >
@@ -18,9 +18,10 @@ export const ProjectCard = ({ project }: ProjectCardProps) =>{
         <div className={`${styles["project-card__header"]} ${styles["margin-sides"]}`}>
           <h6 className={styles["project-card__company-logo"]}>
             <picture className={styles["project-card__header"]}>
-              <img src={base64Image}  alt="company-logo"              
+              <img src={base64Image} className={`${styles["project-card__company-logo-image"]}
+                   ${project.isBusinessProject ? styles["project-card__company-logo-image--rounded"] : ''}`} alt="company-logo"              
                 onError={(e) => {
-                  e.currentTarget.src = '/img/default-logo.svg';
+                  e.currentTarget.src = 'public/img/blank-avatar.png';
                 }}/>
             </picture>
             {project.ownerName}
