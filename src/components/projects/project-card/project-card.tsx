@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 
 export const ProjectCard = () => {
   const json = {
-    isBusinessProject: true
-  }
+    isBusinessProject: true,
+  };
 
   return (
     <Link to={"/"}>
@@ -15,9 +15,12 @@ export const ProjectCard = () => {
         >
           <h6 className={styles["project-card__company-logo"]}>
             <picture>
-              <img src="/img/medium-shot-woman-with-laptop.png" alt="company-logo"
-                   className={`${styles["project-card__company-logo-image"]}
-                   ${json.isBusinessProject ? styles["project-card__company-logo-image--rounded"] : ''}`}/>
+              <img
+                src="/img/medium-shot-woman-with-laptop.png"
+                alt="company-logo"
+                className={`${styles["project-card__company-logo-image"]}
+                   ${json.isBusinessProject ? styles["project-card__company-logo-image--rounded"] : ""}`}
+              />
             </picture>
             ОАО Татнефть
           </h6>

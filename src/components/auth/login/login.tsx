@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../../button/button.tsx";
 import * as Yup from "yup";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 type AuthorizationProps = {
   email: string;
@@ -13,7 +14,7 @@ type AuthorizationProps = {
 
 export const Login = () => {
   const [isMessageOpen, setMessageOpen] = useState(false);
-  const handleMessage = () => setMessageOpen((prev) => !prev);
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   const validationSchema = Yup.object().shape({
@@ -37,43 +38,52 @@ export const Login = () => {
 
   const handleSubmit = async (values: AuthorizationProps) => {
     try {
-      const response = await fetch("http://localhost:5140/api/Authorization/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      await axios.post(
+        "http://localhost:5140/api/Authorization/login",
+        {
           email: values.email,
           password: values.password,
-        }),
-      });
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.message || "Ошибка авторизации");
-      }
-
-      // Сохраняем токена 
-      /*     
-      
-      if (values.rememberMe) {
-        localStorage.setItem("token", data.token);
-      } else {
-        sessionStorage.setItem("token", data.token);
-      }
-      
-      */
-      
       navigate("/");
     } catch (error: any) {
-      // setErrorMessage(error.message || "Произошла ошибка");
+      if (error.response) {
+        const status = error.response.status;
+        switch (status) {
+          case 400:
+            setErrorMessage(
+              "Некорректные данные. Проверьте введенные значения.",
+            );
+            break;
+          case 401:
+            setErrorMessage("Неверный email или пароль.");
+            break;
+          case 500:
+            setErrorMessage("Ошибка сервера. Попробуйте позже.");
+            break;
+          default:
+            setErrorMessage("Произошла ошибка при авторизации.");
+        }
+      } else if (error.request) {
+        setErrorMessage(
+          "Сервер недоступен. Проверьте подключение к интернету.",
+        );
+      } else {
+        setErrorMessage("Произошла непредвиденная ошибка.");
+      }
+
       setMessageOpen(true);
     }
   };
 
   const setMessageTimer = () => {
-    setTimeout(handleMessage, 5000);
+    setTimeout(() => setMessageOpen(false), 5000);
   };
 
   useEffect(() => {
@@ -85,66 +95,48 @@ export const Login = () => {
   return (
     <div className={styles["authorization__form-side"]}>
       <h1>Войти в профиль</h1>
+
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}
         validationSchema={validationSchema}
       >
-        {({ handleSubmit, errors, touched }) => (
-          <Form
-            noValidate
-            onSubmit={(e) => {
-              console.log("handleSubmit вызван");
-              handleSubmit(e);
-            }}
-            className={styles["authorization__form"]}
-          >
+        {({ errors, touched }) => (
+          <Form className={styles["authorization__form"]}>
             <div className={styles["authorization__text-fields"]}>
               <Field
-                id="email"
                 name="email"
                 type="email"
                 placeholder="Электронная почта"
                 className={styles["authorization__form-field"]}
               />
-              {errors.email && touched.email ? (
+              {errors.email && touched.email && (
                 <div className={styles["authorization__form--error"]}>
                   {errors.email}
                 </div>
-              ) : null}
+              )}
+
               <Field
-                id="password"
                 name="password"
                 type="password"
                 placeholder="Пароль"
                 className={styles["authorization__form-field"]}
               />
-              {errors.password && touched.password ? (
+              {errors.password && touched.password && (
                 <div className={styles["authorization__form--error"]}>
                   {errors.password}
                 </div>
-              ) : null}
+              )}
             </div>
-            <div>
-              <label
-                htmlFor="authCheckbox"
-                className={styles["authorization__form-checkbox"]}
-              >
-                <div
-                  className={`${styles["authorization__form-checkbox-container"]} ${styles["authorization__form-checkbox-container--centered"]}`}
-                >
-                  <Field
-                    id="rememberMe"
-                    name="rememberMe"
-                    type="checkbox"
-                    className={styles["authorization__form-checkbox-input"]}
-                  />
-                  <p>Запомнить меня</p>
-                </div>
+
+            <div className={styles["authorization__options"]}>
+              <label>
+                <Field type="checkbox" name="rememberMe" />
+                Запомнить меня
               </label>
-              <Link to="/forget-password">Забыли пароль?</Link>{" "}
-              {/*TODO путь к станице с восстановлением */}
+              <Link to="/forgot-password">Забыли пароль?</Link>
             </div>
+
             <Button
               type="submit"
               style="blue-button-header"
@@ -156,11 +148,9 @@ export const Login = () => {
 
       {isMessageOpen && (
         <div className={styles["authorization__message"]}>
-          <p>
-            Произошла ошибка при авторизации! Попробуйте авторизироваться снова!
-            😓
+          <p className={styles["authorization__message--error"]}>
+            {errorMessage}
           </p>
-          {/*<p className={styles["authorization__message--error"]}> Аккаунт с такой почтой уже существует! Пожалуйста, поменяйте почту и повторите попытку 😓</p>*/}
         </div>
       )}
     </div>
