@@ -16,7 +16,7 @@
     "@microsoft/signalr": "^8.0.7",
     "@mui/base": "^5.0.0-beta.62",
     "@mui/material": "^6.1.7",
-    "axios": "^1.8.0",
+    "axios": "^1.8.3",
     "formik": "^2.4.6",
     "mkcert": "^3.2.0",
     "mobx": "^6.13.7",

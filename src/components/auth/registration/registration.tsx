@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../../button/button.tsx";
 import * as Yup from "yup";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 type RegistrationProps = {
   firstName: string;
@@ -16,8 +17,7 @@ type RegistrationProps = {
 
 export const Registration = () => {
   const [isMessageOpen, setMessageOpen] = useState(false);
-  const handleMessage = () => setMessageOpen((prev) => !prev);
-
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   const validationSchema = Yup.object().shape({
@@ -26,7 +26,7 @@ export const Registration = () => {
       .max(30, "Слишком длинное имя")
       .required("Введите имя"),
     lastName: Yup.string()
-      .min(2, "Имя должно содержать не менее 2 символов")
+      .min(2, "Фамилия должна содержать не менее 2 символов")
       .max(30, "Слишком длинная фамилия")
       .required("Введите фамилию"),
     email: Yup.string()
@@ -54,31 +54,59 @@ export const Registration = () => {
     acceptTerms: false,
   };
 
-  // Имитация сервера
-  const save = async () => {
-    console.log("save");
-    return {
-      error: Math.random() > 0.5 ? "500" : "200",
-    };
-  };
-
-  // Имитация сервера
   const handleSubmit = async (values: RegistrationProps) => {
-    const { error } = await save();
-    console.log(values.firstName);
-    switch (error) {
-      case "200":
-        navigate("/");
-        break;
+    try {
+      const requestBody = {
+        Name: `${values.firstName} ${values.lastName}`,
+        Email: values.email,
+        Password: values.password,
+      };
 
-      case "500":
-        handleMessage();
-        break;
+      await axios.post(
+        "http://localhost:5140/api/Authorization/register",
+        requestBody,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      navigate("/");
+    } catch (error: any) {
+      if (error.response) {
+        const status = error.response.status;
+        switch (status) {
+          case 400:
+            setErrorMessage(
+              "Некорректные данные. Проверьте введенные значения.",
+            );
+            break;
+          case 409:
+            setErrorMessage("Аккаунт с такой почтой уже существует.");
+            break;
+          case 500:
+            setErrorMessage("Ошибка сервера. Попробуйте позже.");
+            break;
+          default:
+            setErrorMessage("Произошла ошибка при регистрации.");
+        }
+      } else if (error.request) {
+        // Ошибка сети (например, сервер недоступен)
+        setErrorMessage(
+          "Сервер недоступен. Проверьте подключение к интернету.",
+        );
+      } else {
+        // Другие ошибки
+        setErrorMessage("Произошла непредвиденная ошибка.");
+      }
+
+      setMessageOpen(true);
     }
   };
 
   const setMessageTimer = () => {
-    setTimeout(handleMessage, 5000);
+    setTimeout(() => setMessageOpen(false), 5000);
   };
 
   useEffect(() => {
@@ -95,76 +123,68 @@ export const Registration = () => {
         onSubmit={handleSubmit}
         validationSchema={validationSchema}
       >
-        {({ handleSubmit, errors, touched }) => (
-          <Form
-            noValidate
-            onSubmit={(e) => {
-              console.log("handleSubmit вызван");
-              handleSubmit(e);
-            }}
-            className={styles["authorization__form"]}
-          >
+        {({ errors, touched }) => (
+          <Form className={styles["authorization__form"]}>
             <div className={styles["authorization__text-fields"]}>
               <Field
-                id="firstName"
                 name="firstName"
                 type="text"
                 placeholder="Имя"
                 className={styles["authorization__form-field"]}
               />
-              {errors.firstName && touched.firstName ? (
+              {errors.firstName && touched.firstName && (
                 <div className={styles["authorization__form--error"]}>
                   {errors.firstName}
                 </div>
-              ) : null}
+              )}
+
               <Field
-                id="lastName"
                 name="lastName"
                 type="text"
                 placeholder="Фамилия"
                 className={styles["authorization__form-field"]}
               />
-              {errors.lastName && touched.lastName ? (
+              {errors.lastName && touched.lastName && (
                 <div className={styles["authorization__form--error"]}>
                   {errors.lastName}
                 </div>
-              ) : null}
+              )}
+
               <Field
-                id="email"
                 name="email"
                 type="email"
                 placeholder="Электронная почта"
                 className={styles["authorization__form-field"]}
               />
-              {errors.email && touched.email ? (
+              {errors.email && touched.email && (
                 <div className={styles["authorization__form--error"]}>
                   {errors.email}
                 </div>
-              ) : null}
+              )}
+
               <Field
-                id="password"
                 name="password"
                 type="password"
                 placeholder="Пароль"
                 className={styles["authorization__form-field"]}
               />
-              {errors.password && touched.password ? (
+              {errors.password && touched.password && (
                 <div className={styles["authorization__form--error"]}>
                   {errors.password}
                 </div>
-              ) : null}
+              )}
+
               <Field
-                id="confirmPassword"
                 name="confirmPassword"
                 type="password"
                 placeholder="Повторите пароль"
                 className={styles["authorization__form-field"]}
               />
-              {errors.confirmPassword && touched.confirmPassword ? (
+              {errors.confirmPassword && touched.confirmPassword && (
                 <div className={styles["authorization__form--error"]}>
                   {errors.confirmPassword}
                 </div>
-              ) : null}
+              )}
             </div>
             <label
               htmlFor="registrationCheckbox"
@@ -194,13 +214,13 @@ export const Registration = () => {
                     правила пользования сервисом
                   </Link>
                   <span style={{ color: "red" }}>*</span>
-                  {errors.acceptTerms && touched.acceptTerms ? (
+                  {errors.acceptTerms && touched.acceptTerms && (
                     <div
                       className={styles["authorization__form--error-checkbox"]}
                     >
                       {errors.acceptTerms}
                     </div>
-                  ) : null}
+                  )}
                 </p>
                 {/*//TODO пути к докам*/}
               </div>
@@ -216,11 +236,9 @@ export const Registration = () => {
 
       {isMessageOpen && (
         <div className={styles["authorization__message"]}>
-          <p>
-            Произошла ошибка при регистрации! Попробуйте зарегистрироваться
-            снова! 😓
+          <p className={styles["authorization__message--error"]}>
+            {errorMessage}
           </p>
-          {/*<p className={styles["authorization__message--error"]}> Аккаунт с такой почтой уже существует! Пожалуйста, поменяйте почту и повторите попытку 😓</p>*/}
         </div>
       )}
     </div>
