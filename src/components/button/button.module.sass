@@ -23,7 +23,7 @@
 .white-button:hover, .white-auth-button:hover
   background-color: rgba($background-white, 0.5)
 
-.blue-button-header
+.blue-button-header, .grey-button
   color: $background-white
   background-color: $primary-color
   transition: background-color 0.7s
@@ -38,5 +38,12 @@
   width: fit-content
   font-weight: 400
 
-.white-auth-button
+.white-auth-button, .grey-button
   color: $primary-color
+
+.grey-button
+  transition: background-color 0.7s
+  background-color: $background-dark
+
+.grey-button:hover
+  background-color: $background-grey-dark

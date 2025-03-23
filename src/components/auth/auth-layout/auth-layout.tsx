@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { Button } from "../button/button.tsx";
+import { Button } from "../../button/button.tsx";
 import styles from "./auth-layout.module.sass";
 
 export const AuthLayout = () => {

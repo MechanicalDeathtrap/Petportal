@@ -1,4 +1,4 @@
-import styles from "../auth-layout.module.sass";
+import styles from "../auth-layout/auth-layout.module.sass";
 import { Field, Form, Formik } from "formik";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../../button/button.tsx";

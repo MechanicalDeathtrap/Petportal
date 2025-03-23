@@ -1,5 +1,5 @@
-@import "/src/mixins/mixins.sass"
-@import "/src/colors/colors.sass"
+@import "/src/mixins/mixins"
+@import "/src/colors/colors"
 
 .authorization
   position: relative
@@ -59,7 +59,7 @@
     font-weight: 200
 
   &__form-field
-    background-color: $background-input-grey
+    background-color: $background-grey
     border-radius: 15px
     padding: 8px 14px
 
@@ -98,7 +98,7 @@
     width: fit-content
 
   &__form-checkbox-input:checked
-    background-color: $background-input-grey
+    background-color: $background-grey
 
   &__form-checkbox-input:checked::before
     content: ""
@@ -161,7 +161,7 @@ input[type="checkbox"]
   width: 15px
   height: 15px
   border-radius: 4px
-  background-color: $background-input-grey
+  background-color: $background-grey
   border: none
   cursor: pointer
   position: relative

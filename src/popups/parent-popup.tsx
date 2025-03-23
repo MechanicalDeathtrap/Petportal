@@ -11,6 +11,7 @@ export const ParentPopup = (props: Props) => {
   const open = Boolean(props.anchorEl);
 
   return (
+    // <ClickAwayListener onClickAway={clickAwayHandler}>
     <Popper sx={{ width: 330 }} id={id} open={open} anchorEl={props.anchorEl}>
       {props.popup}
     </Popper>

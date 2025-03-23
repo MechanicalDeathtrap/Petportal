@@ -1,0 +1,38 @@
+@import "/src/mixins/mixins"
+@import "/src/colors/colors"
+
+.delete-account-modal
+  width: 35vw
+
+  &__typography h2
+    font-size: 18px
+    font-weight: 700
+    font-family: 'Rubik', 'sans-serif'
+
+  &__typography p
+    color: $text-error
+    font-size: 15px
+    font-weight: 400
+    margin-top: 7px
+    line-height: 20px
+
+  &__form-field::-webkit-input-placeholder
+    font-size: 15px
+    font-weight: 200
+
+  &__form-field
+    background-color: $background-grey
+    border-radius: 15px
+    padding: 8px 14px
+    margin-top: 15px
+    width: 65%
+
+  &__buttons
+    margin-top: 20px
+    @include flexAndGap(22px)
+
+  &__form--error
+    color: $text-error
+    font-size: 12px
+    margin-left: 10px
+    margin-top: 5px

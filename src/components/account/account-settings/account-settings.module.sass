@@ -1,0 +1,30 @@
+@import "/src/colors/colors"
+@import "/src/mixins/mixins.sass"
+
+.account-settings
+  position: relative
+
+  &__delete-account-container
+    background: $background-white
+    border-radius: 15px
+    padding: 18px 0 25px 42px
+    width: 54.1vw
+    flex-direction: column
+    height: fit-content
+    align-items: start
+    @include flexAndGap(14px)
+
+.account-settings h2
+  font-size: 18px
+
+.account-settings p
+  font-size: 15px
+  font-weight: 300
+  width: 48.8vw
+  white-space: pre-wrap
+
+.account-settings button
+  font-size: 15px
+  color: $text-error
+
+

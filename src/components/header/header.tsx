@@ -12,7 +12,7 @@ export const Header = () => {
   const [notificationPopperAnchorEl, setNotificationPopperAnchorEl] =
     useState<HTMLElement | null>(null);
   /*const [isAuthorized, setIsAuthorized] = useState(true); //SHOULD BE FALSE AT THE END*/
-  const isAuthorized = false;
+  const isAuthorized = true;
 
   const [path, setPath] = useState("None");
   const location = useLocation();
@@ -29,6 +29,8 @@ export const Header = () => {
         case "/createProject":
           setPath("Create Project");
           break;
+        default:
+          setPath("None");
       }
     };
     currentPath();

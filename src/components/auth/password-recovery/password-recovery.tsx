@@ -1,4 +1,4 @@
-import styles from "../auth-layout.module.sass";
+import styles from "../auth-layout/auth-layout.module.sass";
 import { Field, Form, Formik } from "formik";
 import { Button } from "../../button/button.tsx";
 import { useEffect, useState } from "react";

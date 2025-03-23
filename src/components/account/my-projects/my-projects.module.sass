@@ -1,0 +1,28 @@
+@import "/src/colors/colors"
+@import "/src/mixins/mixins.sass"
+
+.my-project-list
+  &__container
+    flex-direction: column
+    align-items: start
+    @include flexAndGap(20px)
+
+  &__container > ul
+    display: grid
+    grid-template-columns: repeat(2, auto)
+    grid-auto-flow: row
+    gap: 20px
+
+  &__container h2
+    font-family: Inter, sans-serif
+    font-size: 22.5px
+    font-weight: 500
+
+  &__filter-old
+    border: 1px solid $border-color
+    border-radius: 25px
+    background: $background-white
+    padding: 7px 11px
+    align-items: center
+    @include flexAndGap(10px)
+

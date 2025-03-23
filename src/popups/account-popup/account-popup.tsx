@@ -23,7 +23,7 @@ export const AccountPopup = () => {
           type="button"
           className={styles["account-popup__go-to-account-button"]}
         >
-          <Link to="/">Перейти в личный кабинет</Link>
+          <Link to="/account">Перейти в личный кабинет</Link>
         </button>
         <div>
           <ul className={styles["account-popup__links-list"]}>
@@ -60,7 +60,7 @@ export const AccountPopup = () => {
             </li>
             <li className={styles["account-popup__list-item"]}>
               <img src="/img/Logout%20Rounded.svg" alt="logout-icon" />
-              <Link to="">Выйти</Link>
+              <Link to="/">Выйти</Link>
             </li>
           </ul>
         </div>
