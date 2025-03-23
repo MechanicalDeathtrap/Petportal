@@ -17,6 +17,7 @@ import { MyProjects } from "../components/account/my-projects/my-projects.tsx";
 import { MyReview } from "../components/account/my-review/my-review.tsx";
 import { MyFavourites } from "../components/account/my-favourites/my-favourites.tsx";
 import { AccountSettings } from "../components/account/account-settings/account-settings.tsx";
+import { Chat } from "../pages/chat/chat.tsx";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -25,6 +26,7 @@ export const router = createBrowserRouter(
         <Route path="/" element={<HomePage />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/account" element={<AccountLayout />} />
+        <Route path="/chat" element={<Chat />} />
         <Route element={<Account />}>
           <Route path={"/account"} element={<MyCabinet />} />
           <Route path={"/account/my-projects"} element={<MyProjects />} />
