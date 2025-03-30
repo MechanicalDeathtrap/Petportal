@@ -1,0 +1,42 @@
+@import "/src/mixins/mixins.sass"
+@import "/src/colors/colors.sass"
+
+.side-menu
+  position: sticky
+  padding: 5px 0
+  border-radius: 15px
+  height: fit-content
+  width: 18vw
+  background: $background-white
+
+  &__list
+    flex-direction: column
+
+  &__menu-item
+    cursor: pointer
+    padding: 10px 25px
+
+  &__menu-item button
+    align-items: center
+    @include flexAndGap(10px)
+
+  &__menu-item:nth-child(2)
+    padding: 15px 25px
+
+  &__menu-item:first-child svg
+    width: 23px
+    height: auto
+
+  &__menu-item svg
+    width: 25px
+    height: auto
+
+  &__menu-item:hover
+    background: $background-dark
+
+  &__menu-item--chosen
+    background: $background-dark
+
+  &__menu-item--chosen span,   &__menu-item--chosen svg
+    color: $primary-color
+

@@ -50,5 +50,5 @@ export const ProjectCard = ({ project }: ProjectCardProps) =>{
         <div className={`${styles["project-card--recruiting-stage-color"]} ${styles["project-card__footer"]}`}><span>Идёт набор</span></div> {/* поменять в зависимости от state */}
       </div>
     </Link>
-  )
-}
+  );
+};

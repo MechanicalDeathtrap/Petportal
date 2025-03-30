@@ -1,0 +1,72 @@
+@import "/src/mixins/mixins.sass"
+@import "/src/colors/colors.sass"
+
+.notification-popup
+  position: absolute
+  top: 36px
+  right: 30px
+  width: 100%
+  border-radius: 15px
+  padding: 19px 21px
+  background-color: $background-white
+  display: flex
+  flex-direction: column
+  max-height: 405px
+
+  &__notification-list-item:first-child
+    padding-top: 0
+
+  &__notification-list-item
+    padding: 16px 0
+    border-bottom: 0.75px solid $notification-border-color
+    @include flexAndGap(12px)
+
+  &__notification-list-item-content
+    flex-direction: column
+    @include flexAndGap(5px)
+
+  &__notification-list-item-content > h2
+    font-family: Inter, sans-serif
+    font-size: 15px
+    font-weight: 600
+
+  &__notification-list-item-content > p
+    font-size: 14px
+    font-weight: 300
+    display: block
+    overflow: hidden
+    text-overflow: ellipsis
+    white-space: normal
+    line-height: 1.2
+    max-height: 3em
+    display: -webkit-box
+    -webkit-box-orient: vertical
+    -webkit-line-clamp: 2
+
+  &__notification-image
+    border-radius: 50px
+    width:  36px
+    height: auto
+
+  &__load-more-button:hover
+    color: $text-secondary-color
+
+  &__load-more-button
+    padding-top: 19px
+    font-weight: 600
+    font-size: 15px
+    transition: color 0.5s
+
+  &__notification-image-wrapper
+    position: relative
+    display: inline-block
+
+    &::after
+      content: ""
+      position: absolute
+      top: -5px
+      left: -3px
+      width: 6px
+      height: 6px
+      background-color: $primary-color
+      border-radius: 50px

@@ -14,7 +14,8 @@
   font-weight: 500
 
 .project-list > ul
-  flex-wrap: wrap
-  justify-content: space-between
-  @include flexAndGap(37.5px)
+  display: grid
+  grid-template-columns: repeat(2, auto)
+  grid-auto-flow: row
+  gap: 20px
 

@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import { ParentPopup } from "../../popups/parent-popup.tsx";
 import { Button } from "../button/button.tsx";
 import { AccountPopup } from "../../popups/account-popup/account-popup.tsx";
+import { NotificationPopup } from "../../popups/notifications-popup/notification-popup.tsx";
 
 export const Header = () => {
-  const [popperAnchorEl, setPopperAnchorEl] = useState<HTMLElement | null>(
-    null,
-  );
+  const [accountPopperAnchorEl, setAccountPopperAnchorEl] =
+    useState<HTMLElement | null>(null);
+  const [notificationPopperAnchorEl, setNotificationPopperAnchorEl] =
+    useState<HTMLElement | null>(null);
   /*const [isAuthorized, setIsAuthorized] = useState(true); //SHOULD BE FALSE AT THE END*/
   const isAuthorized = true;
 
@@ -27,14 +29,34 @@ export const Header = () => {
         case "/createProject":
           setPath("Create Project");
           break;
+        default:
+          setPath("None");
       }
     };
     currentPath();
   }, [path, location]);
 
-  const setPopperAnchorElement = (e: React.MouseEvent<HTMLElement>) =>
-    setPopperAnchorEl(popperAnchorEl ? null : e.currentTarget);
+  const togglePopperAnchorElement = (
+    e: React.MouseEvent<HTMLElement>,
+    type: "account" | "notification",
+  ) => {
+    if (type === "account") {
+      setAccountPopperAnchorEl((prev) => (prev ? null : e.currentTarget));
+      if (notificationPopperAnchorEl)
+        setNotificationPopperAnchorEl((prev) =>
+          prev ? null : e.currentTarget,
+        );
+    } else {
+      setNotificationPopperAnchorEl((prev) => (prev ? null : e.currentTarget));
+      if (accountPopperAnchorEl)
+        setAccountPopperAnchorEl((prev) => (prev ? null : e.currentTarget));
+    }
+  };
   /*const toggleAuthorization = () => setIsAuthorized((prevState) => !prevState);*/
+
+  const resolveAuthPath = () => {
+    return isAuthorized ? "/" : "/login"; //TODO заменить / на путь к созданию проекта
+  };
 
   return (
     <>
@@ -102,7 +124,7 @@ export const Header = () => {
                     ? styles["headerNavigationList__navigationLink--active"]
                     : ""
                 }`}
-                to="/"
+                to={resolveAuthPath()}
               >
                 Создать проект
               </Link>
@@ -117,7 +139,11 @@ export const Header = () => {
         <div className={styles.profileButtons}>
           <ul className={styles.headerButtonsList}>
             <li>
-              <Link to="/" className={styles.notificationsButton}>
+              <button
+                type="button"
+                className={styles.notificationsButton}
+                onClick={(e) => togglePopperAnchorElement(e, "notification")}
+              >
                 <svg
                   className={styles.headerButtonsList__notificationIcon}
                   xmlns="http://www.w3.org/2000/svg"
@@ -133,31 +159,36 @@ export const Header = () => {
                     fill="black"
                   />
                 </svg>
-              </Link>
+              </button>
             </li>
             <li>
-              <button type="button">
-                <svg
-                  className={styles.headerButtonsList__messageIcon}
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="32"
-                  height="29"
-                  viewBox="0 0 32 29"
-                  fill="none"
-                >
-                  <path
-                    d="M8.22222 9.625H23.7778M8.22222 16.125H16M30 27.5L24.8289 24.7989C24.4369 24.5942 24.2409 24.4918 24.0354 24.4197C23.8531 24.3556 23.6653 24.3093 23.4748 24.2814C23.2601 24.25 23.0409 24.25 22.6027 24.25H6.97778C5.23538 24.25 4.3642 24.25 3.6987 23.8957C3.1133 23.5842 2.63736 23.087 2.3391 22.4755C2 21.7803 2 20.8702 2 19.05V6.7C2 4.87982 2 3.96974 2.3391 3.27453C2.63736 2.663 3.1133 2.16581 3.6987 1.85423C4.3642 1.5 5.2354 1.5 6.97778 1.5H25.0222C26.7646 1.5 27.6359 1.5 28.3013 1.85423C28.8867 2.16581 29.3627 2.663 29.6609 3.27453C30 3.96974 30 4.87984 30 6.7V27.5Z"
-                    stroke="black"
-                    stroke-width="3"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-              </button>
+              <Link to="/chat">
+                <button type="button">
+                  <svg
+                    className={styles.headerButtonsList__messageIcon}
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="32"
+                    height="29"
+                    viewBox="0 0 32 29"
+                    fill="none"
+                  >
+                    <path
+                      d="M8.22222 9.625H23.7778M8.22222 16.125H16M30 27.5L24.8289 24.7989C24.4369 24.5942 24.2409 24.4918 24.0354 24.4197C23.8531 24.3556 23.6653 24.3093 23.4748 24.2814C23.2601 24.25 23.0409 24.25 22.6027 24.25H6.97778C5.23538 24.25 4.3642 24.25 3.6987 23.8957C3.1133 23.5842 2.63736 23.087 2.3391 22.4755C2 21.7803 2 20.8702 2 19.05V6.7C2 4.87982 2 3.96974 2.3391 3.27453C2.63736 2.663 3.1133 2.16581 3.6987 1.85423C4.3642 1.5 5.2354 1.5 6.97778 1.5H25.0222C26.7646 1.5 27.6359 1.5 28.3013 1.85423C28.8867 2.16581 29.3627 2.663 29.6609 3.27453C30 3.96974 30 4.87984 30 6.7V27.5Z"
+                      stroke="black"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </button>
+              </Link>
             </li>
           </ul>
           {isAuthorized ? (
-            <button type="button" onClick={setPopperAnchorElement}>
+            <button
+              type="button"
+              onClick={(e) => togglePopperAnchorElement(e, "account")}
+            >
               {/*TODO смена картинки на пользовательскую*/}
               <img
                 className={styles.userAvatar}
@@ -166,17 +197,21 @@ export const Header = () => {
               />
             </button>
           ) : (
-            <button type="button">
-              {/*TODO link to registration*/}
-              <Button link="/" style="blue-button-header" text="Войти" />
-            </button>
+            <Link to="/login">
+              <Button type="button" style="blue-button-header" text="Войти" />
+            </Link>
           )}
         </div>
       </header>
       <ParentPopup
         popup={AccountPopup()}
         id="account-menu-popup"
-        anchorEl={popperAnchorEl}
+        anchorEl={accountPopperAnchorEl}
+      />
+      <ParentPopup
+        popup={NotificationPopup()}
+        id="notifications-popup"
+        anchorEl={notificationPopperAnchorEl}
       />
     </>
   );

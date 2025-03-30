@@ -1,0 +1,31 @@
+@import "/src/colors/colors"
+@import "/src/mixins/mixins.sass"
+
+.empty-state
+  background: $background-white
+  border-radius: 15px
+  padding: 18px 0 25px 42px
+  width: 54.1vw
+  flex-direction: column
+  @include flexAndGap(14px)
+
+.empty-state h2
+  font-size: 18px
+
+.empty-state p
+  font-size: 15px
+  font-weight: 300
+  width: 48.8vw
+  white-space: pre-wrap
+
+.empty-state a:hover
+  color: $secondary-color
+
+.empty-state a
+  font-size: 15px
+  font-weight: 700
+  color: $primary-color
+  transition: color 0.5s
+
+.empty-state div
+  @include flexAndGap(35px)

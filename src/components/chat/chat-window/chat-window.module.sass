@@ -1,0 +1,24 @@
+@import "/src/mixins/mixins.sass"
+@import "/src/colors/colors.sass"
+
+.chat-window
+  background: $background-white
+  border-radius: 15px
+  width: 64vw
+
+  &__no-dialog
+    display: flex
+    align-items: center
+    justify-content: center
+
+
+  &__no-dialog-message
+    background: $background-dark
+    border-radius: 15px
+    width: 26.3vw
+    padding: 20px
+
+  &__no-dialog-message p
+    font-size: 14px
+    font-weight: 500
+    text-align: center

@@ -30,7 +30,7 @@ export const SelectFilter = (props: Props) => {
           onChange={handleFilterChange}
           sx={{
             "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              border: "0.75px solid rgba(177, 177, 177, 1)" //TODO заменить на нормальный стиль в сасе
+              border: "0.75px solid rgba(177, 177, 177, 1)", //TODO заменить на нормальный стиль в сасе
             },
           }}
           displayEmpty
