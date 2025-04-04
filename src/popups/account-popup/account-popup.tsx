@@ -29,7 +29,7 @@ export const AccountPopup = () => {
           <ul className={styles["account-popup__links-list"]}>
             <li className={styles["account-popup__list-item"]}>
               <img src="/img/Opened%20Folder.svg" alt="folder-icon" />
-              <Link to="/">Мои проекты</Link>
+              <Link to="/account/my-projects">Мои проекты</Link>
             </li>
             <li
               className={[
@@ -38,7 +38,7 @@ export const AccountPopup = () => {
               ].join(" ")}
             >
               <img src="/img/Rating.svg" alt="rating-icon" />
-              <Link to="/">Отзывы</Link>
+              <Link to="/account/my-reviews">Отзывы</Link>
             </li>
             <li
               className={[
@@ -47,7 +47,7 @@ export const AccountPopup = () => {
               ].join(" ")}
             >
               <img src="/img/Bookmark.svg" alt="bookmark-icon" />
-              <Link to="/">Избранное</Link>
+              <Link to="/account/favourites">Избранное</Link>
             </li>
             <li
               className={[
@@ -56,11 +56,11 @@ export const AccountPopup = () => {
               ].join(" ")}
             >
               <img src="/img/Settings.svg" alt="setting-icon" />
-              <Link to="">Настройки</Link>
+              <Link to="/account/settings">Настройки</Link>
             </li>
             <li className={styles["account-popup__list-item"]}>
               <img src="/img/Logout%20Rounded.svg" alt="logout-icon" />
-              <Link to="/">Выйти</Link>
+              <button type="button">Выйти</button>
             </li>
           </ul>
         </div>

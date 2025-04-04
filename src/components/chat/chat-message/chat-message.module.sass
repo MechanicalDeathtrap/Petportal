@@ -1,0 +1,35 @@
+@import "/src/mixins/mixins.sass"
+@import "/src/colors/colors.sass"
+@import "/src/assets/variables/variables.sass"
+
+.chat-message
+
+  &__wrapper
+    padding: .4125rem .6rem .475rem
+    background-color: $background-grey
+    margin-bottom: 15px
+    position: relative
+
+  &__mine-message,   &__mine-last-message
+    justify-content: end
+    border-radius: $border-radius-message //0.375rem 20px 20px 20px
+    font-size: .875rem
+    display: flex
+    max-width: fit-content
+
+  //&__mine-last-message::before
+  //  content: ''
+  //  position: absolute
+  //  top: 0
+  //  right: 0
+  //  border-left: 20px solid white
+  //  border-bottom: 20px solid transparent
+  //  clip-path: polygon(0 0, 100% 0, 100% 100%, 15% 15%)
+
+  & span
+    color: $background-grey
+    position: absolute
+
+  &--mine
+    justify-content: end
+    display: flex

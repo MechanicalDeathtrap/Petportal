@@ -5,6 +5,8 @@
   background-color: $background-white
   padding: 14px 21px
   position: relative
+  cursor: pointer
+  transition: background-color 0.7s
   @include flexAndGap(15px)
 
   &__image
@@ -43,4 +45,5 @@
     right: 21px
     @include flexAndGap(3px)
 
-
+  &:hover
+    background-color: $background-grey

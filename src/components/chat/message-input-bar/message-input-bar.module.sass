@@ -1,0 +1,30 @@
+@import "/src/mixins/mixins.sass"
+@import "/src/colors/colors.sass"
+@import "/src/assets/variables/variables.sass"
+
+.message-input-bar
+  background-color: $background-white
+  border-bottom-left-radius: $border-radius-dialog-window
+  border-bottom-right-radius: $border-radius-dialog-window
+  padding: 13px 22px
+
+  &__message-input-container
+    background-color: $background-grey-plain
+    border-radius: 100px
+    padding: 10px 25px
+    display: flex
+    justify-content: space-between
+    max-height: 40%
+    box-sizing: border-box
+    align-items: center
+
+  &__form
+    width: 90%
+
+  &__form-field
+    width: 100%
+    min-height: auto
+    background-color: $background-grey-plain
+    border: none
+    outline: none
+
