@@ -1,65 +1,53 @@
 import styles from "../project-card/project-card.module.sass";
 import { Link } from "react-router-dom";
+import { Project } from "../project-type";
 
-export const ProjectCard = () => {
-  const json = {
-    isBusinessProject: true,
-  };
+interface ProjectCardProps {
+  project: Project; // Используем интерфейс Project
+} 
 
-  return (
-    <Link to={"/"}>
-      <div className={styles["project-card"]}>
-        {/*TODO достать всё из бэка */}
-        <div
-          className={`${styles["project-card__header"]} ${styles["margin-sides"]}`}
-        >
+export const ProjectCard = ({ project }: ProjectCardProps) =>{
+
+  const base64Image = project.avatarImageBase64 
+    ? `data:image/jpeg;base64,${project.avatarImageBase64}`
+    : 'public/img/blank-avatar.png'; // Запасной вариант
+
+  return(
+    <Link to={'/'} >
+      <div className={styles["project-card"]}>{/*TODO достать всё из бэка */}
+        <div className={`${styles["project-card__header"]} ${styles["margin-sides"]}`}>
           <h6 className={styles["project-card__company-logo"]}>
-            <picture>
-              <img
-                src="/img/medium-shot-woman-with-laptop.png"
-                alt="company-logo"
-                className={`${styles["project-card__company-logo-image"]}
-                   ${json.isBusinessProject ? styles["project-card__company-logo-image--rounded"] : ""}`}
-              />
+            <picture className={styles["project-card__header"]}>
+              <img src={base64Image} className={`${styles["project-card__company-logo-image"]}
+                   ${project.isBusinessProject ? styles["project-card__company-logo-image--rounded"] : ''}`} alt="company-logo"              
+                onError={(e) => {
+                  e.currentTarget.src = 'public/img/blank-avatar.png';
+                }}/>
             </picture>
-            ОАО Татнефть
+            {project.ownerName}
           </h6>
 
           <ul className={styles["project-card__tech-stack"]}>
-            <li>Node.js</li>
-            <li>React</li>
-            <li>Redux</li>
+            {project.tags?.slice(0, 3).map((tag) => (
+              <li key={tag}>{tag}</li>
+            ))}
           </ul>
         </div>
-        <div
-          className={`${styles["project-card__main-info"]} ${styles["margin-sides"]}`}
-        >
-          <h2>
-            Составление документации для рабочей API, а также разработка сайта
-            для блаблаблаблаблаблаблабалбалабла типа много текста проверим css{" "}
-          </h2>
+        <div className={`${styles["project-card__main-info"]} ${styles["margin-sides"]}`}>
+          <h2>{project.name}</h2>
           <ul className={styles["project-card__main-info-list"]}>
-            <li>
-              {" "}
-              Сроки работы:
-              <span>20 минут</span>
+            <li> Сроки работы:
+              <span>{project.deadline}</span>
             </li>
-            <li>
-              Бюджет:
-              <span>1 337 000 р</span>
+            <li>Бюджет:
+              <span>{project.budget}</span> {/* {сделать форматирование} */}
             </li>
-            <li>
-              {" "}
-              Приём заявок:
-              <span>1 неделя</span>
+            <li> Приём заявок:
+              <span>{project.applyingDeadline}</span>
             </li>
           </ul>
         </div>
-        <div
-          className={`${styles["project-card--recruiting-stage-color"]} ${styles["project-card__footer"]}`}
-        >
-          <span>Идёт набор</span>
-        </div>
+        <div className={`${styles["project-card--recruiting-stage-color"]} ${styles["project-card__footer"]}`}><span>Идёт набор</span></div> {/* поменять в зависимости от state */}
       </div>
     </Link>
   );
