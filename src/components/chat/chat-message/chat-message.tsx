@@ -1,16 +1,18 @@
 import style from "./chat-message.module.sass";
 
-export const ChatMessage = () => {
+type MessageProps = {
+  message: string;
+};
+
+export const ChatMessage = (props: MessageProps) => {
   return (
     <div className={`${style["chat-message"]} ${style["chat-message--mine"]}`}>
       <div
         className={`${style["chat-message__wrapper"]} ${style["chat-message__mine-message"]}`}
       >
-        Жоская копирка с телеги причем даже вёрстки
-        <br />
-        Вот так вот дамы и господа
-        <span>19:00</span>
+        {props.message}
       </div>
+{/*      <span>19:00</span>*/}
     </div>
   );
 };

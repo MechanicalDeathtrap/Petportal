@@ -1,4 +1,6 @@
 import style from "./chat-item.module.sass";
+import ChatUser from "../chat-type.ts"
+
 
 export const ChatItem = () => {
   const imageUrlFromBackend = "/img/medium-hot-woman-with-laptop.png";

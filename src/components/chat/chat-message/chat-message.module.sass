@@ -3,12 +3,12 @@
 @import "/src/assets/variables/variables.sass"
 
 .chat-message
+  position: relative
 
   &__wrapper
-    padding: .4125rem .6rem .475rem
     background-color: $background-grey
     margin-bottom: 15px
-    position: relative
+    padding: .4125rem .6rem 20px
 
   &__mine-message,   &__mine-last-message
     justify-content: end
@@ -26,9 +26,12 @@
   //  border-bottom: 20px solid transparent
   //  clip-path: polygon(0 0, 100% 0, 100% 100%, 15% 15%)
 
-  & span
-    color: $background-grey
-    position: absolute
+  //& span
+  //  color: $text-secondary-color
+  //  position: absolute
+  //  right: 10px
+  //  bottom: 20px
+  //  font-size: 14px
 
   &--mine
     justify-content: end
