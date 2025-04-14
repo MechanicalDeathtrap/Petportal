@@ -11,13 +11,22 @@ export const Header = () => {
     useState<HTMLElement | null>(null);
   const [notificationPopperAnchorEl, setNotificationPopperAnchorEl] =
     useState<HTMLElement | null>(null);
-  /*const [isAuthorized, setIsAuthorized] = useState(true); //SHOULD BE FALSE AT THE END*/
-  const isAuthorized = false;
-
+  const [isAuthorized, setIsAuthorized] = useState(false);
   const [path, setPath] = useState("None");
   const location = useLocation();
 
   useEffect(() => {
+    const checkAuth = () => {
+      const cookies = document.cookie
+        .split("; ")
+        .reduce((acc: Record<string, string>, cookie) => {
+          const [name, value] = cookie.split("=");
+          acc[name] = value;
+          return acc;
+        }, {});
+  
+      setIsAuthorized(!!cookies["jwttoken"]);
+    };
     const currentPath = () => {
       switch (location.pathname) {
         case "/":
@@ -31,8 +40,11 @@ export const Header = () => {
           break;
       }
     };
+    checkAuth();
     currentPath();
-  }, [path, location]);
+  }, [path, location, isAuthorized]);
+
+  
 
   const togglePopperAnchorElement = (
     e: React.MouseEvent<HTMLElement>,
