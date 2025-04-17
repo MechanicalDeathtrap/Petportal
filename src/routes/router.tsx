@@ -18,6 +18,7 @@ import { MyReview } from "../components/account/my-review/my-review.tsx";
 import { MyFavourites } from "../components/account/my-favourites/my-favourites.tsx";
 import { AccountSettings } from "../components/account/account-settings/account-settings.tsx";
 import { Chat } from "../pages/chat/chat.tsx";
+import { ProjectPage } from "../pages/project/project-page.tsx";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -30,10 +31,12 @@ export const router = createBrowserRouter(
         <Route element={<Account />}>
           <Route path={"/account"} element={<MyCabinet />} />
           <Route path={"/account/my-projects"} element={<MyProjects />} />
+          <Route path={"/account/my-projects/:id"} element={<ProjectPage />} />
           <Route path={"/account/my-reviews"} element={<MyReview />} />
           <Route path={"/account/favourites"} element={<MyFavourites />} />
           <Route path={"/account/settings"} element={<AccountSettings />} />
         </Route>
+        <Route path={"/projects/:id"} element={<ProjectPage />} />
       </Route>
       <Route element={<Auth />}>
         <Route path="/registration" element={<Registration />} />

@@ -2,16 +2,28 @@ import style from "./my-projects.module.sass";
 import { useEffect, useState } from "react";
 import { ProjectCard } from "../../projects/project-card/project-card.tsx";
 import { EmptyStateMessage } from "../empty-state-message/empty-state-message.tsx";
+import axios from "axios";
+import { Project } from "../../../types/project-type.ts";
 
 export const MyProjects = () => {
-  const [projectCount, setProjectCount] = useState(0);
+  const [myProjects, setMyProjects] = useState<Project[]>([]);
+  const [myProjectCount, setMyProjectCount] = useState(0);
 
-  const handleProjectCount = (count: number) => setProjectCount(count);
+  const handleMyProjectCount = (count: number) => setMyProjectCount(count);
+  const handleMyProjects = (projects: Project[]) => setMyProjects(projects);
 
   // имитация сервера, заменить any
-  const getProjects = async (value: any) => {
-    console.log(value);
-    handleProjectCount(5);
+  const getProjects = async () => {
+    await axios
+      .get<Project[]>("http://localhost:5140/api/Users/MyProjects/")
+      .then((response) => {
+        const projects = response.data;
+        handleMyProjects(projects);
+        handleMyProjectCount(projects.length);
+      })
+      .catch((error) => {
+        console.error("Ошибка при загрузке данных МОИ ПРОЕКТЫ:", error);
+      });
   };
 
   // фильтрация по старости
@@ -20,16 +32,15 @@ export const MyProjects = () => {
   };
 
   useEffect(() => {
-    // заменить на нормальный value
-    getProjects(true);
+    getProjects();
   }, []);
 
   return (
     <section>
-      {projectCount === 0 && <EmptyStateMessage heading="Проекты" />}
-      {projectCount > 0 && (
+      {myProjectCount === 0 && <EmptyStateMessage heading="Проекты" />}
+      {myProjectCount > 0 && (
         <div className={style["my-project-list__container"]}>
-          <h2>Мои проекты: {projectCount}</h2>
+          <h2>Мои проекты: {myProjectCount}</h2>
           <button
             onClick={filterOldProjects}
             className={style["my-project-list__filter-old"]}
@@ -53,15 +64,12 @@ export const MyProjects = () => {
             </svg>
           </button>
           <ul>
-            <li>
-              <ProjectCard />
-            </li>
-            <li>
-              <ProjectCard />
-            </li>
-            <li>
-              <ProjectCard />
-            </li>
+            {" "}
+            {myProjects.map((project) => (
+              <li key={project.id}>
+                <ProjectCard project={project} />
+              </li>
+            ))}
           </ul>
         </div>
       )}

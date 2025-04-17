@@ -1,0 +1,77 @@
+@import "/src/mixins/mixins"
+@import "/src/colors/colors.sass"
+
+
+.project-info
+  display: flex
+  justify-content: center
+
+  &> div
+    margin-top: 2.438rem
+    background-color: $background-white
+    width: 56.25rem
+    border-radius: 20px
+
+  &__header
+    padding: 1.313rem 1.688rem 1.688rem 2.438rem
+    display: flex
+    justify-content: space-between
+
+    & > div
+      align-items: center
+      @include flexAndGap(19px)
+
+    & > div p
+      font-weight: 500
+
+    &__favourite-button
+      color: $text-secondary-color
+
+    &__favourite-button--checked
+      color: $primary-color
+
+    & > div p span
+      color: $primary-color
+
+    & button:hover
+      color: $text-primary-color
+
+    & button
+      align-items: center
+      transition: color 1s
+      @include flexAndGap(5px)
+
+    & button span
+      color: $text-secondary-color
+      font-size: 1rem
+      font-weight: 600
+
+  &__logo
+    display: block
+    border-radius: 50%
+    object-fit: cover
+    min-width: 38px
+    height: 38px
+    background-size: cover
+    background-position: center
+    background-repeat: no-repeat
+
+  &__logo-container
+    @include flexAndGap(11px)
+
+  &__info
+    padding: 0 2.813rem 3.438rem 4.063rem
+
+    & h2
+      margin-bottom: 1rem
+
+    & h2 + ul
+      @include flexAndGap(7px)
+
+      & li
+        font-size: 12px
+        font-weight: 500
+        color: $background-white
+        background-color: $primary-color
+        border-radius: 15px
+        padding: 6px 10px

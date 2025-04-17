@@ -12,7 +12,7 @@ export const ChatMessage = (props: MessageProps) => {
       >
         {props.message}
       </div>
-{/*      <span>19:00</span>*/}
+      {/*      <span>19:00</span>*/}
     </div>
   );
 };

@@ -13,10 +13,13 @@
   "dependencies": {
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
+    "@microsoft/signalr": "^8.0.7",
     "@mui/base": "^5.0.0-beta.62",
     "@mui/material": "^6.1.7",
     "axios": "^1.8.0",
     "formik": "^2.4.6",
+    "mkcert": "^3.2.0",
+    "mobx": "^6.13.7",
     "normalize.css": "^8.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
