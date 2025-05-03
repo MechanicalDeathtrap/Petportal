@@ -99,6 +99,12 @@ export const ProjectResponseModal = forwardRef(
               </Form>
             )}
           </Formik>
+          <button onClick={props.onClose} className={style["project-response__close-button"]}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 14 14" fill="none">
+              <path d="M1.23242 1L12.9999 13" stroke="#666666" strokeWidth="2" strokeLinecap="round" />
+              <path d="M12.7676 1L1.00011 13" stroke="#666666" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </button>
         </div>
       </Box>
     );
