@@ -1,0 +1,60 @@
+@import "/src/mixins/mixins"
+@import "/src/colors/colors"
+
+.project-response
+
+  & h2
+    font-size: 18px
+    font-weight: 700
+    font-family: 'Rubik', 'sans-serif'
+    margin-bottom: 20px
+
+  & label
+    padding: 10px 0
+    align-items: center
+    @include flexAndGap(15px)
+
+  &__textarea-container
+    margin-top: 30px
+
+  &__textarea
+    box-sizing: border-box
+    border: none
+    outline: none
+    padding: 7px
+    background-color: $background-grey-plain
+    border-radius: 15px
+    width: 100%
+    min-height: 180px
+
+  & button
+    margin-top: 25px
+
+  &__radio-input
+    position: relative
+    width: 13px
+    height: 13px
+    border: 2px solid #ccc
+    border-radius: 50%
+    cursor: pointer
+    appearance: none
+    background-color: white
+    transition: border-color 0.2s
+
+    &:checked
+      border-color: $primary-color
+      background-color: white
+
+      &::after
+        content: ""
+        position: absolute
+        top: 0
+        left: 0
+        width: 101%
+        height: 101%
+        background-color: $primary-color
+        border-radius: 50%
+
+  &__form--error
+    color: $text-error
+    font-size: 12px

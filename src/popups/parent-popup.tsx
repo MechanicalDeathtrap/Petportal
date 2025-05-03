@@ -4,15 +4,21 @@ type Props = {
   anchorEl: HTMLElement | null;
   id: string;
   popup: JSX.Element;
+  isOpen: boolean;
 };
 
 export const ParentPopup = (props: Props) => {
   const id = props.anchorEl ? props.id : undefined;
-  const open = Boolean(props.anchorEl);
+  //const open = Boolean(props.anchorEl);
 
   return (
     // <ClickAwayListener onClickAway={clickAwayHandler}>
-    <Popper sx={{ width: 330 }} id={id} open={open} anchorEl={props.anchorEl}>
+    <Popper
+      sx={{ width: 330 }}
+      id={id}
+      open={props.isOpen}
+      anchorEl={props.anchorEl}
+    >
       {props.popup}
     </Popper>
   );

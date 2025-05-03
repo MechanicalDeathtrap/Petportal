@@ -1,4 +1,5 @@
 @import "/src/colors/colors"
+@import "/src/mixins/mixins"
 
 .parent-modal
   position: fixed
@@ -8,12 +9,16 @@
   background: $background-modal
   width: 100vw
   height: 100vh
+  display: flex
+  align-items: center
+  justify-content: center
 
   &__info-container
-    position: fixed
+    position: relative
     background: $background-white
     z-index: 15
-    top: 35%
-    left: 30%
+    //top: 35%
+    //left: 30%
     border-radius: 20px
     padding: 22px 33px
+    max-width: fit-content

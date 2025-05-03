@@ -12,22 +12,21 @@ export const ParentModal = (props: modalProps) => {
   return (
     <>
       {props.isOpen && (
-        <div className={style["parent-modal"]}>
-          <Modal
-            disableEnforceFocus
-            keepMounted
-            open={props.isOpen}
-            onClose={props.onClose}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Fade in={props.isOpen}>
-              <div className={style["parent-modal__info-container"]}>
-                {props.children}
-              </div>
-            </Fade>
-          </Modal>
-        </div>
+        <Modal
+          disableEnforceFocus
+          keepMounted
+          open={props.isOpen}
+          onClose={props.onClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+          className={style["parent-modal"]}
+        >
+          <Fade in={props.isOpen}>
+            <div className={style["parent-modal__info-container"]}>
+              {props.children}
+            </div>
+          </Fade>
+        </Modal>
       )}
     </>
   );

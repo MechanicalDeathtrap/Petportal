@@ -1,7 +1,20 @@
 import styles from "./account-popup.module.sass";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { authStore } from "../../stores/auth-store.ts";
+import { popupStore } from "../../stores/popups-store.ts";
+import { observer } from "mobx-react-lite";
+import { deleteAuthCookie } from "../../utils/cookies.ts";
 
-export const AccountPopup = () => {
+export const AccountPopup = observer(() => {
+  const navigate = useNavigate();
+
+  const exitFromProfile = () => {
+    deleteAuthCookie();
+    authStore.setAuthorized(false);
+    popupStore.toggleAccountPopupOpen();
+    navigate("/");
+  };
+
   return (
     <div className={styles["account-popup"]}>
       {/*TODO заменить фотку, имя и тег*/}
@@ -60,11 +73,13 @@ export const AccountPopup = () => {
             </li>
             <li className={styles["account-popup__list-item"]}>
               <img src="/img/Logout%20Rounded.svg" alt="logout-icon" />
-              <button type="button">Выйти</button>
+              <button onClick={exitFromProfile} type="button">
+                Выйти
+              </button>
             </li>
           </ul>
         </div>
       </div>
     </div>
   );
-};
+});

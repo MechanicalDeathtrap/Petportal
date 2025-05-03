@@ -36,7 +36,7 @@ export const router = createBrowserRouter(
           <Route path={"/account/favourites"} element={<MyFavourites />} />
           <Route path={"/account/settings"} element={<AccountSettings />} />
         </Route>
-        <Route path={"/projects/:id"} element={<ProjectPage />} />
+        <Route path={"/projects/:projectId"} element={<ProjectPage />} />
       </Route>
       <Route element={<Auth />}>
         <Route path="/registration" element={<Registration />} />

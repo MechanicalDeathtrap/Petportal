@@ -69,6 +69,7 @@ export const Registration = () => {
           headers: {
             "Content-Type": "application/json",
           },
+          withCredentials: true,
         },
       );
 

@@ -7,7 +7,7 @@
   justify-content: center
 
   &> div
-    margin-top: 2.438rem
+    margin: 2.438rem 0
     background-color: $background-white
     width: 56.25rem
     border-radius: 20px
@@ -57,6 +57,8 @@
     background-repeat: no-repeat
 
   &__logo-container
+    align-items: center
+    margin-bottom: 13px
     @include flexAndGap(11px)
 
   &__info
@@ -64,6 +66,10 @@
 
     & h2
       margin-bottom: 1rem
+
+    & ul
+      margin-bottom: 28px
+
 
     & h2 + ul
       @include flexAndGap(7px)
@@ -75,3 +81,15 @@
         background-color: $primary-color
         border-radius: 15px
         padding: 6px 10px
+
+    & h3
+      margin-top: 30px
+
+
+    & p, ul, span
+      color: $text-primary-color
+      font-weight: 400
+      margin-top: 15px
+
+    & button
+      margin-top: 2.5rem

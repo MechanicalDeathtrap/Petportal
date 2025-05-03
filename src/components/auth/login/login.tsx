@@ -48,6 +48,7 @@ export const Login = () => {
           headers: {
             "Content-Type": "application/json",
           },
+          withCredentials: true,
         },
       );
 
@@ -55,6 +56,7 @@ export const Login = () => {
     } catch (error: any) {
       if (error.response) {
         const status = error.response.status;
+        console.log(status);
         switch (status) {
           case 400:
             setErrorMessage(
