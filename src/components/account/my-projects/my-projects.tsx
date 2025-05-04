@@ -12,7 +12,6 @@ export const MyProjects = () => {
   const handleMyProjectCount = (count: number) => setMyProjectCount(count);
   const handleMyProjects = (projects: Project[]) => setMyProjects(projects);
 
-  // имитация сервера, заменить any
   const getProjects = async () => {
     await axios
       .get<Project[]>("http://localhost:5140/api/Users/MyProjects/")

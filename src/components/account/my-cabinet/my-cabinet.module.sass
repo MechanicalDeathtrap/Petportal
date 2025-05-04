@@ -1,0 +1,100 @@
+@import "/src/colors/colors"
+@import "/src/mixins/mixins.sass"
+
+.my-cabinet
+  width: 50vw
+  flex-direction: column
+  @include flexAndGap(1.406rem)
+
+  & p, button, span
+    font-size: 0.875rem
+
+  &__about-myself, &__my-info
+    background-color: $background-white
+    border-radius: 15px
+    padding: 2.375rem
+    height: fit-content
+
+  &__my-info
+    display: flex
+    justify-content: space-between
+
+    & > div
+      display: flex
+
+  &__avatar
+    width: 10.813rem
+    height: 10.813rem
+    background-size: cover
+    background-position: center
+    background-repeat: no-repeat
+    display: block
+    border-radius: 15px
+    object-fit: cover
+    margin-right: 1.75rem
+
+  &__main-info span
+    color: $text-primary-color
+    font-weight: 600
+
+  &__main-info p
+    font-weight: 600
+    margin-top: 14px
+
+  &__main-info p:first-of-type
+    margin-top: 1.375rem
+
+  &__main-info p svg
+    margin-left: 5px
+    width: 15px
+    height: auto
+
+  &__contacts
+    flex-direction: column
+    color: $text-primary-color
+    font-weight: 300
+    @include flexAndGap(18px)
+
+    & span
+      font-weight: 600
+      color: $text-black
+
+    & button
+      color: $primary-color
+      text-decoration: underline
+      cursor: pointer
+
+  &__about-myself
+    flex-direction: column
+    @include flexAndGap(18px)
+
+    & h3
+      margin-bottom: 10px
+
+  &__accordion h3
+    font-size: 1.125rem
+    font-weight: 700
+    font-family: Rubik, sans-serif
+
+  &__accordion-details:global(.MuiAccordionDetails-root)
+    padding: 0 0 2rem 0
+
+  &__accordion-details ol
+    padding-left: 1rem
+
+  &__accordion:global(.MuiAccordion-root), &__accordion:global(.MuiAccordion-root:last-of-type)
+    border: transparent
+    box-shadow: none
+    border-radius: 15px
+    padding: 0.375rem 2.375rem
+    outline: transparent
+    margin: 0
+
+  &__accordion:global(.MuiAccordion-root) h3 button, &__accordion:global(.MuiAccordion-root:last-of-type) h3 button
+    padding: 0
+
+  &__accordion:global(.MuiAccordion-root)::before,
+  &__accordion:global(.MuiAccordion-root:last-of-type)::before
+    display: none
+
+

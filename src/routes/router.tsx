@@ -28,8 +28,8 @@ export const router = createBrowserRouter(
         <Route path="/projects" element={<Projects />} />
         <Route path="/account" element={<AccountLayout />} />
         <Route path="/chat" element={<Chat />} />
-        <Route element={<Account />}>
-          <Route path={"/account"} element={<MyCabinet />} />
+        <Route path={"/account"} element={<Account />}>
+          <Route index element={<MyCabinet />} />
           <Route path={"/account/my-projects"} element={<MyProjects />} />
           <Route path={"/account/my-projects/:id"} element={<ProjectPage />} />
           <Route path={"/account/my-reviews"} element={<MyReview />} />
