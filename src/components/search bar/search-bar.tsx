@@ -1,13 +1,31 @@
+import { ChangeEvent, FormEvent, useState } from "react";
 import styles from "./search-bar.module.sass";
 
-export const SearchBar = () => {
+interface SearchBarProps {
+  onSearch: (query: string) => void;
+}
+
+export const SearchBar = ({ onSearch }: SearchBarProps) => {
+
+  const [searchString, setSearchString] = useState("");
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchString(e.target.value);
+  };
+
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // Предотвращаем перезагрузку страницы
+    onSearch(searchString); // Выполняем поиск только здесь
+  };
+
+
   return (
     <div className={styles["searchbar"]}>
-      <button className={styles["searchbar__search-button"]} type="submit">
+      <button form="searchForm" className={styles["searchbar__search-button"]} type="submit">
         <img src="/img/поиск.svg" alt="magnifier" />
       </button>
-      <form className={styles["searchbar__form"]} action="">
-        <input type="text" placeholder="Искать проекты" />
+      <form id="searchForm" className={styles["searchbar__form"]} onSubmit={handleSubmit}>
+        <input type="text" placeholder="Искать проекты" value={searchString} onChange={handleChange}/>
       </form>
       <button className={styles["searchbar__erase-button"]} type="button">
         <svg

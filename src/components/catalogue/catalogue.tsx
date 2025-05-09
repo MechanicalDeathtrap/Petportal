@@ -4,16 +4,19 @@ import { PopularityButtonFilter } from "../filters/popularity-button-filter.tsx"
 import { ProjectList } from "../projects/project-list/project-list.tsx";
 import { Button } from "../button/button.tsx";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 export const Catalogue = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+
   return (
     <section className={styles["catalogue"]}>
       <div className={styles["catalogue__searchbar-container"]}>
-        <SearchBar />
+        <SearchBar onSearch={setSearchQuery}/>
       </div>
       <div className={styles["catalogue__project-container"]}>
         <PopularityButtonFilter />
-        <ProjectList />
+        <ProjectList searchQuery={searchQuery}/>
       </div>
       <Link to="/link">
         <Button

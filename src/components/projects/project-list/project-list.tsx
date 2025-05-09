@@ -4,21 +4,38 @@ import { Project } from "../../../types/project-type.ts";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-export const ProjectList = () => {
+interface ProjectListProps {
+  searchQuery: string;
+}
+
+
+export const ProjectList = ({ searchQuery }: ProjectListProps) => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [projectNumber, setProjectNumber] = useState(0);
 
   const fetchProjects = async () => {
-    try {
-      const response = await axios.get<Project[]>(
-        "http://localhost:5140/api/Projects/",
-      );
-      setProjects(response.data);
-      setProjectNumber(response.data.length);
-    } catch (error) {
-      console.error("Ошибка при загрузке данных ПРОЕКТЫ:", error);
+        try {
+          let url = "http://localhost:5140/api/Projects/";
+
+          if (searchQuery) {
+            url += `?SearchElement=${encodeURIComponent(searchQuery)}`;
+          }
+
+          const response = await axios.get<Project[]>(
+            url
+          );
+          setProjects(response.data);
+          setProjectNumber(response.data.length);
+        } catch (error) {
+        console.error("Ошибка при загрузке данных ПРОЕКТЫ:", error);
+      }
     }
-  };
+
+  useEffect(() => {
+    fetchProjects();
+  }, [searchQuery]
+  );
+
 
   useEffect(() => {
     fetchProjects();
