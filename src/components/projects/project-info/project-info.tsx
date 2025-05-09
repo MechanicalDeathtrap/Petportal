@@ -141,7 +141,7 @@ export const ProjectInfo = () => {
               </div>
               <div className={style["project-info__deadline"]}>
                 <h3>
-                  Сроки выполнения: <span>{proj.deadline}</span>
+                  Сроки выполнения: <span>{formatDate(proj.deadline)}</span>
                 </h3>
               </div>
               <div className={style["project-info__budget"]}>
