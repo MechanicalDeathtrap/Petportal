@@ -1,0 +1,68 @@
+@import "/src/mixins/mixins"
+@import "/src/colors/colors.sass"
+
+
+.create-project
+  display: flex
+  justify-content: center
+
+  & > div
+    margin: 2.438rem 0
+    background-color: $background-white
+    width: 56.25rem
+    border-radius: 20px
+    padding: 2.688rem 4.063rem
+
+    & h2
+      font-size: 2rem
+      margin-bottom: 2.625rem
+
+  &__form
+    flex-direction: column
+    @include flexAndGap(2.25rem)
+
+    &--error
+      top: 100%
+      position: absolute
+      font-size: 0.75rem
+      margin-top: 10px
+      margin-left: 0.625rem
+      font-weight: 400
+      color: $text-error
+
+    & label
+      font-weight: 700
+      font-size: 1.125rem
+      flex-direction: column
+      display: flex
+
+    &-field
+      margin-top: 0.938rem
+      background-color: $background-grey
+      border-radius: 15px
+      padding: 8px 14px
+      border: transparent
+
+    &-field::-webkit-input-placeholder
+      color: $text-secondary-color
+      font-size: 0.938rem
+      font-weight: 400
+
+  &__form-chars-number
+    margin-top: 5px
+    display: flex
+    justify-content: end
+    font-size: 0.938rem
+    font-weight: 400
+    color: $text-secondary-color
+
+  &__form-button
+    display: flex
+    justify-content: end
+
+input[type=date]
+  font-size: 0.938rem
+  font-weight: 400
+
+input[type=date], input[type=number]
+  width: 20%
