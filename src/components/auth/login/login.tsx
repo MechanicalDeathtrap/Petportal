@@ -53,10 +53,10 @@ export const Login = () => {
       );
 
       navigate("/");
-    } catch (error: any) {
-      if (error.response) {
-        const status = error.response.status;
-        console.log(status);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+
         switch (status) {
           case 400:
             setErrorMessage(
@@ -72,7 +72,7 @@ export const Login = () => {
           default:
             setErrorMessage("Произошла ошибка при авторизации.");
         }
-      } else if (error.request) {
+      } else if (axios.isAxiosError(error) && error.request) {
         setErrorMessage(
           "Сервер недоступен. Проверьте подключение к интернету.",
         );

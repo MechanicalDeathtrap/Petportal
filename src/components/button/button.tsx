@@ -3,7 +3,7 @@ import styles from "./button.module.sass";
 type Props = {
   text: string;
   style: string;
-  type: "button" | "submit";
+  type: "button" | "submit" | "reset";
   // disabled?: boolean;
   onClick?: () => void;
 };
