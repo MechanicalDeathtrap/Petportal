@@ -1,0 +1,49 @@
+@import "/src/colors/colors"
+@import "/src/mixins/mixins.sass"
+
+.my-review
+  background: $background-white
+  border-radius: 15px
+  padding: 1.125rem 2.625rem 1.563rem 2.625rem
+  width: 54.1vw
+  flex-direction: column
+  @include flexAndGap(14px)
+
+  &__filters
+    font-size: 0.875rem
+    @include flexAndGap(1.25rem)
+
+    & span
+      align-items: center
+      cursor: pointer
+      transition: color 0.7s
+      @include flexAndGap(5px)
+
+      &:hover, & span svg rect
+        color: $primary-color
+        fill: $primary-color
+
+  &__review-container
+    @include flexAndGap(1rem)
+
+  &__reviews-list
+    margin-top: 3.188rem
+
+  &__avatar
+    display: block
+    border-radius: 50%
+    object-fit: cover
+    min-width: 55px
+    height: 55px
+    background-size: cover
+    background-position: center
+    background-repeat: no-repeat
+
+  &__review-info h4
+    margin-bottom: 0.313rem
+
+  &__review-info h4 + div
+    @include flexAndGap(0.5rem)
+
+  &__review-info div span
+    color: $text-secondary-color

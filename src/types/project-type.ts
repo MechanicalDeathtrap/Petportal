@@ -17,7 +17,7 @@ export type Project = {
   tags: string[];
 };
 
-enum StateOfProject {
+export enum StateOfProject {
   Open,
   InProgress,
   Closed,
