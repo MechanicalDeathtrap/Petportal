@@ -74,9 +74,9 @@ export const Registration = () => {
       );
 
       navigate("/");
-    } catch (error: any) {
-      if (error.response) {
-        const status = error.response.status;
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
         switch (status) {
           case 400:
             setErrorMessage(
@@ -92,7 +92,7 @@ export const Registration = () => {
           default:
             setErrorMessage("Произошла ошибка при регистрации.");
         }
-      } else if (error.request) {
+      } else if (axios.isAxiosError(error) && error.request) {
         // Ошибка сети (например, сервер недоступен)
         setErrorMessage(
           "Сервер недоступен. Проверьте подключение к интернету.",

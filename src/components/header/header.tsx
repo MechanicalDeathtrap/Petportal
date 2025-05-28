@@ -7,9 +7,10 @@ import { AccountPopup } from "../../popups/account-popup/account-popup.tsx";
 import { NotificationPopup } from "../../popups/notifications-popup/notification-popup.tsx";
 import { authStore } from "../../stores/auth-store.ts";
 import { popupStore } from "../../stores/popups-store.ts";
+import { userStore } from "../../stores/user-store.ts";
 import { observer } from "mobx-react-lite";
 import { findAllCookies } from "../../utils/cookies.ts";
-
+import { fetchUserData } from "../../utils/fetch-user-data.ts";
 
 export const Header = observer(() => {
   const [accountPopperAnchorEl, setAccountPopperAnchorEl] =
@@ -19,27 +20,36 @@ export const Header = observer(() => {
   const [path, setPath] = useState("None");
   const location = useLocation();
 
+  const checkAuth = () => {
+    const cookies = findAllCookies();
+    authStore.setAuthorized(!!cookies["jwttoken"]);
+  };
+
+  const currentPath = () => {
+    switch (location.pathname) {
+      case "/":
+        setPath("About us");
+        break;
+      case "/projects":
+        setPath("Projects");
+        break;
+      case "/createProject":
+        setPath("Create Project");
+        break;
+      default:
+        setPath("None");
+    }
+  };
+
+  const getUserData = () => {
+    let userData = {};
+    if (authStore.isAuthorized) userData = fetchUserData();
+    userStore.setUser(userData);
+  };
+
   useEffect(() => {
-    const checkAuth = () => {
-      const cookies = findAllCookies();
-      authStore.setAuthorized(!!cookies["jwttoken"]);
-    };
-    const currentPath = () => {
-      switch (location.pathname) {
-        case "/":
-          setPath("About us");
-          break;
-        case "/projects":
-          setPath("Projects");
-          break;
-        case "/createProject":
-          setPath("Create Project");
-          break;
-        default:
-          setPath("None");
-      }
-    };
     checkAuth();
+    getUserData();
     currentPath();
   }, [location]);
 
@@ -69,7 +79,7 @@ export const Header = observer(() => {
   };
 
   const resolveAuthPath = () => {
-    return authStore.isAuthorized ? "/" : "/login"; //TODO заменить / на путь к созданию проекта
+    return authStore.isAuthorized ? "/create-project" : "/login"; //TODO заменить / на путь к созданию проекта
   };
 
   return (

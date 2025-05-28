@@ -2,11 +2,14 @@ import styles from "./account-popup.module.sass";
 import { Link, useNavigate } from "react-router-dom";
 import { authStore } from "../../stores/auth-store.ts";
 import { popupStore } from "../../stores/popups-store.ts";
+import { userStore } from "../../stores/user-store.ts";
 import { observer } from "mobx-react-lite";
 import { deleteAuthCookie } from "../../utils/cookies.ts";
 
 export const AccountPopup = observer(() => {
   const navigate = useNavigate();
+  const user = userStore.user;
+  const userAvatar = user.avatarUrl || "/img/blank-avatar.png";
 
   const exitFromProfile = () => {
     deleteAuthCookie();
@@ -17,18 +20,16 @@ export const AccountPopup = observer(() => {
 
   return (
     <div className={styles["account-popup"]}>
-      {/*TODO заменить фотку, имя и тег*/}
       <div className={styles["account-popup__account-info"]}>
         <picture>
           <img
             className={styles["account-popup__account-image"]}
-            src="/img/blank-avatar.png"
+            src={userAvatar}
             alt="profile-photo"
           />
         </picture>
         <div className={styles["account-popup__account-names"]}>
-          <h6>Василиса Премудрая</h6>
-          <span>@bombachka</span>
+          <h6>{user.firstName + " " + user.lastName}</h6>
         </div>
       </div>
       <div className={styles["account-popup__buttons"]}>
