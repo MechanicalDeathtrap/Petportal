@@ -11,18 +11,24 @@ export type UserData = {
   email: string;
   telegram: string;
   education: {
+    id: string,
     university: string;
     specialization: string;
-    releaseYear: number;
+    releaseYear: number;        
+    isActive: boolean;
   }[];
   experience: {
+    id: string,
     workPlace: string;
     workPosition: string;
     workYears: number;
+    isActive: boolean;
   }[];
   stack: {
+    id: string,
     programmingLanguage: string;
     programmingLevel: "1" | "2" | "3" | "4" | "5";
     programmingYears: number;
+    isActive: boolean;
   }[];
 };
