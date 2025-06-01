@@ -1,6 +1,6 @@
-import type { Project } from './project-type';  
+import type { Project } from "./project-type";
 
-export type ProjectsDto = { 
-    projects: Project[];
-    projectsCount: number;
+export type ProjectsDto = {
+  projects: Project[];
+  projectsCount: number;
 };

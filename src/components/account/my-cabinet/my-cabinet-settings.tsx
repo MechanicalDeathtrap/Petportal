@@ -24,7 +24,7 @@ const validationSchema = Yup.object().shape({
       releaseYear: Yup.number()
         .positive("Год должен быть положительным")
         .required("Укажите год выпуска"),
-    })
+    }),
   ),
   experience: Yup.array().of(
     Yup.object().shape({
@@ -33,16 +33,18 @@ const validationSchema = Yup.object().shape({
       workYears: Yup.number()
         .positive("Количество лет должно быть положительным")
         .required("Укажите продолжительность"),
-    })
+    }),
   ),
   stack: Yup.array().of(
     Yup.object().shape({
-      programmingLanguage: Yup.string().required("Укажите язык программирования"),
+      programmingLanguage: Yup.string().required(
+        "Укажите язык программирования",
+      ),
       programmingLevel: Yup.string().required("Выберите уровень"),
       programmingYears: Yup.number()
         .positive("Количество лет должно быть положительным")
         .required("Укажите продолжительность"),
-    })
+    }),
   ),
 });
 
@@ -60,7 +62,7 @@ export const MyCabinetSettings = observer(() => {
           "http://localhost:5140/api/Authorization/me",
           {
             withCredentials: true,
-          }
+          },
         );
 
         const data = response.data;
@@ -134,7 +136,7 @@ export const MyCabinetSettings = observer(() => {
             "Content-Type": "multipart/form-data",
           },
           withCredentials: true,
-        }
+        },
       );
 
       setInitialData({
@@ -194,7 +196,7 @@ export const MyCabinetSettings = observer(() => {
         payload,
         {
           withCredentials: true,
-        }
+        },
       );
       navigate("/account");
     } catch (err) {
@@ -338,9 +340,7 @@ export const MyCabinetSettings = observer(() => {
                             type="button"
                             onClick={() => remove(index)}
                             className={
-                              style[
-                                "my-cabinet__delete-added-fields-button"
-                              ]
+                              style["my-cabinet__delete-added-fields-button"]
                             }
                           >
                             Удалить
@@ -407,9 +407,7 @@ export const MyCabinetSettings = observer(() => {
                             type="button"
                             onClick={() => remove(index)}
                             className={
-                              style[
-                                "my-cabinet__delete-added-fields-button"
-                              ]
+                              style["my-cabinet__delete-added-fields-button"]
                             }
                           >
                             Удалить
@@ -483,9 +481,7 @@ export const MyCabinetSettings = observer(() => {
                             type="button"
                             onClick={() => remove(index)}
                             className={
-                              style[
-                                "my-cabinet__delete-added-fields-button"
-                              ]
+                              style["my-cabinet__delete-added-fields-button"]
                             }
                           >
                             Удалить

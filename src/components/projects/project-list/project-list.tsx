@@ -11,55 +11,57 @@ interface ProjectListProps {
   setNeedToFetch: (arg0: boolean) => void;
 }
 
-let offset = 10
+let offset = 10;
 
-export const ProjectList = ({ searchQuery, needToFetch, setNeedToFetch }: ProjectListProps) => {
+export const ProjectList = ({
+  searchQuery,
+  needToFetch,
+  setNeedToFetch,
+}: ProjectListProps) => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [projectCount, setProjectCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
 
   const fetchProjects = async (nextPage: number) => {
-        try {
-          const response = await axios.get<ProjectsDto>("http://localhost:5140/api/Projects/", {
-              params: {
-                SearchElement: searchQuery || undefined,
-                Page: nextPage || undefined,
-              },
-            });
+    try {
+      const response = await axios.get<ProjectsDto>(
+        "http://localhost:5140/api/Projects/",
+        {
+          params: {
+            SearchElement: searchQuery || undefined,
+            Page: nextPage || undefined,
+          },
+        },
+      );
 
-          return response;
-        } catch (error) {
-          console.error("Ошибка при загрузке данных ПРОЕКТЫ:", error);
-          return null;
-        }
+      return response;
+    } catch (error) {
+      console.error("Ошибка при загрузке данных ПРОЕКТЫ:", error);
+      return null;
     }
+  };
 
   useEffect(() => {
-    if (needToFetch){
+    if (needToFetch) {
       const nextPage = currentPage + 1;
-      fetchProjects(nextPage)
-      .then(response => {
-        if (response){
+      fetchProjects(nextPage).then((response) => {
+        if (response) {
           setProjects([...projects, ...response.data.projects]);
           setCurrentPage(nextPage);
         }
-      })
-    }      
+      });
+    }
     setNeedToFetch(false);
-  }, [needToFetch])
+  }, [needToFetch]);
 
   useEffect(() => {
-    fetchProjects()
-    .then(response => {
-        if (response){
-          setProjects(response.data.projects);
-          setProjectCount(response.data.projectsCount);
-        };
-      })
-
-  }, [searchQuery]
-  );
-
+    fetchProjects().then((response) => {
+      if (response) {
+        setProjects(response.data.projects);
+        setProjectCount(response.data.projectsCount);
+      }
+    });
+  }, [searchQuery]);
 
   // useEffect(() => {
   //   fetchProjects();

@@ -15,7 +15,7 @@ export const MyCabinet = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isSettingsOpen, setSettingsOpen] = useState(false);
   const [avatarBlobUrl, setAvatarBlobUrl] = useState<string | null>(null);
-  
+
   useEffect(() => {
     if (!userData?.avatarUrl) return;
 
@@ -93,12 +93,16 @@ export const MyCabinet = () => {
               <div
                 className={`${style["my-cabinet__avatar"]} ${style["my-cabinet__avatar-margin-right"]}`}
                 style={{
-                backgroundImage: `url(${avatarBlobUrl || "/img/blank-avatar.png"})`,
-              }}
+                  backgroundImage: `url(${avatarBlobUrl || "/img/blank-avatar.png"})`,
+                }}
               />
               <div className={style["my-cabinet__main-info"]}>
-                <h2>{userData.firstName} {userData.lastName}</h2>
-                <span>{userData.country}, {userData.town}</span>
+                <h2>
+                  {userData.firstName} {userData.lastName}
+                </h2>
+                <span>
+                  {userData.country}, {userData.town}
+                </span>
                 <p>Зарегистрирован: {/* нет даты регистрации */}</p>
                 <p>Проектов выполнено: 4</p>
                 <p>
@@ -108,9 +112,18 @@ export const MyCabinet = () => {
               </div>
             </div>
             <div className={style["my-cabinet__contacts"]}>
-              <p>Номер телефона: <br /><span>{userData.phoneNumber || "Не указано"}</span></p>
-              <p>Адрес почты: <br /><span>{userData.email || "Не указано"}</span></p>
-              <p>Telegram: <br /><span>{userData.telegram || "Не указано"}</span></p>
+              <p>
+                Номер телефона: <br />
+                <span>{userData.phoneNumber || "Не указано"}</span>
+              </p>
+              <p>
+                Адрес почты: <br />
+                <span>{userData.email || "Не указано"}</span>
+              </p>
+              <p>
+                Telegram: <br />
+                <span>{userData.telegram || "Не указано"}</span>
+              </p>
               <button onClick={handleSettingsOpen}>Изменить профиль</button>
             </div>
           </div>
@@ -124,17 +137,23 @@ export const MyCabinet = () => {
               <p>
                 {userData.stack.map((s, idx) => (
                   <div key={idx}>
-                    {s.programmingLanguage} — {s.programmingYears} лет — Уровень: {s.programmingLevel}
+                    {s.programmingLanguage} — {s.programmingYears} лет —
+                    Уровень: {s.programmingLevel}
                   </div>
                 ))}
               </p>
             </div>
           </div>
           <Accordion className={style["my-cabinet__accordion"]}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />} className={style["my-cabinet__accordion-summary"]}>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              className={style["my-cabinet__accordion-summary"]}
+            >
               <Typography component="h3">Образование</Typography>
             </AccordionSummary>
-            <AccordionDetails className={style["my-cabinet__accordion-details"]}>
+            <AccordionDetails
+              className={style["my-cabinet__accordion-details"]}
+            >
               <Typography component="ol">
                 {userData.education.map((edu, idx) => (
                   <li key={idx}>
@@ -145,10 +164,15 @@ export const MyCabinet = () => {
             </AccordionDetails>
           </Accordion>
           <Accordion className={style["my-cabinet__accordion"]}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />} className={style["my-cabinet__accordion-summary"]}>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              className={style["my-cabinet__accordion-summary"]}
+            >
               <Typography component="h3">Опыт работы</Typography>
             </AccordionSummary>
-            <AccordionDetails className={style["my-cabinet__accordion-details"]}>
+            <AccordionDetails
+              className={style["my-cabinet__accordion-details"]}
+            >
               <Typography component="ol">
                 {userData.experience.map((exp, idx) => (
                   <li key={idx}>
