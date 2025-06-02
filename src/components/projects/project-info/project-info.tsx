@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Button } from "../../button/button.tsx";
 import { ParentModal } from "../../../modals/parent-modal.tsx";
 import { ProjectResponseModal } from "../../../modals/project-response-modal/project-response-modal.tsx";
+import { formatDate } from "../../../utils/format-date.ts";
 
 export const ProjectInfo = () => {
   const { projectId } = useParams() as { projectId: string };
@@ -40,9 +41,7 @@ export const ProjectInfo = () => {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("ru-RU");
-  };
+
 
   useEffect(() => {
     getProject();

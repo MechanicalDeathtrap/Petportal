@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 interface ProjectListProps {
   searchQuery: string;
   needToFetch: boolean;
+  sort: string;
   setNeedToFetch: (arg0: boolean) => void;
 }
 
@@ -16,6 +17,7 @@ let offset = 10;
 export const ProjectList = ({
   searchQuery,
   needToFetch,
+  sort,
   setNeedToFetch,
 }: ProjectListProps) => {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -30,6 +32,8 @@ export const ProjectList = ({
           params: {
             SearchElement: searchQuery || undefined,
             Page: nextPage || undefined,
+            SortItem: sort || undefined,
+            SortOrtder: "asc",
           },
         },
       );
@@ -55,13 +59,13 @@ export const ProjectList = ({
   }, [needToFetch]);
 
   useEffect(() => {
-    fetchProjects().then((response) => {
+    fetchProjects(0).then((response) => {
       if (response) {
         setProjects(response.data.projects);
         setProjectCount(response.data.projectsCount);
       }
     });
-  }, [searchQuery]);
+  }, [searchQuery, sort]);
 
   // useEffect(() => {
   //   fetchProjects();

@@ -1,6 +1,8 @@
 import styles from "../project-card/project-card.module.sass";
 import { Link } from "react-router-dom";
 import { Project } from "../../../types/project-type.ts";
+import { formatDate } from "../../../utils/format-date.ts";
+
 
 interface ProjectCardProps {
   project: Project; // Используем интерфейс Project
@@ -45,7 +47,7 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
             <li>
               {" "}
               Сроки работы:
-              <span>{project.deadline}</span>
+              <span>{formatDate(project.deadline)}</span>
             </li>
             <li>
               Бюджет:
@@ -54,7 +56,7 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
             <li>
               {" "}
               Приём заявок:
-              <span>{project.applyingDeadline}</span>
+              <span>{formatDate(project.applyingDeadline)}</span>
             </li>
           </ul>
         </div>

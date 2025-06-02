@@ -14,9 +14,7 @@ export const MyReview = () => {
     handleReviewCount(1);
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("ru-RU");
-  };
+
 
   useEffect(() => {
     // заменить на нормальный value

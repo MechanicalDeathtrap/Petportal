@@ -1,0 +1,44 @@
+@import "/src/colors/colors.sass"
+@import "/src/mixins/mixins.sass"
+
+.dropdown
+  position: relative
+  display: inline-block
+
+.filter-button
+  border: 0.75px solid $border-color
+  border-radius: 22.5px
+  padding: 6px 8px
+  margin-bottom: 15px
+  align-items: center
+  max-width: fit-content
+  @include flexAndGap(8px)
+  background-color: transparent
+  cursor: pointer
+
+.filter-button span
+  color: $filter-color
+  font-size: 15px
+  font-weight: 500
+
+// Стили выпадающего меню
+.dropdown-menu
+  position: absolute
+  top: 100%
+  left: 0
+  background: white
+  border: 0.75px solid $border-color
+  border-radius: 8px
+  z-index: 10
+  list-style: none
+  padding: 4px 0
+  min-width: 160px
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)
+
+.dropdown-menu li
+  padding: 8px 16px
+  cursor: pointer
+
+.dropdown-menu li:hover,
+.dropdown-menu li.selected
+  background-color: #f0f0f0
