@@ -13,3 +13,34 @@
   &--flex
     display: flex
     justify-content: space-between
+
+
+.apply-button
+  width: 140px  // Установи нужную ширину
+  padding: 5px 9.3px
+  font-family: Inter, sans-serif
+  font-size: 16px !important
+  font-weight: 600
+  color: $background-white !important
+  border: none
+  min-height: 30px
+  border-radius: 100px !important 
+  background-color: $primary-color !important
+  text-transform: none !important
+
+  &:hover
+    background-color: darken($primary-color, 10%)
+    border: none
+
+.button-wrapper
+  display: flex
+  justify-content: flex-end
+
+
+
+  // Стили для MUI-обёртки
+  :global(.MuiButton-outlined)
+    border-radius: 100px !important
+    border-color: $primary-color
+
+

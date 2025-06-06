@@ -11,14 +11,11 @@ type Props = {
   placeholder: string;
   menuItems: string[];
   sizeStyle: "small" | "big";
+  value: string;
+  onChange: (event: SelectChangeEvent<string>) => void;
 };
 
 export const SelectFilter = (props: Props) => {
-  const [filter, setFilter] = useState<string>("");
-
-  const handleFilterChange = (e: SelectChangeEvent) => {
-    setFilter(e.target.value);
-  };
 
   return (
     <div>
@@ -26,8 +23,8 @@ export const SelectFilter = (props: Props) => {
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={filter}
-          onChange={handleFilterChange}
+          value={props.value}
+          onChange={props.onChange}
           sx={{
             "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
               border: "0.75px solid rgba(177, 177, 177, 1)", //TODO заменить на нормальный стиль в сасе
@@ -35,16 +32,19 @@ export const SelectFilter = (props: Props) => {
           }}
           displayEmpty
           className={`${styles["select"]} ${props.sizeStyle === "small" ? styles["select--small"] : styles["select--big"]}`}
-          renderValue={(selected) =>
-            selected.length === 0 ? <em>{props.placeholder}</em> : <></>
-          }
-        >
-          <MenuItem key="Role1" value="Role1">
-            Role1
+          renderValue={(selected) =>{
+              if (!selected || selected.length === 0) {
+                return <em>{props.placeholder}</em>;
+              }
+              return selected;
+            }}
+          >
+
+        {props.menuItems.map((item, index) => (
+          <MenuItem key={index} value={item}>
+            {item}
           </MenuItem>
-          <MenuItem key="Role2" value="Role2">
-            Role2
-          </MenuItem>
+        ))}
         </Select>
       </FormControl>
     </div>

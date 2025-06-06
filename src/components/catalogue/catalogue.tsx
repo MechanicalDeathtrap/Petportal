@@ -1,16 +1,25 @@
 import styles from "./catalogue.module.sass";
 import { SearchBar } from "../search bar/search-bar.tsx";
-import { PopularityButtonSort } from "../filters/popularity-button-sort.tsx";
 import { SortDropdown } from "../filters/sort-dropdown.tsx";
 
 import { ProjectList } from "../projects/project-list/project-list.tsx";
 import { Button } from "../button/button.tsx";
 import { useState } from "react";
+import { useFilterContext } from "../../context/filter-context.tsx";
 
-export const Catalogue = () => {
+export type ProjectFilters = {
+  role: string;
+  terms: string;
+  isCommercial: string;
+  tags: string[];
+};
+
+
+export const Catalogue = ( ) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sort, setSort] = useState("date");
   const [needToFetch, setNeedToFetch] = useState(false);
+
 
   return (
     <section className={styles["catalogue"]}>

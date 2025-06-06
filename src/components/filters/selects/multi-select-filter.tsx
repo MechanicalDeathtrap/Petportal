@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import styles from "./select-filter.module.sass";
+import { tags } from "../../../data/tags";
 
 export const MultiSelectFilter = () => {
   const [progLang, setProgLang] = useState<string[]>([]);
@@ -17,7 +18,7 @@ export const MultiSelectFilter = () => {
       target: { value },
     } = event;
     setProgLang(typeof value === "string" ? value.split(",") : value);
-  };
+  };  
 
   return (
     <FormControl>
@@ -28,6 +29,14 @@ export const MultiSelectFilter = () => {
         displayEmpty
         multiple
         className={styles["select"]}
+        MenuProps={{
+          PaperProps: {
+            style: {
+              maxHeight: 300, // Максимальная высота меню
+              overflowY: "auto", // Прокрутка по вертикали
+            },
+          },
+        }}
         sx={{
           "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
             border: "0.75px solid rgba(177, 177, 177, 1)", //TODO заменить на нормальный стиль в сасе
@@ -35,7 +44,7 @@ export const MultiSelectFilter = () => {
         }}
         renderValue={(selected) =>
           selected.length === 0 ? (
-            <em>Языки программирования</em>
+            <em>Теги</em>
           ) : (
             <Box
               className={styles["select__chip-box"]}
@@ -48,12 +57,11 @@ export const MultiSelectFilter = () => {
           )
         }
       >
-        <MenuItem key="Role1" value="Role1">
-          Role1
-        </MenuItem>
-        <MenuItem key="Role2" value="Role2">
-          Role2
-        </MenuItem>
+            {tags.map((tag) => (
+          <MenuItem key={tag.id} value={tag.label}>
+            {tag.label}
+          </MenuItem>
+        ))}
       </Select>
     </FormControl>
   );

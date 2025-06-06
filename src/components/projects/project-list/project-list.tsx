@@ -2,8 +2,12 @@ import styles from "./project-list.module.sass";
 import { ProjectCard } from "../project-card/project-card.tsx";
 import { Project } from "../../../types/project-type.ts";
 import { ProjectsDto } from "../../../types/projects-dto-type.ts";
+import { ProjectFilters } from "../../catalogue/catalogue.tsx";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useFilterContext } from "../../../context/filter-context.tsx";
+import { IsCommercialProjectFilter } from "../../filters/aside-filters.tsx";
+
 
 interface ProjectListProps {
   searchQuery: string;
@@ -18,11 +22,12 @@ export const ProjectList = ({
   searchQuery,
   needToFetch,
   sort,
-  setNeedToFetch,
+  setNeedToFetch
 }: ProjectListProps) => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [projectCount, setProjectCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const { filters } = useFilterContext();
 
   const fetchProjects = async (nextPage: number) => {
     try {
@@ -34,9 +39,14 @@ export const ProjectList = ({
             Page: nextPage || undefined,
             SortItem: sort || undefined,
             SortOrtder: "asc",
+            [`Filters.Role`]: filters.role || undefined,
+            [`Filters.Deadline`]: filters.terms || undefined,
+            [`Filters.IsCommercial`]: filters.isCommercial  === IsCommercialProjectFilter.YES ? true : false,
           },
         },
-      );
+      );  
+
+      console.log(filters.role);
 
       return response;
     } catch (error) {
