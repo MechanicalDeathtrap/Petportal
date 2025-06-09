@@ -2,16 +2,36 @@ import styles from "../project-card/project-card.module.sass";
 import { Link } from "react-router-dom";
 import { Project } from "../../../types/project-type.ts";
 import { formatDate } from "../../../utils/format-date.ts";
-
+import {StateOfProject} from "../../../types/project-state.enum.ts"
 
 interface ProjectCardProps {
   project: Project; // Используем интерфейс Project
 }
 
+
+// const statusConfig = {
+//   Recruitment: {
+//     text: "Идёт набор",
+//     colorClass: styles["project-card--recruiting-stage-color"],
+//   },
+//   InProgress: {
+//     text: "В процессе",
+//     colorClass: styles["project-card--inprogress-stage-color"],
+//   },
+//   Finished: {
+//     text: "Завершён",
+//     colorClass: styles["project-card--finished-stage-color"],
+//   },
+// };
+
 export const ProjectCard = ({ project }: ProjectCardProps) => {
   const base64Image = project.avatarImageBase64
     ? `data:image/jpeg;base64,${project.avatarImageBase64}`
     : "public/img/blank-avatar.png"; // Запасной вариант
+
+  const status = project.stateOfProject ?? StateOfProject.Finished;
+
+  // const statusInfo = statusConfig[status];
 
   return (
     <Link to={`/projects/${project.id}`}>
@@ -60,6 +80,7 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
             </li>
           </ul>
         </div>
+
         <div
           className={`${styles["project-card--recruiting-stage-color"]} ${styles["project-card__footer"]}`}
         >
