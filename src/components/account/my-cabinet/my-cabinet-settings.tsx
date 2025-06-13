@@ -37,9 +37,7 @@ const validationSchema = Yup.object().shape({
   ),
   stack: Yup.array().of(
     Yup.object().shape({
-      programmingLanguage: Yup.string().required(
-        "Укажите язык программирования",
-      ),
+      programmingLanguage: Yup.string().required("Укажите язык программирования"),
       programmingLevel: Yup.string().required("Выберите уровень"),
       programmingYears: Yup.number()
         .positive("Количество лет должно быть положительным")
@@ -48,7 +46,11 @@ const validationSchema = Yup.object().shape({
   ),
 });
 
-export const MyCabinetSettings = observer(() => {
+interface Props {
+  onSave?: () => void;
+}
+
+export const MyCabinetSettings = observer(({ onSave }: Props) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [initialData, setInitialData] = useState<CabinetSettings | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -58,13 +60,9 @@ export const MyCabinetSettings = observer(() => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:5140/api/Authorization/me",
-          {
-            withCredentials: true,
-          },
-        );
-
+        const response = await axios.get("http://localhost:5140/api/Authorization/me", {
+          withCredentials: true,
+        });
         const data = response.data;
 
         const mapped: CabinetSettings = {
@@ -77,24 +75,24 @@ export const MyCabinetSettings = observer(() => {
           phoneNumber: data.phone || "",
           telegram: data.telegram || "",
           education: data.educations.map((edu: any) => ({
-            id: edu.id,
-            university: edu.university,
-            specialization: edu.speciality,
-            releaseYear: edu.releaseYear.toString(),
+            id: edu.id || undefined,
+            university: edu.university || "",
+            specialization: edu.speciality || "",
+            releaseYear: edu.releaseYear?.toString() || "",
             isActive: Boolean(edu.isActive),
           })),
           experience: data.experiences.map((exp: any) => ({
-            id: exp.id,
-            workPlace: exp.workPlace,
-            workPosition: exp.workPosition,
-            workYears: exp.workYears.toString(),
+            id: exp.id || undefined,
+            workPlace: exp.workPlace || "",
+            workPosition: exp.workPosition || "",
+            workYears: exp.workYears?.toString() || "",
             isActive: Boolean(exp.isActive),
           })),
           stack: data.stacks.map((stack: any) => ({
-            id: stack.id,
-            programmingLanguage: stack.programmingLanguage,
-            programmingLevel: stack.programmingLevel.toString(),
-            programmingYears: stack.programmingYears,
+            id: stack.id || undefined,
+            programmingLanguage: stack.programmingLanguage || "",
+            programmingLevel: stack.programmingLevel?.toString() || "1",
+            programmingYears: stack.programmingYears || 0,
             isActive: Boolean(stack.isActive),
           })),
         };
@@ -105,7 +103,6 @@ export const MyCabinetSettings = observer(() => {
         console.error("Ошибка загрузки профиля:", err);
       }
     };
-
     fetchUserData();
   }, []);
 
@@ -117,7 +114,6 @@ export const MyCabinetSettings = observer(() => {
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onloadend = () => {
       setImagePreview(reader.result as string);
@@ -127,7 +123,6 @@ export const MyCabinetSettings = observer(() => {
     try {
       const formData = new FormData();
       formData.append("avatar", file);
-
       const res = await axios.post(
         `http://localhost:5140/api/Avatar/upload-avatar/${initialData.id}`,
         formData,
@@ -138,7 +133,6 @@ export const MyCabinetSettings = observer(() => {
           withCredentials: true,
         },
       );
-
       setInitialData({
         ...initialData,
         avatarUrl: res.data.url,
@@ -158,28 +152,25 @@ export const MyCabinetSettings = observer(() => {
     telegram: values.telegram,
     email: userStore.user.email,
     avatarUrl: values.avatarUrl,
-
     educations: values.education.map((edu) => ({
-      id: edu.id || undefined,
-      university: edu.university || "",
-      speciality: edu.specialization || "",
+      id: edu.id,
+      university: edu.university,
+      speciality: edu.specialization,
       releaseYear: edu.releaseYear || 0,
       userId: values.id,
       isActive: Boolean(edu.isActive),
     })),
-
     experiences: values.experience.map((exp) => ({
-      id: exp.id || undefined,
-      workPlace: exp.workPlace || "",
-      workPosition: exp.workPosition || "",
+      id: exp.id,
+      workPlace: exp.workPlace,
+      workPosition: exp.workPosition,
       workYears: exp.workYears || 0,
       userId: values.id,
       isActive: Boolean(exp.isActive),
     })),
-
     stacks: values.stack.map((stack) => ({
-      id: stack.id || undefined,
-      programmingLanguage: stack.programmingLanguage || "",
+      id: stack.id,
+      programmingLanguage: stack.programmingLanguage,
       programmingLevel: parseInt(stack.programmingLevel) || 0,
       programmingYears: parseInt(String(stack.programmingYears)) || 0,
       userId: values.id,
@@ -199,6 +190,7 @@ export const MyCabinetSettings = observer(() => {
         },
       );
       navigate("/account");
+      if (onSave) onSave();
     } catch (err) {
       console.error("Ошибка при обновлении пользователя", err);
     }
@@ -212,12 +204,10 @@ export const MyCabinetSettings = observer(() => {
         validationSchema={validationSchema}
         enableReinitialize
       >
-        {({ values, errors, touched }) => (
+        {({ values, errors, touched, setFieldValue }) => (
           <Form className={style["my-cabinet"]}>
             {/* Личная информация */}
-            <section
-              className={`${style["my-cabinet__info-section"]} ${style["my-cabinet__flex"]}`}
-            >
+            <section className={`${style["my-cabinet__info-section"]} ${style["my-cabinet__flex"]}`}>
               <div className={style["my-cabinet__main-info-fields"]}>
                 <h3>Личная информация</h3>
                 <Field
@@ -304,66 +294,60 @@ export const MyCabinetSettings = observer(() => {
             <section className={style["my-cabinet__info-section"]}>
               <h3>Образование</h3>
               <FieldArray name="education">
-                {({ push, remove }) => (
-                  <>
-                    {values.education.map((_, index) => (
-                      <div
-                        key={index}
-                        className={style["my-cabinet__added-fields"]}
+                {({ push }) => {
+                  const visibleEducations = values.education.filter((e) => e.isActive);
+                  return (
+                    <>
+                      {visibleEducations.map((_, index) => {
+                        const realIndex = values.education.findIndex(
+                          (edu) => edu === _
+                        );
+                        return (
+                          <div key={realIndex} className={style["my-cabinet__added-fields"]}>
+                            <Field
+                              name={`education[${realIndex}].university`}
+                              placeholder="Вуз"
+                              className={style["my-cabinet__form-field"]}
+                            />
+                            <Field
+                              name={`education[${realIndex}].specialization`}
+                              placeholder="Специальность"
+                              className={style["my-cabinet__form-field"]}
+                            />
+                            <Field
+                              name={`education[${realIndex}].releaseYear`}
+                              placeholder="Год выпуска"
+                              className={style["my-cabinet__form-field"]}
+                            />
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setFieldValue(`education[${realIndex}].isActive`, false)
+                              }
+                              className={style["my-cabinet__remove-button"]}
+                            >
+                              Удалить
+                            </button>
+                          </div>
+                        );
+                      })}
+                      <button
+                        className={style["my-cabinet__add-fields-button"]}
+                        type="button"
+                        onClick={() =>
+                          push({
+                            university: "",
+                            specialization: "",
+                            releaseYear: "",
+                            isActive: true,
+                          })
+                        }
                       >
-                        <Field
-                          name={`education[${index}].university`}
-                          placeholder="Вуз"
-                          className={style["my-cabinet__form-field"]}
-                        />
-                        <Field
-                          name={`education[${index}].specialization`}
-                          placeholder="Специальность"
-                          className={style["my-cabinet__form-field"]}
-                        />
-                        <Field
-                          name={`education[${index}].releaseYear`}
-                          placeholder="Год выпуска"
-                          className={style["my-cabinet__form-field"]}
-                        />
-
-                        <label className={style["my-cabinet__checkbox-label"]}>
-                          <Field
-                            type="checkbox"
-                            name={`education[${index}].isActive`}
-                          />
-                          Активно
-                        </label>
-
-                        {index > 0 && (
-                          <button
-                            type="button"
-                            onClick={() => remove(index)}
-                            className={
-                              style["my-cabinet__delete-added-fields-button"]
-                            }
-                          >
-                            Удалить
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                    <button
-                      className={style["my-cabinet__add-fields-button"]}
-                      type="button"
-                      onClick={() =>
-                        push({
-                          university: "",
-                          specialization: "",
-                          releaseYear: "",
-                          isActive: true,
-                        })
-                      }
-                    >
-                      Добавить вуз
-                    </button>
-                  </>
-                )}
+                        Добавить вуз
+                      </button>
+                    </>
+                  );
+                }}
               </FieldArray>
             </section>
 
@@ -371,66 +355,60 @@ export const MyCabinetSettings = observer(() => {
             <section className={style["my-cabinet__info-section"]}>
               <h3>Опыт работы</h3>
               <FieldArray name="experience">
-                {({ push, remove }) => (
-                  <>
-                    {values.experience.map((_, index) => (
-                      <div
-                        key={index}
-                        className={style["my-cabinet__added-fields"]}
+                {({ push }) => {
+                  const visibleExperiences = values.experience.filter((e) => e.isActive);
+                  return (
+                    <>
+                      {visibleExperiences.map((_, index) => {
+                        const realIndex = values.experience.findIndex(
+                          (exp) => exp === _
+                        );
+                        return (
+                          <div key={realIndex} className={style["my-cabinet__added-fields"]}>
+                            <Field
+                              name={`experience[${realIndex}].workPlace`}
+                              placeholder="Место работы"
+                              className={style["my-cabinet__form-field"]}
+                            />
+                            <Field
+                              name={`experience[${realIndex}].workPosition`}
+                              placeholder="Должность"
+                              className={style["my-cabinet__form-field"]}
+                            />
+                            <Field
+                              name={`experience[${realIndex}].workYears`}
+                              placeholder="Продолжительность"
+                              className={style["my-cabinet__form-field"]}
+                            />
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setFieldValue(`experience[${realIndex}].isActive`, false)
+                              }
+                              className={style["my-cabinet__remove-button"]}
+                            >
+                              Удалить
+                            </button>
+                          </div>
+                        );
+                      })}
+                      <button
+                        className={style["my-cabinet__add-fields-button"]}
+                        type="button"
+                        onClick={() =>
+                          push({
+                            workPlace: "",
+                            workPosition: "",
+                            workYears: "",
+                            isActive: true,
+                          })
+                        }
                       >
-                        <Field
-                          name={`experience[${index}].workPlace`}
-                          placeholder="Место работы"
-                          className={style["my-cabinet__form-field"]}
-                        />
-                        <Field
-                          name={`experience[${index}].workPosition`}
-                          placeholder="Должность"
-                          className={style["my-cabinet__form-field"]}
-                        />
-                        <Field
-                          name={`experience[${index}].workYears`}
-                          placeholder="Продолжительность"
-                          className={style["my-cabinet__form-field"]}
-                        />
-
-                        <label className={style["my-cabinet__checkbox-label"]}>
-                          <Field
-                            type="checkbox"
-                            name={`experience[${index}].isActive`}
-                          />
-                          Активно
-                        </label>
-
-                        {index > 0 && (
-                          <button
-                            type="button"
-                            onClick={() => remove(index)}
-                            className={
-                              style["my-cabinet__delete-added-fields-button"]
-                            }
-                          >
-                            Удалить
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                    <button
-                      className={style["my-cabinet__add-fields-button"]}
-                      type="button"
-                      onClick={() =>
-                        push({
-                          workPlace: "",
-                          workPosition: "",
-                          workYears: "",
-                          isActive: true,
-                        })
-                      }
-                    >
-                      Добавить опыт работы
-                    </button>
-                  </>
-                )}
+                        Добавить опыт работы
+                      </button>
+                    </>
+                  );
+                }}
               </FieldArray>
             </section>
 
@@ -438,73 +416,67 @@ export const MyCabinetSettings = observer(() => {
             <section className={style["my-cabinet__info-section"]}>
               <h3>Мой стек</h3>
               <FieldArray name="stack">
-                {({ push, remove }) => (
-                  <>
-                    {values.stack.map((_, index) => (
-                      <div
-                        key={index}
-                        className={style["my-cabinet__added-fields"]}
+                {({ push }) => {
+                  const visibleStacks = values.stack.filter((s) => s.isActive);
+                  return (
+                    <>
+                      {visibleStacks.map((_, index) => {
+                        const realIndex = values.stack.findIndex(
+                          (s) => s === _
+                        );
+                        return (
+                          <div key={realIndex} className={style["my-cabinet__added-fields"]}>
+                            <Field
+                              name={`stack[${realIndex}].programmingLanguage`}
+                              placeholder="Язык"
+                              className={style["my-cabinet__form-field"]}
+                            />
+                            <Field
+                              name={`stack[${realIndex}].programmingLevel`}
+                              as="select"
+                              className={style["my-cabinet__form-select"]}
+                            >
+                              <option value="1">Junior</option>
+                              <option value="2">Junior+</option>
+                              <option value="3">Middle</option>
+                              <option value="4">Middle+</option>
+                              <option value="5">Senior</option>
+                            </Field>
+                            <Field
+                              name={`stack[${realIndex}].programmingYears`}
+                              type="number"
+                              placeholder="Продолжительность"
+                              className={style["my-cabinet__form-field"]}
+                            />
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setFieldValue(`stack[${realIndex}].isActive`, false)
+                              }
+                              className={style["my-cabinet__remove-button"]}
+                            >
+                              Удалить
+                            </button>
+                          </div>
+                        );
+                      })}
+                      <button
+                        className={style["my-cabinet__add-fields-button"]}
+                        type="button"
+                        onClick={() =>
+                          push({
+                            programmingLanguage: "",
+                            programmingLevel: "1",
+                            programmingYears: 0,
+                            isActive: true,
+                          })
+                        }
                       >
-                        <Field
-                          name={`stack[${index}].programmingLanguage`}
-                          placeholder="Язык"
-                          className={style["my-cabinet__form-field"]}
-                        />
-                        <Field
-                          name={`stack[${index}].programmingLevel`}
-                          as="select"
-                          className={style["my-cabinet__form-select"]}
-                        >
-                          <option value="1">Junior</option>
-                          <option value="2">Junior+</option>
-                          <option value="3">Middle</option>
-                          <option value="4">Middle+</option>
-                          <option value="5">Senior</option>
-                        </Field>
-                        <Field
-                          name={`stack[${index}].programmingYears`}
-                          type="number"
-                          placeholder="Продолжительность"
-                          className={style["my-cabinet__form-field"]}
-                        />
-
-                        <label className={style["my-cabinet__checkbox-label"]}>
-                          <Field
-                            type="checkbox"
-                            name={`stack[${index}].isActive`}
-                          />
-                          Активно
-                        </label>
-
-                        {index > 0 && (
-                          <button
-                            type="button"
-                            onClick={() => remove(index)}
-                            className={
-                              style["my-cabinet__delete-added-fields-button"]
-                            }
-                          >
-                            Удалить
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                    <button
-                      className={style["my-cabinet__add-fields-button"]}
-                      type="button"
-                      onClick={() =>
-                        push({
-                          programmingLanguage: "",
-                          programmingLevel: "1",
-                          programmingYears: 0,
-                          isActive: true,
-                        })
-                      }
-                    >
-                      Добавить стек
-                    </button>
-                  </>
-                )}
+                        Добавить стек
+                      </button>
+                    </>
+                  );
+                }}
               </FieldArray>
             </section>
 

@@ -182,9 +182,31 @@ export const MyCabinet = () => {
               </Typography>
             </AccordionDetails>
           </Accordion>
+
+          {/* 🔥 Стек технологий */}
+          <Accordion className={style["my-cabinet__accordion"]}>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              className={style["my-cabinet__accordion-summary"]}
+            >
+              <Typography component="h3">Стек технологий</Typography>
+            </AccordionSummary>
+            <AccordionDetails
+              className={style["my-cabinet__accordion-details"]}
+            >
+              <Typography component="ol">
+                {userData.stack.map((stack, idx) => (
+                  <li key={idx}>
+                    {stack.programmingLanguage}, уровень:{" "}
+                    {stack.programmingLevel}, опыт: {stack.programmingYears} лет
+                  </li>
+                ))}
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
         </section>
       ) : (
-        <MyCabinetSettings />
+        <MyCabinetSettings onSave={() => setSettingsOpen(false)} />
       )}
     </>
   );
