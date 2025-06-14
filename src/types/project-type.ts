@@ -14,8 +14,8 @@ export type Project = {
   isBusinessProject: boolean;
   avatarImageBase64: string;
   budget: number;
-  tags: { id: string; name: string }[];
   executors: string[];
+  tags: { id: string; name: string }[];
 };
 
 export const StateOfProject = {
