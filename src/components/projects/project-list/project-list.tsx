@@ -9,6 +9,10 @@ import { useFilterContext } from "../../../context/filter-context.tsx";
 import { IsCommercialProjectFilter } from "../../filters/aside-filters.tsx";
 
 
+
+import {tags} from "../../../data/tags.ts";
+
+
 interface ProjectListProps {
   searchQuery: string;
   needToFetch: boolean;
@@ -42,6 +46,7 @@ export const ProjectList = ({
             [`Filters.Role`]: filters.role || undefined,
             [`Filters.Deadline`]: filters.terms || undefined,
             [`Filters.IsCommercial`]: filters.isCommercial  === IsCommercialProjectFilter.YES ? true : false,
+            ['Filters.Tags']: tags || undefined
           },
         },
       );  

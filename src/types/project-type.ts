@@ -14,11 +14,13 @@ export type Project = {
   isBusinessProject: boolean;
   avatarImageBase64: string;
   budget: number;
-  tags: string[];
+  tags: { id: string; name: string }[];
 };
 
-export enum StateOfProject {
-  Open,
-  InProgress,
-  Closed,
-}
+export const StateOfProject = {
+  Open: 0,
+  InProgress: 1,
+  Closed: 2,
+} as const;
+
+export type StateOfProject = typeof StateOfProject[keyof typeof StateOfProject];

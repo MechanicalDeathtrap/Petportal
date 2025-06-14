@@ -2,36 +2,49 @@ import styles from "../project-card/project-card.module.sass";
 import { Link } from "react-router-dom";
 import { Project } from "../../../types/project-type.ts";
 import { formatDate } from "../../../utils/format-date.ts";
-import {StateOfProject} from "../../../types/project-state.enum.ts"
+import { StateOfProject } from "../../../types/project-type.ts";
 
 interface ProjectCardProps {
   project: Project; // Используем интерфейс Project
 }
-
-
-// const statusConfig = {
-//   Recruitment: {
-//     text: "Идёт набор",
-//     colorClass: styles["project-card--recruiting-stage-color"],
-//   },
-//   InProgress: {
-//     text: "В процессе",
-//     colorClass: styles["project-card--inprogress-stage-color"],
-//   },
-//   Finished: {
-//     text: "Завершён",
-//     colorClass: styles["project-card--finished-stage-color"],
-//   },
-// };
 
 export const ProjectCard = ({ project }: ProjectCardProps) => {
   const base64Image = project.avatarImageBase64
     ? `data:image/jpeg;base64,${project.avatarImageBase64}`
     : "public/img/blank-avatar.png"; // Запасной вариант
 
-  const status = project.stateOfProject ?? StateOfProject.Finished;
 
-  // const statusInfo = statusConfig[status];
+const getFooterConfig = () => {
+  switch (project.stateOfProject) {
+    case StateOfProject.Open:
+      return {
+        text: "Идёт набор",
+        className: styles["project-card--recruiting-stage-color"],
+        textColorClass: "white",
+      };
+    case StateOfProject.InProgress:
+      return {
+        text: "В процессе",
+        className: styles["project-card--inprogress-stage-color"],
+        textColorClass: "white",
+      };  
+    case StateOfProject.Closed:
+      return {
+        text: "Завершён",
+        className: styles["project-card--closed-stage-color"],
+        textColorClass: "#4E4E4E",  
+      };
+    default:
+      return {
+        text: "",
+        className: "",
+        textColorClass: "white",
+      };
+  }
+};  
+
+  const footerConfig = getFooterConfig();
+
 
   return (
     <Link to={`/projects/${project.id}`}>
@@ -56,7 +69,7 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
           </h6>
 
           <ul className={styles["project-card__tech-stack"]}>
-            {project.tags?.slice(0, 3).map((tag) => <li key={tag}>{tag}</li>)}
+            {project.tags?.slice(0, 3).map((tag) => <li key={tag.id}>{tag.name}</li>)}
           </ul>
         </div>
         <div
@@ -82,11 +95,12 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
         </div>
 
         <div
-          className={`${styles["project-card--recruiting-stage-color"]} ${styles["project-card__footer"]}`}
+          className={`${footerConfig.className} ${styles["project-card__footer"]}`}
         >
-          <span>Идёт набор</span>
+          <span style={{ color: footerConfig.textColorClass }}>
+            {footerConfig.text}
+          </span>
         </div>{" "}
-        {/* поменять в зависимости от state */}
       </div>
     </Link>
   );
