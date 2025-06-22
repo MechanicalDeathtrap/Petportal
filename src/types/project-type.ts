@@ -24,3 +24,21 @@ export const StateOfProject = {
 } as const;
 
 export type StateOfProject = typeof StateOfProject[keyof typeof StateOfProject];
+
+export const getStateLabel = (state: StateOfProject): string => {
+  switch(state) {
+    case StateOfProject.Open: return "Открытый";
+    case StateOfProject.InProgress: return "В процессе";
+    case StateOfProject.Closed: return "Закрытый";
+    default: return "";
+  }
+};
+
+export const getStateValue = (label: string): StateOfProject | undefined => {
+  switch(label) {
+    case "Открытый": return StateOfProject.Open;
+    case "В процессе": return StateOfProject.InProgress;
+    case "Закрытый": return StateOfProject.Closed;
+    default: return undefined;
+  }
+};

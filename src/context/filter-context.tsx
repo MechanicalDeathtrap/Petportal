@@ -1,9 +1,10 @@
 // src/context/FilterContext.tsx
 import React, { createContext, useState, useContext } from "react";
+import { StateOfProject } from "../types/project-type";
 
 type FilterState = {
   role: string;
-  terms: string;
+  terms:  StateOfProject | null;
   isCommercial: string;
   tags: string[];
 };
@@ -14,6 +15,7 @@ export type FilterContextType = {
   setTempFilters: (filters: Partial<FilterState>) => void;
   // setFilters: FilterActions;
   applyFilters: () => void;
+  resetFilters: () => void;
 };
 
 const FilterContext = createContext<FilterContextType | null>(null);
@@ -29,10 +31,15 @@ export const useFilterContext = () => {
 export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const initialFilterState = {
     role: "",
-    terms: "",
+    terms: null,
     isCommercial: "",
     tags: [],
   };  
+
+  const resetFilters = () => {
+    setTempFilters(initialFilterState);
+    setFilters(initialFilterState);
+  };
 
   const [filters, setFilters] = useState<FilterState>(initialFilterState);
   const [tempFilters, setTempFilters] = useState<FilterState>(initialFilterState);
@@ -45,24 +52,12 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setFilters(tempFilters); // Сохраняем временные как основные
   };
 
-  // const [role, setRole] = useState<string>("");
-  // const [terms, setTerms] = useState<string>("");
-  // const [isCommercial, setIsCommercial] = useState<string>("");
-  // const [tags, setTags] = useState<string[]>([]);
-
-  // const filters = { role, terms, isCommercial, tags };
-  // const setFilters = {
-  //   setRole,
-  //   setTerms,
-  //   setIsCommercial,
-  //   setTags,
-  // };
-
   const value = {
     filters,
     tempFilters,
     setTempFilters: handleSetTempFilters,
     applyFilters: handleApplyFilters,
+    resetFilters
   };
 
   return (

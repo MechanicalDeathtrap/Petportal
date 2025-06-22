@@ -1,14 +1,32 @@
-// src/data/tags.ts
+export const tags = {
+  "2402428c-1d7e-401a-b3b0-9225c4ea3ce2": "Security",
+  "5b0c48dd-ac98-4c5c-9b14-226b486bfbf8": "Cloud",
+  "632bf880-3ea3-4ebf-b2df-e6dcdb365a83": "UI/UX",
+  "6527ccfd-3ea3-4ce6-8b6a-22a8d22784b5": "Algorithms",
+  "69e23e02-b3ad-40ec-8943-0d669538fa30": "AI",
+  "82d2c032-f4e8-4e3b-b662-9d6dc7f5ccf8": "Mobile",
+  "85e7bdf3-2aef-4f0c-aa54-0de1d9b45d58": "Frontend",
+  "8f1c11f6-8d48-493d-981e-6ba9a1317d5f": "IoT",
+  "911128ec-76b1-490d-a1ed-48d825fc5f3c": "Python",
+  "96b04e08-9ef1-4d5f-8c74-0b304d4991ea": "GameDev",
+  "a82d8cb8-82f2-4642-9267-4398dcac3e18": "DevOps",
+  "a9b23834-ae48-4eaf-a4fe-eccd526df246": "Backend",
+  "acd41984-2712-486b-b369-ea0798562f1b": "Testing",
+  "bce3ecde-ef3e-4937-b01b-1a82fdea473b": "C#",
+  "cd048c50-997f-4783-94e7-31f864af9379": "ML",
+  "d55e6dda-5d82-42dc-b8bf-087c42a8be4c": "JavaScript",
+  "d70b7f68-e7c0-4166-9b4e-312d994da59b": "DataScience",
+  "e8eb785f-ce8d-40eb-bb3a-5e24e67efde5": "Blockchain",
+  "ed106e6d-45df-4541-bc13-8ad47473d22e": "Ruby",
+  "f91ec361-2778-4ce4-bf86-07e4235cca7c": "Networking"
+} as const;
 
-export const tags = [
-  { id: "2504d846-2907-4ae1-85b5-107a7e11fd73", label: "Security" },
-  { id: "2fe25774-7a8a-4966-a3ff-3443af597609", label: "AI" },
-  { id: "3b3e1dc7-4872-4a21-ba08-a28e29f5d67c", label: "Python" },
-  { id: "3b8e1eff-5292-4ab3-86a4-06a3ff67ef4e", label: "Algorithms" },
-  { id: "41d3d32d-ef95-47c7-a4db-942db7290441", label: "Mobile" },
-  { id: "51632bd5-4779-4a5e-aed5-b6ea8f230253", label: "Networking" },
-  { id: "55de54b0-888e-416d-968d-ca44b8468b90", label: "Blockchain" },
-  { id: "5f9b61a6-8c81-457a-89f7-9589ce7b9edc", label: "DevOps" },
-  { id: "6a7692fa-5dcb-4bb1-b511-3c3e4c3d1180", label: "C#" },
+export type TagId = keyof typeof tags;
+export type TagLabel = typeof tags[TagId];
 
-];
+
+export const labelToIdMap = Object.entries(tags).reduce<
+  Record<TagLabel, TagId>>((acc, [id, label]) => {
+  acc[label as TagLabel] = id as TagId;
+  return acc;
+}, {} as Record<TagLabel, TagId>);

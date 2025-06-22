@@ -5,12 +5,11 @@ import { ProjectsDto } from "../../../types/projects-dto-type.ts";
 import { ProjectFilters } from "../../catalogue/catalogue.tsx";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import qs from "qs";
 import { useFilterContext } from "../../../context/filter-context.tsx";
 import { IsCommercialProjectFilter } from "../../filters/aside-filters.tsx";
 
-
-
-import {tags} from "../../../data/tags.ts";
+// import {tags} from "../../../data/tags.ts";
 
 
 interface ProjectListProps {
@@ -20,7 +19,6 @@ interface ProjectListProps {
   setNeedToFetch: (arg0: boolean) => void;
 }
 
-let offset = 10;
 
 export const ProjectList = ({
   searchQuery,
@@ -44,10 +42,15 @@ export const ProjectList = ({
             SortItem: sort || undefined,
             SortOrtder: "asc",
             [`Filters.Role`]: filters.role || undefined,
-            [`Filters.Deadline`]: filters.terms || undefined,
-            [`Filters.IsCommercial`]: filters.isCommercial  === IsCommercialProjectFilter.YES ? true : false,
-            ['Filters.Tags']: tags || undefined
+            // [`Filters.Deadline`]: filters.terms || undefined,
+            [`Filters.StateOfProject`]: filters.terms || undefined,
+            [`Filters.IsCommercial`]: filters.isCommercial  === IsCommercialProjectFilter.YES ? true : false || undefined,
+            ['Filters.Tags']: filters.tags || undefined
           },
+                paramsSerializer: {
+        serialize: (params) =>
+          qs.stringify(params, { arrayFormat: "repeat" })
+      }
         },
       );  
 
