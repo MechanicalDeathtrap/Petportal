@@ -24,7 +24,7 @@ const getFooterConfig = () => {
       };
     case StateOfProject.InProgress:
       return {
-        text: "В процессе",
+        text: "В процессе работы",
         className: styles["project-card--inprogress-stage-color"],
         textColorClass: "white",
       };  

@@ -29,7 +29,7 @@ export const ProjectList = ({
   const [projects, setProjects] = useState<Project[]>([]);
   const [projectCount, setProjectCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const { filters } = useFilterContext();
+  const { filters, triggerFetch } = useFilterContext();
 
   const fetchProjects = async (nextPage: number) => {
     try {
@@ -43,7 +43,7 @@ export const ProjectList = ({
             SortOrtder: "asc",
             [`Filters.Role`]: filters.role || undefined,
             // [`Filters.Deadline`]: filters.terms || undefined,
-            [`Filters.StateOfProject`]: filters.terms || undefined,
+            [`Filters.StateOfProject`]: filters.terms !== null && filters.terms !== undefined ? filters.terms : undefined,
             [`Filters.IsCommercial`]: filters.isCommercial  === IsCommercialProjectFilter.YES ? true : false || undefined,
             ['Filters.Tags']: filters.tags || undefined
           },
@@ -82,8 +82,8 @@ export const ProjectList = ({
         setProjects(response.data.projects);
         setProjectCount(response.data.projectsCount);
       }
-    });
-  }, [searchQuery, sort]);
+    }); 
+  }, [searchQuery, sort, triggerFetch]);
 
   // useEffect(() => {
   //   fetchProjects();

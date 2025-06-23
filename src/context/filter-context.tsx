@@ -16,6 +16,7 @@ export type FilterContextType = {
   // setFilters: FilterActions;
   applyFilters: () => void;
   resetFilters: () => void;
+  triggerFetch: number;
 };
 
 const FilterContext = createContext<FilterContextType | null>(null);
@@ -29,16 +30,19 @@ export const useFilterContext = () => {
 };
 
 export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [triggerFetch, setTriggerFetch] = useState(0);
+
   const initialFilterState = {
     role: "",
     terms: null,
     isCommercial: "",
-    tags: [],
+    tags: []
   };  
 
   const resetFilters = () => {
     setTempFilters(initialFilterState);
     setFilters(initialFilterState);
+    setTriggerFetch(prev => prev + 1);
   };
 
   const [filters, setFilters] = useState<FilterState>(initialFilterState);
@@ -50,6 +54,7 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const handleApplyFilters = () => {
     setFilters(tempFilters); // Сохраняем временные как основные
+    setTriggerFetch(prev => prev + 1);
   };
 
   const value = {
@@ -57,7 +62,8 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     tempFilters,
     setTempFilters: handleSetTempFilters,
     applyFilters: handleApplyFilters,
-    resetFilters
+    resetFilters,
+    triggerFetch
   };
 
   return (

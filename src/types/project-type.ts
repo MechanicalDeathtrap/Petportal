@@ -18,9 +18,10 @@ export type Project = {
 };
 
 export const StateOfProject = {
-  Open: 0,
-  InProgress: 1,
-  Closed: 2,
+  NotSelected: 0,
+  Open: 1,
+  InProgress: 2,
+  Closed: 3,
 } as const;
 
 export type StateOfProject = typeof StateOfProject[keyof typeof StateOfProject];
