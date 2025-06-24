@@ -377,8 +377,10 @@ export const MyCabinetSettings = observer(({ onSave }: Props) => {
                             />
                             <Field
                               name={`experience[${realIndex}].workYears`}
-                              placeholder="Продолжительность"
+                              placeholder="Продолжительность (в годах)"
+                              type="number" 
                               className={style["my-cabinet__form-field"]}
+                              min="0" 
                             />
                             <button
                               type="button"
