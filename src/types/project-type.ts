@@ -13,8 +13,9 @@ export type Project = {
   stateOfProject: StateOfProject;
   isBusinessProject: boolean;
   avatarImageBase64: string;
-  budget: number;
+  budget: number | undefined;
   tags: string[];
+  executors: string[];
 };
 
 export enum StateOfProject {

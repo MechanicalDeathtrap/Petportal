@@ -20,7 +20,7 @@ export const ProjectList = ({ searchQuery, needToFetch, setNeedToFetch }: Projec
 
   const fetchProjects = async (nextPage: number) => {
         try {
-          const response = await axios.get<ProjectsDto>("http://localhost:5140/api/Projects/", {
+          const response = await axios.get<ProjectsDto>("http://pet-projects.online:5140/api/Projects?SortItem=date&Offset=10&Page=1", {
               params: {
                 SearchElement: searchQuery || undefined,
                 Page: nextPage || undefined,

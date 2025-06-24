@@ -1,9 +1,10 @@
 import style from "./create-project.module.sass"
-import { Field, Form, Formik, useField, useFormikContext  } from "formik";
+import { Field, Form, Formik} from "formik";
 import {StateOfProject, Project} from "../../../types/project-type"
 import * as Yup from "yup";
 import { useState } from "react";
 import { Button } from "../../button/button.tsx";
+import { TagsInput } from "../../tags-input/tags-input.tsx";
 
 export const CreateProject = () => {
   const [charCounts, setCharCounts] = useState<Record<string, number>>({
@@ -13,12 +14,14 @@ export const CreateProject = () => {
     requirements: 0,
     result: 0,
   })
-  const availableTags = ["NodeJS", "React", "TypeScript", "Python", "Sass"];
+
   const [inputTag, setInputTag] = useState("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const stackTags = ["Node.js", "React", "TypeScript", "Python", "Sass"];
 
-  const {  setFieldValue } = useFormikContext<Project>();
-  const [field] = useField("tags");
+  const [inputExecutor, setInputExecutor] = useState("");
+  const [suggestionsExecutors, setSuggestionsExecutors] = useState<string[]>([]);
+  const executorsTags = ["BackEnd-разработчик", "FrontEnd-разработчик"]
 
   const initialValues: Project = {
     id: "",
@@ -35,8 +38,9 @@ export const CreateProject = () => {
     stateOfProject: StateOfProject.Open,
     isBusinessProject: false,
     avatarImageBase64: "",
-    budget: 0,
-    tags: []
+    budget: undefined,
+    tags: [],
+    executors: []
   };
 
   const validationSchema = Yup.object().shape({
@@ -50,26 +54,34 @@ export const CreateProject = () => {
 
     requirements: Yup.string()
       .min(20, "Опишите требования более подробно!")
-      .required("Введите ваши ожидания от исполнителя!"),
+      .required("Введите ваши ожидания от исполнителя"),
 
     teamDescription: Yup.string()
       .min(20, "Опишите состав исполнителей более подробно!")
-      .required("Опишите кого вы ищите!"),
+      .required("Опишите кого вы ищите"),
 
     result: Yup.string()
       .min(10, "Опишите формат результата подробнее")
-      .notRequired(),
+      .required("Опишите формат результата"),
 
     budget: Yup.number()
-      .min(0, "Бюджет не может быть отрицательным")
+      .transform((value, originalValue) =>
+        String(originalValue).trim() === "" ? undefined : value
+      )
       .notRequired()
+      .min(0, "Бюджет не может быть отрицательным")
       .test(
-        "starts-with-non-zero",
+        "no-leading-zero",
         "Бюджет не должен начинаться с нуля",
-        value => value === undefined || /^[1-9]/.test(String(value))
+        function (value) {
+          if (value === undefined || value === null) return true;
+          const original = this.originalValue?.toString();
+          return !/^0\d+/.test(original); // отклоняем значения вроде 0123
+        }
       ),
 
     tags: Yup.array().of(Yup.string()).min(1, "Добавьте хотя бы один тег"),
+    executors: Yup.array().of(Yup.string()).min(1, "Добавьте хотя бы одного исполнителя"),
 
     applyingDeadline: Yup.date()
       .min(new Date(), "Дата не может быть в прошлом")
@@ -91,31 +103,6 @@ export const CreateProject = () => {
     setFieldValue(fieldName, value);
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setInputTag(value)
-    const filtered = availableTags.filter(tag =>
-      tag.toLowerCase().includes(value.toLowerCase())
-    )
-    setSuggestions(filtered.length ? filtered : [value])
-  }
-
-  const handleAddTag = (tag: string) => {
-    const currentTags = field.value || [];
-    if (!currentTags.includes(tag)) {
-      setFieldValue("tags", [...currentTags, tag])
-    }
-    setInputTag("")
-    setSuggestions([])
-  }
-
-  const handleRemoveTag = (tag: string) => {
-    setFieldValue(
-      "tags",
-      field.value.filter((t: string) => t !== tag)
-    )
-  }
-
   const handleSubmit = () =>{
 
   }
@@ -129,7 +116,7 @@ export const CreateProject = () => {
           onSubmit={handleSubmit}
           validationSchema={validationSchema}
         >
-          {({ errors, touched,  setFieldValue }) => (
+          {({ errors, touched,  setFieldValue, values }) => (
             <Form className={style["create-project__form"]}>
               <label>
                 Название проекта
@@ -162,37 +149,17 @@ export const CreateProject = () => {
 
               <label>
                 Теги
+                <p className={style["create-project__field-description"]}>Укажите теги, которые характеризуют ваш проект</p>
                 {/*<Field name="tags" placeholder="Например: NodeJS, React" />*/}
-                <div>
-                  <button type="button" onClick={() => setInputTag("")}>+ Тег</button>
-
-                  {inputTag !== "" && (
-                    <>
-                      <input
-                        type="text"
-                        value={inputTag}
-                        onChange={handleInputChange}
-                        placeholder="Введите тег"
-                      />
-                      <ul>
-                        {suggestions.map((tag, idx) => (
-                          <li key={idx} onClick={() => handleAddTag(tag)}>
-                            {tag}
-                          </li>
-                        ))}
-                      </ul>
-                    </>
-                  )}
-
-                  <div className={style["tag-list"]}>
-                    {field.value.map((tag: string, idx: number) => (
-                      <span key={idx} className={style["tag"]}>
-        {tag}
-                        <button type="button" onClick={() => handleRemoveTag(tag)}>×</button>
-      </span>
-                    ))}
-                  </div>
-                </div>
+                <TagsInput
+                  availableTags= {stackTags}
+                  name="tags"
+                  inputTag={inputTag}
+                  setInputTag={setInputTag}
+                  suggestions={suggestions}
+                  setSuggestions={setSuggestions}
+                  error={errors.tags && touched.tags ? errors.tags : ""}
+                />
 
               </label>
 
@@ -213,7 +180,20 @@ export const CreateProject = () => {
 
               <label>
                 Исполнители
-                <Field name="ownerName" placeholder="Укажите, кого вы ищите" />
+                <p className={style["create-project__field-description"]}>Укажите, кого вы ищите</p>
+                <TagsInput
+                  availableTags= {executorsTags}
+                        name="executors"
+                        inputTag={inputExecutor}
+                        setInputTag={setInputExecutor}
+                        suggestions={suggestionsExecutors}
+                        setSuggestions={setSuggestionsExecutors}
+                        error={
+                         touched.executors && errors.executors
+                             ? (errors.executors as string)
+                               : ""
+                           }
+                        />
               </label>
 
               <label>
@@ -271,16 +251,39 @@ export const CreateProject = () => {
 
               <label>
                 Бюджет проекта
-                <Field type="number" name="budget" placeholder="₽" className={style["create-project__form-field"]}/>
+                <Field
+                  type="number"
+                  name="budget"
+                  placeholder="100₽"
+                  min={0}
+                  className={style["create-project__form-field"]}
+                  disabled={values.isBusinessProject}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    let value = e.target.value;
+                    // Если начинается с 0 и длина больше 1, убираем ведущий ноль
+                    if (/^0\d+/.test(value)) {
+                      value = value.replace(/^0+/, '');
+                    }
+                    setFieldValue("budget", value);
+                  }}
+                />
                 {errors.budget && touched.budget && (
                   <div style={{position:"relative"}}>
-                  <div className={style["create-project__form--error"]}>{errors.budget}</div>
+                  <div className={style["create-project__form--error-no-floating"]}>{errors.budget}</div>
                   </div>
                 )}
-                <label>
-                  <Field type="checkbox" name="isBusinessProject" className={style["create-project__form-field"]}/>
-                  По договорённости
-                </label>
+                <div className={style["create-project__form-checkbox"]}>
+                  <Field
+                    type="checkbox"
+                    name="isBusinessProject"
+                    checked={values.isBusinessProject}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setFieldValue("isBusinessProject", e.target.checked);
+                      if (e.target.checked) setFieldValue("budget", "");
+                    }}
+                  />
+                  <label>По договорённости</label>
+                </div>
               </label>
 
               <div className={style["create-project__form-button"]}>
