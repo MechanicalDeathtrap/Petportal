@@ -1,17 +1,69 @@
-/* Error: Can't find stylesheet to import.
- *   ,
- * 3 | @import "src/colors/colors.sass"
- *   |         ^^^^^^^^^^^^^^^^^^^^^^^^
- *   '
- *   App.sass 3:9  root stylesheet */
-
-body::before {
-  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
-    "Droid Sans Mono", monospace, monospace;
-  white-space: pre;
-  display: block;
-  padding: 1em;
-  margin-bottom: 1em;
-  border-bottom: 2px solid black;
-  content: 'Error: Can\'t find stylesheet to import.\a   \2577 \a 3 \2502  @import "src/colors/colors.sass"\d\a   \2502          ^^^^^^^^^^^^^^^^^^^^^^^^\a   \2575 \a   App.sass 3:9  root stylesheet';
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@300..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+body {
+  background-color: rgba(217, 217, 217, 0.4);
+  box-sizing: border-box;
+  font-family: Inter, sans-serif;
+  user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+ol {
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-family: Rubik, sans-serif;
+}
+
+p {
+  margin: 0;
+}
+
+input {
+  border: none;
+  padding: 0;
+}
+
+input:focus-visible {
+  outline: none;
+}
+
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+::-webkit-scrollbar {
+  background-color: rgb(26, 147, 204);
+  width: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+/*# sourceMappingURL=App.css.map */

@@ -1,17 +1,65 @@
-/* Error: Can't find stylesheet to import.
- *   ,
- * 1 | @import "src/colors/colors.sass"
- *   |         ^^^^^^^^^^^^^^^^^^^^^^^^
- *   '
- *   button.module.sass 1:9  root stylesheet */
-
-body::before {
-  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
-    "Droid Sans Mono", monospace, monospace;
-  white-space: pre;
-  display: block;
-  padding: 1em;
-  margin-bottom: 1em;
-  border-bottom: 2px solid black;
-  content: 'Error: Can\'t find stylesheet to import.\a   \2577 \a 1 \2502  @import "src/colors/colors.sass"\d\a   \2502          ^^^^^^^^^^^^^^^^^^^^^^^^\a   \2575 \a   button.module.sass 1:9  root stylesheet';
+.button {
+  border-radius: 15px;
+  font-size: 23px;
+  padding: 15px 30px;
+  width: fit-content;
+  font-weight: 600;
 }
+
+.blue-button, .blue-button-projects {
+  color: rgb(255, 255, 255);
+  background-color: rgb(26, 147, 204);
+  transition: background-color 0.7s;
+}
+
+.blue-button:hover, .blue-button-header:hover, .blue-button-projects:hover {
+  background-color: rgba(26, 147, 204, 0.5);
+}
+
+.white-button, .white-auth-button, .white-small-button {
+  color: rgb(0, 0, 0);
+  background-color: rgb(255, 255, 255);
+  transition: background-color 0.7s;
+}
+
+.white-button:hover, .white-auth-button:hover, .white-small-button:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.blue-button-header, .grey-button {
+  color: rgb(255, 255, 255);
+  background-color: rgb(26, 147, 204);
+  transition: background-color 0.7s;
+  font-size: 15px;
+  padding: 10px 25px;
+  font-weight: 600;
+}
+
+.white-small-button {
+  font-size: 15px;
+  padding: 10px 25px;
+  font-weight: 600;
+}
+
+.blue-button-projects {
+  border-radius: 15px;
+  font-size: 18px;
+  padding: 11px 30px;
+  width: fit-content;
+  font-weight: 400;
+}
+
+.white-auth-button, .grey-button, .white-small-button {
+  color: rgb(26, 147, 204);
+}
+
+.grey-button {
+  transition: background-color 0.7s;
+  background-color: rgb(236, 234, 234);
+}
+
+.grey-button:hover {
+  background-color: rgb(217, 217, 217);
+}
+
+/*# sourceMappingURL=button.module.css.map */

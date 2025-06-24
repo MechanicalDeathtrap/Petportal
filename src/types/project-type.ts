@@ -15,6 +15,7 @@ export type Project = {
   avatarImageBase64: string;
   budget: number;
   tags: { id: string; name: string }[];
+  executors: string[];
 };
 
 export const StateOfProject = {
