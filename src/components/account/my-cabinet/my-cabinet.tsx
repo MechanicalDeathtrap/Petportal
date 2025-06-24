@@ -36,9 +36,12 @@ export const MyCabinet = () => {
 
   const fetchUserData = async () => {
     try {
-      const res = await axios.get("http://localhost:5140/api/Authorization/me", {
-        withCredentials: true,
-      });
+      const res = await axios.get(
+        "http://localhost:5140/api/Authorization/me",
+        {
+          withCredentials: true,
+        },
+      );
 
       const dto = res.data;
 
@@ -209,10 +212,12 @@ export const MyCabinet = () => {
           </Accordion>
         </section>
       ) : (
-        <MyCabinetSettings onSave={() => {
-          setSettingsOpen(false); 
-          fetchUserData();
-        }} />
+        <MyCabinetSettings
+          onSave={() => {
+            setSettingsOpen(false);
+            fetchUserData();
+          }}
+        />
       )}
     </>
   );
