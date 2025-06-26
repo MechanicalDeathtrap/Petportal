@@ -37,7 +37,9 @@ const validationSchema = Yup.object().shape({
   ),
   stack: Yup.array().of(
     Yup.object().shape({
-      programmingLanguage: Yup.string().required("Укажите язык программирования"),
+      programmingLanguage: Yup.string().required(
+        "Укажите язык программирования",
+      ),
       programmingLevel: Yup.string().required("Выберите уровень"),
       programmingYears: Yup.number()
         .positive("Количество лет должно быть положительным")
@@ -60,9 +62,12 @@ export const MyCabinetSettings = observer(({ onSave }: Props) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get("http://localhost:5140/api/Authorization/me", {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          "http://localhost:5140/api/Authorization/me",
+          {
+            withCredentials: true,
+          },
+        );
         const data = response.data;
 
         const mapped: CabinetSettings = {
@@ -207,7 +212,9 @@ export const MyCabinetSettings = observer(({ onSave }: Props) => {
         {({ values, errors, touched, setFieldValue }) => (
           <Form className={style["my-cabinet"]}>
             {/* Личная информация */}
-            <section className={`${style["my-cabinet__info-section"]} ${style["my-cabinet__flex"]}`}>
+            <section
+              className={`${style["my-cabinet__info-section"]} ${style["my-cabinet__flex"]}`}
+            >
               <div className={style["my-cabinet__main-info-fields"]}>
                 <h3>Личная информация</h3>
                 <Field
@@ -295,15 +302,20 @@ export const MyCabinetSettings = observer(({ onSave }: Props) => {
               <h3>Образование</h3>
               <FieldArray name="education">
                 {({ push }) => {
-                  const visibleEducations = values.education.filter((e) => e.isActive);
+                  const visibleEducations = values.education.filter(
+                    (e) => e.isActive,
+                  );
                   return (
                     <>
-                      {visibleEducations.map((_, index) => {
+                      {visibleEducations.map((_) => {
                         const realIndex = values.education.findIndex(
-                          (edu) => edu === _
+                          (edu) => edu === _,
                         );
                         return (
-                          <div key={realIndex} className={style["my-cabinet__added-fields"]}>
+                          <div
+                            key={realIndex}
+                            className={style["my-cabinet__added-fields"]}
+                          >
                             <Field
                               name={`education[${realIndex}].university`}
                               placeholder="Вуз"
@@ -322,7 +334,10 @@ export const MyCabinetSettings = observer(({ onSave }: Props) => {
                             <button
                               type="button"
                               onClick={() =>
-                                setFieldValue(`education[${realIndex}].isActive`, false)
+                                setFieldValue(
+                                  `education[${realIndex}].isActive`,
+                                  false,
+                                )
                               }
                               className={style["my-cabinet__remove-button"]}
                             >
@@ -356,15 +371,20 @@ export const MyCabinetSettings = observer(({ onSave }: Props) => {
               <h3>Опыт работы</h3>
               <FieldArray name="experience">
                 {({ push }) => {
-                  const visibleExperiences = values.experience.filter((e) => e.isActive);
+                  const visibleExperiences = values.experience.filter(
+                    (e) => e.isActive,
+                  );
                   return (
                     <>
-                      {visibleExperiences.map((_, index) => {
+                      {visibleExperiences.map((_) => {
                         const realIndex = values.experience.findIndex(
-                          (exp) => exp === _
+                          (exp) => exp === _,
                         );
                         return (
-                          <div key={realIndex} className={style["my-cabinet__added-fields"]}>
+                          <div
+                            key={realIndex}
+                            className={style["my-cabinet__added-fields"]}
+                          >
                             <Field
                               name={`experience[${realIndex}].workPlace`}
                               placeholder="Место работы"
@@ -377,13 +397,18 @@ export const MyCabinetSettings = observer(({ onSave }: Props) => {
                             />
                             <Field
                               name={`experience[${realIndex}].workYears`}
-                              placeholder="Продолжительность"
+                              placeholder="Продолжительность (в годах)"
+                              type="number"
                               className={style["my-cabinet__form-field"]}
+                              min="0"
                             />
                             <button
                               type="button"
                               onClick={() =>
-                                setFieldValue(`experience[${realIndex}].isActive`, false)
+                                setFieldValue(
+                                  `experience[${realIndex}].isActive`,
+                                  false,
+                                )
                               }
                               className={style["my-cabinet__remove-button"]}
                             >
@@ -420,12 +445,15 @@ export const MyCabinetSettings = observer(({ onSave }: Props) => {
                   const visibleStacks = values.stack.filter((s) => s.isActive);
                   return (
                     <>
-                      {visibleStacks.map((_, index) => {
+                      {visibleStacks.map((_) => {
                         const realIndex = values.stack.findIndex(
-                          (s) => s === _
+                          (s) => s === _,
                         );
                         return (
-                          <div key={realIndex} className={style["my-cabinet__added-fields"]}>
+                          <div
+                            key={realIndex}
+                            className={style["my-cabinet__added-fields"]}
+                          >
                             <Field
                               name={`stack[${realIndex}].programmingLanguage`}
                               placeholder="Язык"
@@ -451,7 +479,10 @@ export const MyCabinetSettings = observer(({ onSave }: Props) => {
                             <button
                               type="button"
                               onClick={() =>
-                                setFieldValue(`stack[${realIndex}].isActive`, false)
+                                setFieldValue(
+                                  `stack[${realIndex}].isActive`,
+                                  false,
+                                )
                               }
                               className={style["my-cabinet__remove-button"]}
                             >

@@ -34,46 +34,52 @@ export const MyCabinet = () => {
       });
   }, [userData?.avatarUrl]);
 
+  const fetchUserData = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:5140/api/Authorization/me",
+        {
+          withCredentials: true,
+        },
+      );
+
+      const dto = res.data;
+
+      const mapped: UserData = {
+        id: dto.id,
+        avatarUrl: dto.avatarUrl,
+        firstName: dto.name.split(" ")[0],
+        lastName: dto.name.split(" ")[1] ?? "",
+        country: dto.country,
+        town: dto.city,
+        phoneNumber: dto.phone,
+        email: dto.email,
+        telegram: dto.telegram,
+        education: dto.educations.map((e: any) => ({
+          university: e.university,
+          specialization: e.speciality,
+          releaseYear: e.releaseYear,
+        })),
+        experience: dto.experiences.map((e: any) => ({
+          workPlace: e.workPlace,
+          workPosition: e.workPosition,
+          workYears: e.workYears,
+        })),
+        stack: dto.stacks.map((s: any) => ({
+          programmingLanguage: s.programmingLanguage,
+          programmingLevel: s.programmingLevel.toString(),
+          programmingYears: s.programmingYears,
+        })),
+      };
+
+      setUserData(mapped);
+    } catch (err) {
+      console.error("Ошибка загрузки профиля:", err);
+    }
+  };
+
   useEffect(() => {
-    axios
-      .get("http://localhost:5140/api/Authorization/me", {
-        withCredentials: true,
-      })
-      .then((res) => {
-        const dto = res.data;
-
-        const mapped: UserData = {
-          id: dto.id,
-          avatarUrl: dto.avatarUrl,
-          firstName: dto.name.split(" ")[0],
-          lastName: dto.name.split(" ")[1] ?? "",
-          country: dto.country,
-          town: dto.city,
-          phoneNumber: dto.phone,
-          email: dto.email,
-          telegram: dto.telegram,
-          education: dto.educations.map((e: any) => ({
-            university: e.university,
-            specialization: e.speciality,
-            releaseYear: e.releaseYear,
-          })),
-          experience: dto.experiences.map((e: any) => ({
-            workPlace: e.workPlace,
-            workPosition: e.workPosition,
-            workYears: e.workYears,
-          })),
-          stack: dto.stacks.map((s: any) => ({
-            programmingLanguage: s.programmingLanguage,
-            programmingLevel: s.programmingLevel.toString(),
-            programmingYears: s.programmingYears,
-          })),
-        };
-
-        setUserData(mapped);
-      })
-      .catch((err) => {
-        console.error("Ошибка загрузки профиля:", err);
-      });
+    fetchUserData();
   }, []);
 
   const handleSettingsOpen = () => {
@@ -206,7 +212,12 @@ export const MyCabinet = () => {
           </Accordion>
         </section>
       ) : (
-        <MyCabinetSettings onSave={() => setSettingsOpen(false)} />
+        <MyCabinetSettings
+          onSave={() => {
+            setSettingsOpen(false);
+            fetchUserData();
+          }}
+        />
       )}
     </>
   );
