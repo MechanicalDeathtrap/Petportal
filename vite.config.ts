@@ -4,12 +4,18 @@ import react from "@vitejs/plugin-react";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  /*  server: {
-    https: {
+    server: {
+	    host: '0.0.0.0',
+	allowedHosts: [
+      'pet-projects.online',
+      'www.pet-projects.online'
+    ],
+    /*https: {
       key: fs.readFileSync('localhost-key.pem'),
       cert: fs.readFileSync('localhost.pem'),
-    },
+    },*/
     port: 5173,
-  },*/
-  plugins: [react()],
+  plugins: [react()
+  ]
+    }
 });
