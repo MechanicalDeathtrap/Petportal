@@ -59,6 +59,7 @@ export const AsideFilters = () => {
           onChange={handleChangeCommercial}
         />
       <div>
+        Бюджет
         <InputFilters />
       </div>
       <MultiSelectFilter />
