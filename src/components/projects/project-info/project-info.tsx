@@ -32,7 +32,7 @@ export const ProjectInfo = () => {
   const getProject = async () => {
     try {
       const response = await axios.get<Project>(
-        `http://localhost:5140/api/Projects/${projectId}`,
+        `/api/Projects/${projectId}`,
       );
       handleProject(response.data);
     } catch (error) {
