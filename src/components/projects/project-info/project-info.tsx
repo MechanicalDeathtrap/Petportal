@@ -32,7 +32,7 @@ export const ProjectInfo = () => {
   const getProject = async () => {
     try {
       const response = await axios.get<Project>(
-        `/api/Projects/${projectId}`,
+       `${import.meta.env.VITE_API_URL}/Projects/${projectId}`,
       );
       handleProject(response.data);
     } catch (error) {

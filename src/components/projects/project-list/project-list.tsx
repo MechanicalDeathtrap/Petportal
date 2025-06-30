@@ -34,7 +34,7 @@ export const ProjectList = ({
   const fetchProjects = async (nextPage: number) => {
     try {
       const response = await axios.get<ProjectsDto>(
-        "/api/Projects/",
+        `${import.meta.env.VITE_API_URL}/Projects/`,
         {
           params: {
             SearchElement: searchQuery || undefined,
