@@ -2,9 +2,10 @@ import { SelectFilter } from "./selects/select-filter.tsx";
 import styles from "./aside-filters.module.sass";
 import { InputFilters } from "./input-filters.tsx";
 import { MultiSelectFilter } from "./selects/multi-select-filter.tsx";
-import { Button, SelectChangeEvent } from "@mui/material";
+import {SelectChangeEvent } from "@mui/material";
 import { useFilterContext } from "../../context/filter-context.tsx";
 import { getStateLabel, getStateValue, StateOfProject } from "../../types/project-type.ts";
+import { Button } from "../button/button.tsx";
 
 export enum IsCommercialProjectFilter {
   YES = "Да",
@@ -63,27 +64,26 @@ export const AsideFilters = () => {
         <InputFilters />
       </div>
       <MultiSelectFilter />
+      <div className={styles["buttons"]}>
+        <div className={styles["button-wrapper"]}>
+          <Button
+            type="button"
+            style="grey-button"
+            text="Сбросить фильтры"
+            onClick={resetFilters}
+          />
+        </div>
 
-      <div className={styles["button-wrapper"]}>
-        <Button
-          variant="text"
-          className={styles["reset-button"]}
-          onClick={resetFilters}
-        >
-          Сбросить фильтры
-        </Button>
+        <div className={styles["button-wrapper"]}>
+          <Button
+            style="blue-button-header"
+            onClick={applyFilters}
+            type="submit"
+            text="Применить"
+          />
+        </div>
       </div>
 
-      <div className={styles["button-wrapper"]}>
-        <Button
-          variant="outlined"
-          className={styles["apply-button"]}
-          onClick={applyFilters}
-          type="submit"
-        >
-          Применить
-        </Button>
-      </div>
     </aside>
   );
 };

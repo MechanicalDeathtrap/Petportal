@@ -243,7 +243,7 @@ export const CreateProject = () => {
 
               <label>
                 Крайний срок приёма заявок
-                <Field type="date" name="applyingDeadline" className={style["create-project__form-field"]}/>
+                <Field type="date" name="applyingDeadline" className={style["create-project__form-field create-project__date-input"]}/>
                 {errors.applyingDeadline && touched.applyingDeadline && (
                   <div style={{position:"relative"}}>
                     <div className={style["create-project__form--error"]}>{errors.applyingDeadline}</div>
@@ -254,7 +254,7 @@ export const CreateProject = () => {
 
               <label>
                 Сроки выполнения
-                <Field type="date" name="deadline" className={style["create-project__form-field"]}/>
+                <Field type="date" name="deadline" className={style["create-project__form-field create-project__date-input"]}/>
                 {errors.deadline && touched.deadline && (
                   <div style={{position:"relative"}}>
                     <div className={style["create-project__form--error"]}>{errors.deadline}</div>
