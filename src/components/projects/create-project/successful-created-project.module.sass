@@ -1,0 +1,27 @@
+@import "/src/mixins/mixins"
+@import "/src/assets/colors/colors.sass"
+
+.successful-created-project
+  display: flex
+  justify-content: center
+
+  &__logo
+    margin-bottom: 2rem
+
+  & > div
+    margin: 2.438rem 0
+    background-color: $background-white
+    border-radius: 20px
+    padding: 2.688rem 4.063rem
+    width: fit-content
+    display: flex
+    flex-direction: column
+    align-items: center
+
+    & h2
+      font-size: 1.5rem
+      margin-bottom: 1rem
+
+  &__link
+    color: $primary-color
+    text-decoration: underline
