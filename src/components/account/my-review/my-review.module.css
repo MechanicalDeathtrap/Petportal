@@ -1,7 +1,7 @@
 /* Error: Can't find stylesheet to import.
  *   ,
- * 1 | @import "/src/colors/colors"
- *   |         ^^^^^^^^^^^^^^^^^^^^
+ * 1 | @import "/src/assets/colors/colors"
+ *   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
  *   '
  *   my-review.module.sass 1:9  root stylesheet */
 
