@@ -5,6 +5,7 @@ import * as Yup from "yup";
 import { useState } from "react";
 import { Button } from "../../button/button.tsx";
 import { TagsInput } from "../../tags-input/tags-input.tsx";
+import { useNavigate } from "react-router-dom";
 
 export const CreateProject = () => {
   const [charCounts, setCharCounts] = useState<Record<string, number>>({
@@ -22,6 +23,7 @@ export const CreateProject = () => {
   const [inputExecutor, setInputExecutor] = useState("");
   const [suggestionsExecutors, setSuggestionsExecutors] = useState<string[]>([]);
   const executorsTags = ["BackEnd-разработчик", "FrontEnd-разработчик"]
+  const navigate = useNavigate()
 
   const initialValues: Project = {
     id: "",
@@ -38,7 +40,7 @@ export const CreateProject = () => {
     stateOfProject: StateOfProject.Open,
     isBusinessProject: false,
     avatarImageBase64: "",
-    budget: undefined,
+    budget: 0,
     tags: [],
     executors: []
   };
@@ -107,6 +109,13 @@ export const CreateProject = () => {
 
   }
 
+  const handleCreateProjectSuccess = () =>{
+    const isCreated = true
+    if (isCreated) {
+      navigate("/create-project-success")
+    }
+  }
+
   return (
     <section className={style["create-project"]}>
       <div>
@@ -126,7 +135,7 @@ export const CreateProject = () => {
                        }/>
                 {errors.name && touched.name && (
                   <div style={{position:"relative"}}>
-                  <div className={style["create-project__form--error"]}>{errors.name}</div>
+                    <div className={style["create-project__form--error"]}>{errors.name}</div>
                   </div>
                 )}
                 <span className={style["create-project__form-chars-number"]}>{charCounts["name"]} / 100</span>
@@ -141,7 +150,7 @@ export const CreateProject = () => {
                        }/>
                 {errors.description && touched.description && (
                   <div style={{position:"relative"}}>
-                  <div className={style["create-project__form--error"]}>{errors.description}</div>
+                    <div className={style["create-project__form--error"]}>{errors.description}</div>
                   </div>
                 )}
                 <span className={style["create-project__form-chars-number"]}>{charCounts["description"]} / 300</span>
@@ -158,7 +167,11 @@ export const CreateProject = () => {
                   setInputTag={setInputTag}
                   suggestions={suggestions}
                   setSuggestions={setSuggestions}
-                  error={errors.tags && touched.tags ? errors.tags : ""}
+                  error={
+                    touched.tags && errors.tags
+                      ? (errors.tags as string)
+                      : ""
+                  }
                 />
 
               </label>
@@ -183,17 +196,17 @@ export const CreateProject = () => {
                 <p className={style["create-project__field-description"]}>Укажите, кого вы ищите</p>
                 <TagsInput
                   availableTags= {executorsTags}
-                        name="executors"
-                        inputTag={inputExecutor}
-                        setInputTag={setInputExecutor}
-                        suggestions={suggestionsExecutors}
-                        setSuggestions={setSuggestionsExecutors}
-                        error={
-                         touched.executors && errors.executors
-                             ? (errors.executors as string)
-                               : ""
-                           }
-                        />
+                  name="executors"
+                  inputTag={inputExecutor}
+                  setInputTag={setInputExecutor}
+                  suggestions={suggestionsExecutors}
+                  setSuggestions={setSuggestionsExecutors}
+                  error={
+                    touched.executors && errors.executors
+                      ? (errors.executors as string)
+                      : ""
+                  }
+                />
               </label>
 
               <label>
@@ -206,7 +219,7 @@ export const CreateProject = () => {
                        }/>
                 {errors.requirements && touched.requirements && (
                   <div style={{position:"relative"}}>
-                  <div className={style["create-project__form--error"]}>{errors.requirements}</div>
+                    <div className={style["create-project__form--error"]}>{errors.requirements}</div>
                   </div>
                 )}
                 <span className={style["create-project__form-chars-number"]}>{charCounts["requirements"]} / 300</span>
@@ -222,7 +235,7 @@ export const CreateProject = () => {
                        }/>
                 {errors.result && touched.result && (
                   <div style={{position:"relative"}}>
-                  <div className={style["create-project__form--error"]}>{errors.result}</div>
+                    <div className={style["create-project__form--error"]}>{errors.result}</div>
                   </div>
                 )}
                 <span className={style["create-project__form-chars-number"]}>{charCounts["result"]} / 300</span>
@@ -244,7 +257,7 @@ export const CreateProject = () => {
                 <Field type="date" name="deadline" className={style["create-project__form-field"]}/>
                 {errors.deadline && touched.deadline && (
                   <div style={{position:"relative"}}>
-                  <div className={style["create-project__form--error"]}>{errors.deadline}</div>
+                    <div className={style["create-project__form--error"]}>{errors.deadline}</div>
                   </div>
                 )}
               </label>
@@ -269,7 +282,7 @@ export const CreateProject = () => {
                 />
                 {errors.budget && touched.budget && (
                   <div style={{position:"relative"}}>
-                  <div className={style["create-project__form--error-no-floating"]}>{errors.budget}</div>
+                    <div className={style["create-project__form--error-no-floating"]}>{errors.budget}</div>
                   </div>
                 )}
                 <div className={style["create-project__form-checkbox"]}>
@@ -289,7 +302,8 @@ export const CreateProject = () => {
               <div className={style["create-project__form-button"]}>
                 <Button              type="submit"
                                      style="blue-button-header"
-                                     text="Опубликовать"/>
+                                     text="Опубликовать"
+                                     onClick={handleCreateProjectSuccess}/>
               </div>
 
             </Form>
