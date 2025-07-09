@@ -11,9 +11,9 @@ interface ProjectCardProps {
 export const ProjectCard = ({ project }: ProjectCardProps) => {
   const base64Image = project.avatarImageBase64
     ? `data:image/jpeg;base64,${project.avatarImageBase64}`
-    : "public/img/blank-avatar.png"; // Запасной вариант
+    : "/img/blank-avatar.png"; // Запасной вариант
 
-
+ 
 const getFooterConfig = () => {
   switch (project.stateOfProject) {
     case StateOfProject.Open:
