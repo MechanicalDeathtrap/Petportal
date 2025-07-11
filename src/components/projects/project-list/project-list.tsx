@@ -34,7 +34,7 @@ export const ProjectList = ({
   const fetchProjects = async (nextPage: number) => {
     try {
       const response = await axios.get<ProjectsDto>(
-        `${import.meta.env.VITE_API_URL}/Projects/`,
+        `/api/Projects/`,
         {
           params: {
             SearchElement: searchQuery || undefined,
@@ -54,7 +54,7 @@ export const ProjectList = ({
         },
       );  
 
-      console.log(filters.role);
+      console.log(response);
 
       return response;
     } catch (error) {
@@ -93,12 +93,12 @@ export const ProjectList = ({
     <div className={styles["project-list"]}>
       <h2>Проектов найдено: {`${projectCount}`}</h2>
       <ul>
-        {" "}
-        {projects.map((project) => (
-          <li key={project.id} className={styles["project-list__project"]}>
-            <ProjectCard project={project} />
-          </li>
-        ))}
+        {Array.isArray(projects) &&
+          projects.map((project) => (
+            <li key={project.id} className={styles["project-list__project"]}>
+              <ProjectCard project={project} />
+            </li>
+          ))}
       </ul>
     </div>
   );
