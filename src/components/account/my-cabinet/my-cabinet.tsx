@@ -150,6 +150,17 @@ export const MyCabinet = () => {
               </p>
             </div>
           </div>
+          <div className={style["my-cabinet__registration-error"]}>
+            <h2>У вас непроверенные данные о компании, поэтому сервис работает с ограничениями.</h2>
+            <h3>Для подтверждения регистрации отправьте на почту <span>daukaevk@gmail.com</span>
+              &#160;один из следующих документов:</h3>
+            <ol className={style["my-cabinet__registration-error-list"]}>
+              <li>Свидетельство о государственной регистрации ЮЛ/ИП</li>
+              <li>Свидетельство о постановке на налоговый учёт ЮЛ/ИП</li>
+              <li>Лист записи ЕГРЮЛ/ЕГРИП, его можно получить в личном кабинете на <a
+                href="https://www.nalog.gov.ru/">nalog.gov.ru</a></li>
+            </ol>
+          </div>
           <Accordion className={style["my-cabinet__accordion"]}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}

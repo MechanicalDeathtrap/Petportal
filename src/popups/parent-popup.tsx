@@ -14,12 +14,12 @@ export const ParentPopup = (props: Props) => {
   return (
     // <ClickAwayListener onClickAway={clickAwayHandler}>
     <Popper
-      sx={{ width: 330 }}
+      sx={{ width: 330,  zIndex: 2000 }}
       id={id}
       open={props.isOpen}
       anchorEl={props.anchorEl}
     >
-      {props.popup}
+        {props.popup}
     </Popper>
   );
 };

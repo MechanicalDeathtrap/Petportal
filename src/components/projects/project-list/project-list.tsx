@@ -50,11 +50,16 @@ export const ProjectList = ({
                 paramsSerializer: {
         serialize: (params) =>
           qs.stringify(params, { arrayFormat: "repeat" })
-      }
+      },
+          withCredentials: true,
         },
       );  
 
       console.log(filters.role);
+      if (!Array.isArray(response.data.projects)) {
+        console.error("projects is not an array!", response.data.projects);
+        return;
+      }
 
       return response;
     } catch (error) {
@@ -93,12 +98,12 @@ export const ProjectList = ({
     <div className={styles["project-list"]}>
       <h2>Проектов найдено: {`${projectCount}`}</h2>
       <ul>
-        {" "}
-        {projects.map((project) => (
-          <li key={project.id} className={styles["project-list__project"]}>
-            <ProjectCard project={project} />
-          </li>
-        ))}
+        {Array.isArray(projects) &&
+          projects.map((project) => (
+            <li key={project.id} className={styles["project-list__project"]}>
+              <ProjectCard project={project} />
+            </li>
+          ))}
       </ul>
     </div>
   );
