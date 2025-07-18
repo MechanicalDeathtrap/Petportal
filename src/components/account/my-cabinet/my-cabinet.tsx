@@ -79,6 +79,7 @@ export const MyCabinet = () => {
   };
 
   useEffect(() => {
+    console.log(userData?.id);
     fetchUserData();
   }, []);
 
@@ -106,14 +107,13 @@ export const MyCabinet = () => {
                 <h2>
                   {userData.firstName} {userData.lastName}
                 </h2>
-                <span>
-                  {userData.country}, {userData.town}
-                </span>
+                  {
+                    userData.country && userData.town && (<span> {userData.country}, {userData.town} </span>)
+                  }
                 <p>Зарегистрирован: {/* нет даты регистрации */}</p>
                 <p>Проектов выполнено: 4</p>
                 <p>
                   Рейтинг: 4,4
-                  <svg /* ...звезда... */ />
                 </p>
               </div>
             </div>
