@@ -41,8 +41,7 @@ export const ProjectInfo = () => {
     }
   };
 
-
-
+  
   useEffect(() => {
     getProject();
     //getIsFavouriteProject();
@@ -160,7 +159,10 @@ export const ProjectInfo = () => {
         </div>
       </section>
       <ParentModal isOpen={isModalOpen} onClose={handleModalClose}>
-        <ProjectResponseModal onClose={handleModalClose} />
+        <ProjectResponseModal 
+          onClose={handleModalClose}
+          projectId={projectId}
+        />
       </ParentModal>
     </>
   );

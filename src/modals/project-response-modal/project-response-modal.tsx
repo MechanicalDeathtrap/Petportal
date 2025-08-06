@@ -4,31 +4,84 @@ import { forwardRef } from "react";
 import { Field, Form, Formik, FieldProps } from "formik";
 import { Button } from "../../components/button/button.tsx";
 import * as Yup from "yup";
+import axios from "axios";
+import { userStore } from "../../stores/user-store.ts";
+
 
 type ProjectResponse = {
   radios: string;
   comment: string;
 };
-type ProjectResponseModal = {
+
+type ProjectResponseModalProps = {
   onClose: () => void;
+  projectId: string; 
 };
 
+const validationSchema = Yup.object().shape({
+  radios: Yup.string().required("Выберите хотя бы одну роль"),
+  comment: Yup.string().optional(),
+});
+
 export const ProjectResponseModal = forwardRef(
-  (props: ProjectResponseModal, ref) => {
+  ({ onClose, projectId }: ProjectResponseModalProps, ref) => {
     const roles = ["Ux/Ui", "Backend developer"];
 
-    const initialValues = {
+    const initialValues: ProjectResponse = {
       radios: "",
       comment: "",
     };
 
-    const validationSchema = Yup.object().shape({
-      radios: Yup.string().required("Выберите хотя бы одну роль"),
-      comment: Yup.string(),
-    });
+    const userId = userStore.user.id;
 
-    const handleProjectResponse = (values: ProjectResponse) => {
-      console.log(values);
+    if (!userId) {
+      console.error("Пользователь не авторизован");
+    }
+
+    const handleProjectResponse = async (values: ProjectResponse, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) => {
+      const payload = {
+        role: values.radios,
+        comment: values.comment,
+        userId,
+        projectId,
+      };
+
+      try {
+        const response = await axios.post(
+          "http://localhost:5140/api/Responds/AddRespond",
+          payload,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              accept: "text/plain",
+            },
+            withCredentials: true, 
+          }
+        );
+
+        if (response.status === 200 || response.status === 201) {
+          console.log("Отклик успешно отправлен");
+          onClose(); 
+        } else {
+          alert("Не удалось отправить отклик. Попробуйте позже.");
+        }
+      } catch (error: unknown) {
+        console.error("Ошибка при отправке отклика:", error);
+
+        if (axios.isAxiosError(error)) {
+          if (error.response?.status === 409) {
+            alert("Вы уже откликнулись на этот проект.");
+          } else if (error.response?.status === 400) {
+            alert("Некорректные данные. Попробуйте снова.");
+          } else {
+            alert("Ошибка сети или сервера. Попробуйте позже.");
+          }
+        } else {
+          alert("Произошла неизвестная ошибка.");
+        }
+      } finally {
+        setSubmitting(false);
+      }
     };
 
     return (
@@ -37,40 +90,37 @@ export const ProjectResponseModal = forwardRef(
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Какую бы роль вы хотели взять?
           </Typography>
+
           <Formik
-            validationSchema={validationSchema}
             initialValues={initialValues}
-            onSubmit={(values, { setSubmitting }) => {
-              handleProjectResponse(values);
-              props.onClose();
-              setSubmitting(false);
-            }}
+            validationSchema={validationSchema}
+            onSubmit={handleProjectResponse}
           >
-            {({ handleSubmit, errors }) => (
+            {({ handleSubmit, errors, isSubmitting }) => (
               <Form
                 noValidate
                 onSubmit={(e) => {
-                  handleSubmit(e);
+                  e.preventDefault();
+                  handleSubmit();
                 }}
               >
-                {roles.map((role) => {
-                  return (
-                    <label key={role}>
-                      <Field name="radios" id="radios">
-                        {({ field }: FieldProps) => (
-                          <input
-                            {...field}
-                            type="radio"
-                            value={role}
-                            checked={field.value === role}
-                            className={style["project-response__radio-input"]}
-                          />
-                        )}
-                      </Field>
-                      {role}
-                    </label>
-                  );
-                })}
+                {roles.map((role) => (
+                  <label key={role} className={style["project-response__radio-label"]}>
+                    <Field name="radios" id="radios">
+                      {({ field }: FieldProps) => (
+                        <input
+                          {...field}
+                          type="radio"
+                          value={role}
+                          checked={field.value === role}
+                          className={style["project-response__radio-input"]}
+                          disabled={isSubmitting}
+                        />
+                      )}
+                    </Field>
+                    {role}
+                  </label>
+                ))}
 
                 {errors.radios && (
                   <div className={style["project-response__form--error"]}>
@@ -85,22 +135,26 @@ export const ProjectResponseModal = forwardRef(
                   <Field
                     as="textarea"
                     className={style["project-response__textarea"]}
-                    type="textarea"
                     name="comment"
                     id="comment"
                     placeholder="Если у вас есть что сказать..."
+                    disabled={isSubmitting}
                   />
                 </div>
+
                 <Button
-                  text="Отправить отклик"
-                  style={"blue-button-header"}
+                  text={isSubmitting ? "Отправка..." : "Отправить отклик"}
+                  style="blue-button-header"
                   type="submit"
+                  disabled={isSubmitting}
                 />
               </Form>
             )}
           </Formik>
+
           <button
-            onClick={props.onClose}
+            type="button"
+            onClick={onClose}
             className={style["project-response__close-button"]}
           >
             <svg
@@ -127,5 +181,8 @@ export const ProjectResponseModal = forwardRef(
         </div>
       </Box>
     );
-  },
+  }
 );
+
+// Рекомендуется указывать displayName для forwardRef
+ProjectResponseModal.displayName = "ProjectResponseModal";
