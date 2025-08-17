@@ -50,11 +50,16 @@ export const ProjectList = ({
                 paramsSerializer: {
         serialize: (params) =>
           qs.stringify(params, { arrayFormat: "repeat" })
-      }
+      },
+          withCredentials: true,
         },
       );  
 
-      console.log(response);
+      console.log(filters.role);
+      if (!Array.isArray(response.data.projects)) {
+        console.error("projects is not an array!", response.data.projects);
+        return;
+      }
 
       return response;
     } catch (error) {

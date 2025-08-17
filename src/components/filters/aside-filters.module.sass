@@ -1,5 +1,5 @@
 @import "/src/mixins/mixins.sass"
-@import "/src/colors/colors.sass"
+@import "/src/assets/colors/colors.sass"
 
 .filters
   width: 19.8vw
@@ -43,4 +43,7 @@
     border-radius: 100px !important
     border-color: $primary-color
 
-
+.buttons
+  margin-top: 30px
+  flex-direction: column
+  @include flexAndGap(10px)

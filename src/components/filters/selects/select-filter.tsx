@@ -32,12 +32,18 @@ export const SelectFilter = (props: Props) => {
           }}
           displayEmpty
           className={`${styles["select"]} ${props.sizeStyle === "small" ? styles["select--small"] : styles["select--big"]}`}
-          renderValue={(selected) =>{
-              if (!selected || selected.length === 0) {
-                return <em>{props.placeholder}</em>;
-              }
-              return selected;
-            }}
+          renderValue={(selected) => {
+            if (!selected || selected.length === 0) {
+              return <em>{props.placeholder}</em>;
+            }
+            // Показываем плейсхолдер и выбранное значение в скобках
+            return (
+              <span>
+                {props.placeholder}
+                {selected ? `: ${selected}` : ""}
+              </span>
+            );
+          }}
           >
 
         {props.menuItems.map((item, index) => (

@@ -1,4 +1,4 @@
-@import "/src/colors/colors"
+@import "/src/assets/colors/colors"
 @import "/src/mixins/mixins.sass"
 
 .my-cabinet
@@ -9,7 +9,7 @@
   & p, button, span
     font-size: 0.875rem
 
-  &__about-myself, &__my-info, &__info-section
+  &__about-myself, &__my-info, &__info-section, &__registration-error
     background-color: $background-white
     border-radius: 15px
     padding: 2.375rem
@@ -167,3 +167,34 @@
   &__form--error
     margin-left: 15px
     font-size: 12px
+
+  &__registration-error
+    padding: 1.375rem 2.375rem
+    background: $background-registration-company-error
+
+    & span
+      text-decoration: underline
+      font-size: 16px
+      font-weight: 600
+
+    & h3
+      font-size: 16px
+      font-weight: 600
+      padding-bottom: 18px
+
+    & h2
+      font-size: 20px
+      font-weight: 600
+      padding-bottom: 18px
+
+    &-list
+      list-style: inside
+      margin-left: 20px
+      color: $text-primary-color
+      display: flex
+      flex-direction: column
+      gap: 10px
+      font-weight: 400
+
+      & a
+        color: $primary-color

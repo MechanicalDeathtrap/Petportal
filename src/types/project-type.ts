@@ -14,6 +14,7 @@ export type Project = {
   isBusinessProject: boolean;
   avatarImageBase64: string;
   budget: number;
+  executors: string[];
   tags: { id: string; name: string }[];
 };
 

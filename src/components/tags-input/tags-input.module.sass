@@ -1,0 +1,117 @@
+@import "/src/mixins/mixins.sass"
+@import "/src/assets/colors/colors"
+
+.tags-input
+    width: fit-content
+    &__tag
+        font-size: 0.938rem
+        font-weight: 500
+        color: $background-white
+        background-color: $primary-color
+        border-radius: 15px
+        padding: 6px
+        display: inline-flex
+        height: fit-content
+        align-items: center
+
+        & button
+            margin-left: 5px
+            color: $background-white
+            background: none
+            border: none
+            padding: 0
+            cursor: pointer
+            display: flex
+            align-items: center
+            justify-content: center
+            font-size: 16px
+            line-height: 1
+
+    &__container
+        justify-content: start
+        align-items: center
+        position: relative
+        @include flexAndGap(5px)
+
+    &__tags
+        flex-wrap: wrap
+        @include flexAndGap(5px)
+        display: flex
+        align-items: center
+        position: relative
+
+    &__add-section
+        display: flex
+        align-items: center
+        gap: 10px
+
+    &__add-button
+        background: none
+        border: none
+        padding: 0
+        cursor: pointer
+        display: flex
+        align-items: center
+        justify-content: center
+
+    &__input-container
+      padding: 8px 14px
+      border-top-left-radius: 15px
+      border-top-right-radius: 15px
+      border: 1px solid $border-color
+      display: flex
+      align-items: center
+
+    &__input::-webkit-input-placeholder
+      font-size: 14px
+
+    &__input
+      font-size: 14px
+
+    &__tags-input-list
+      position: relative
+
+    &__suggestions-list
+      left: 0
+      border: 1px solid $border-color
+      position: absolute
+      width: 100%
+      box-sizing: border-box
+      border-top: none
+      background-color: $background-white
+      border-bottom-left-radius: 15px
+      border-bottom-right-radius: 15px
+      max-height: 15vh
+      overflow-y: scroll
+      z-index: 10
+
+      &::-webkit-scrollbar
+        width: 10px
+        background-color: $background-white
+        border-radius: 50px
+
+      &::-webkit-scrollbar-track
+        box-shadow: inset 0 0 10px 10px $background-white
+        border-right: solid 3px $background-white
+        border-radius: 50px
+        background-color: $background-white
+
+      &::-webkit-scrollbar-thumb
+        box-shadow: inset 0 0 10px 10px $primary-color
+        border-right: solid 3px transparent
+
+    &__error
+      position: static
+      font-size: 12px
+      font-weight: 400
+      color: $text-error
+      margin: 0
+
+    &__suggestion
+      font-size: 0.938rem
+      font-weight: 400
+      padding: 5px 17px
+      cursor: pointer
+
+      &:hover
+        background: $background-grey

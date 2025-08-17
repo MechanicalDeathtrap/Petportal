@@ -79,6 +79,7 @@ export const MyCabinet = () => {
   };
 
   useEffect(() => {
+    console.log(userData?.id);
     fetchUserData();
   }, []);
 
@@ -106,14 +107,13 @@ export const MyCabinet = () => {
                 <h2>
                   {userData.firstName} {userData.lastName}
                 </h2>
-                <span>
-                  {userData.country}, {userData.town}
-                </span>
+                  {
+                    userData.country && userData.town && (<span> {userData.country}, {userData.town} </span>)
+                  }
                 <p>Зарегистрирован: {/* нет даты регистрации */}</p>
                 <p>Проектов выполнено: 4</p>
                 <p>
                   Рейтинг: 4,4
-                  <svg /* ...звезда... */ />
                 </p>
               </div>
             </div>
@@ -149,6 +149,17 @@ export const MyCabinet = () => {
                 ))}
               </p>
             </div>
+          </div>
+          <div className={style["my-cabinet__registration-error"]}>
+            <h2>У вас непроверенные данные о компании, поэтому сервис работает с ограничениями.</h2>
+            <h3>Для подтверждения регистрации отправьте на почту <span>daukaevk@gmail.com</span>
+              &#160;один из следующих документов:</h3>
+            <ol className={style["my-cabinet__registration-error-list"]}>
+              <li>Свидетельство о государственной регистрации ЮЛ/ИП</li>
+              <li>Свидетельство о постановке на налоговый учёт ЮЛ/ИП</li>
+              <li>Лист записи ЕГРЮЛ/ЕГРИП, его можно получить в личном кабинете на <a
+                href="https://www.nalog.gov.ru/">nalog.gov.ru</a></li>
+            </ol>
           </div>
           <Accordion className={style["my-cabinet__accordion"]}>
             <AccordionSummary

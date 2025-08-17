@@ -1,17 +1,17 @@
-/* Error: Can't find stylesheet to import.
- *   ,
- * 1 | @import "src/colors/colors.sass"
- *   |         ^^^^^^^^^^^^^^^^^^^^^^^^
- *   '
- *   marquee.module.sass 1:9  root stylesheet */
-
-body::before {
-  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
-    "Droid Sans Mono", monospace, monospace;
-  white-space: pre;
-  display: block;
-  padding: 1em;
-  margin-bottom: 1em;
-  border-bottom: 2px solid black;
-  content: 'Error: Can\'t find stylesheet to import.\a   \2577 \a 1 \2502  @import "src/colors/colors.sass"\d\a   \2502          ^^^^^^^^^^^^^^^^^^^^^^^^\a   \2575 \a   marquee.module.sass 1:9  root stylesheet';
+.about-us__upper-running-text {
+  font-size: 38px;
+  font-weight: 800;
 }
+.about-us__lower-running-text {
+  font-size: 23px;
+  font-weight: 400;
+}
+
+.marquee {
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  overflow-y: hidden;
+  font-family: "Rubik", "sans-serif";
+}
+
+/*# sourceMappingURL=marquee.module.css.map */

@@ -82,11 +82,13 @@ const getFooterConfig = () => {
               Сроки работы:
               <span>{formatDate(project.deadline)}</span>
             </li>
-            <li>
-              Бюджет:
-              <span>{project.budget}</span> {/* {сделать форматирование} */}
-            </li>
-            <li>
+            {project.isBusinessProject && (
+              <li>
+                Бюджет:
+                <span>{project.budget}</span>
+              </li>
+            )}
+            <li>  
               {" "}
               Приём заявок:
               <span>{formatDate(project.applyingDeadline)}</span>
