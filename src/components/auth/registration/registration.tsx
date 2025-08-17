@@ -63,7 +63,7 @@ export const Registration = () => {
       };
 
       await axios.post(
-        "http://localhost:5140/api/Authorization/register",
+        "/api/Authorization/register",
         requestBody,
         {
           headers: {

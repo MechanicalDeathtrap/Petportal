@@ -39,7 +39,7 @@ export const Login = () => {
   const handleSubmit = async (values: AuthorizationProps) => {
     try {
       await axios.post(
-        "http://localhost:5140/api/Authorization/login",
+        "/api/Authorization/login",
         {
           email: values.email,
           password: values.password,
