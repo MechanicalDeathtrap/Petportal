@@ -87,6 +87,10 @@ export const MyCabinet = () => {
     setSettingsOpen(true);
   };
 
+    const handleSettingsClose = () => {
+    setSettingsOpen(false);
+  };
+
   if (!userData) {
     return <div>Загрузка...</div>;
   }
@@ -228,6 +232,7 @@ export const MyCabinet = () => {
             setSettingsOpen(false);
             fetchUserData();
           }}
+          onClose={handleSettingsClose}
         />
       )}
     </>
