@@ -20,7 +20,7 @@ export const MyCabinet = () => {
     if (!userData?.avatarUrl) return;
 
     axios
-      .get(`http://localhost:5140/api/Avatar/download/${userData.avatarUrl}`, {
+      .get(`/api/Avatar/download/${userData.avatarUrl}`, {
         responseType: "blob",
         withCredentials: true,
       })
@@ -37,7 +37,7 @@ export const MyCabinet = () => {
   const fetchUserData = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5140/api/Authorization/me",
+        "/api/Authorization/me",
         {
           withCredentials: true,
         },

@@ -14,7 +14,7 @@ export const MyProjects = () => {
 
   const getProjects = async () => {
     await axios
-      .get<Project[]>("http://localhost:5140/api/Users/MyProjects/")
+      .get<Project[]>("/api/Users/MyProjects/")
       .then((response) => {
         const projects = response.data;
         handleMyProjects(projects);

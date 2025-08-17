@@ -63,7 +63,7 @@ export const MyCabinetSettings = observer(({ onSave }: Props) => {
     const fetchUserData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5140/api/Authorization/me",
+          "/api/Authorization/me",
           {
             withCredentials: true,
           },
@@ -129,7 +129,7 @@ export const MyCabinetSettings = observer(({ onSave }: Props) => {
       const formData = new FormData();
       formData.append("avatar", file);
       const res = await axios.post(
-        `http://localhost:5140/api/Avatar/upload-avatar/${initialData.id}`,
+        `/api/Avatar/upload-avatar/${initialData.id}`,
         formData,
         {
           headers: {
@@ -188,7 +188,7 @@ export const MyCabinetSettings = observer(({ onSave }: Props) => {
     try {
       const payload = preparePayload(values);
       await axios.put(
-        "http://localhost:5140/api/Authorization/ChangeProfileData",
+        "/api/Authorization/ChangeProfileData",
         payload,
         {
           withCredentials: true,

@@ -3,7 +3,7 @@ import axios from "axios";
 export const fetchUserData = async () => {
   try {
     const response = await axios.get(
-      "http://localhost:5140/api/Authorization/me",
+      "/api/Authorization/me",
       {
         withCredentials: true,
       },

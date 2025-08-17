@@ -4,7 +4,7 @@ import { HubConnectionBuilder } from "@microsoft/signalr";
 
 export const Chat = () => {
   const connection = new HubConnectionBuilder()
-    .withUrl("http://localhost:5140/api/Chat")
+    .withUrl("/api/Chat")
     .withAutomaticReconnect()
     .build();
 
