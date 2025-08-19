@@ -50,9 +50,10 @@ const validationSchema = Yup.object().shape({
 
 interface Props {
   onSave?: () => void;
+  onClose?: () => void;
 }
 
-export const MyCabinetSettings = observer(({ onSave }: Props) => {
+export const MyCabinetSettings = observer(({ onSave, onClose }: Props) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [initialData, setInitialData] = useState<CabinetSettings | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -514,7 +515,7 @@ export const MyCabinetSettings = observer(({ onSave }: Props) => {
             {/* Кнопки управления */}
             <div className={style["my-cabinet__settings-buttons"]}>
               <Link to="/account">
-                <Button
+                <Button  onClick={onClose}
                   type="reset"
                   style="white-small-button"
                   text="Отменить"
