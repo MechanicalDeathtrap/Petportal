@@ -238,13 +238,16 @@ export const Header = observer(() => {
         id="account-menu-popup"
         anchorEl={accountPopperAnchorEl}
         isOpen={popupStore.isAccountPopupOpen}
+        onPopupClose={() => popupStore.toggleAccountPopupOpen()}
       />
       <ParentPopup
         popup={NotificationPopup()}
         id="notifications-popup"
         anchorEl={notificationPopperAnchorEl}
         isOpen={popupStore.isNotificationPopupOpen}
+        onPopupClose={() => popupStore.toggleNotificationPopupOpen()}
       />
     </>
   );
 });
+
