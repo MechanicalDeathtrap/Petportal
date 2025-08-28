@@ -5,6 +5,7 @@ import { Button } from "../../button/button.tsx";
 import * as Yup from "yup";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { userStore } from "../../../stores/user-store.ts";
 
 type RegistrationProps = {
   firstName: string;
@@ -72,6 +73,32 @@ export const Registration = () => {
           withCredentials: true,
         },
       );
+
+      const meResponse = await axios.get("http://localhost:5140/api/Authorization/me", {
+        headers: { accept: "*/*" },
+        withCredentials: true,
+      });
+
+      const userData = meResponse.data;
+
+      const nameParts = userData.name?.split(" ").filter(Boolean) || [];
+      const firstName = nameParts[0] || "";
+      const lastName = nameParts[1] || "";
+
+      userStore.setUser({
+        id: userData.id,
+        email: userData.email,
+        firstName,
+        lastName,
+        country: userData.country || "",
+        town: userData.city || "", 
+        phoneNumber: userData.phone || "",
+        telegram: userData.telegram || "",
+        avatarUrl: userData.avatarUrl || "",
+        education: userData.educations || [],
+        experience: userData.experiences || [],
+        stack: userData.stacks || [],
+      });
 
       navigate("/");
     } catch (error: unknown) {

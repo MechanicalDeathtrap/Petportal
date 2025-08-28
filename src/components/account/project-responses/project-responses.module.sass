@@ -1,0 +1,69 @@
+@import "/src/assets/colors/colors"
+@import "/src/mixins/mixins.sass"
+
+.project-responses
+  background: $background-white
+  border-radius: 15px
+  padding: 1.125rem 2.625rem 1.563rem 2.625rem
+  width: 54.1vw
+  flex-direction: column
+  @include flexAndGap(14px)
+
+  &__container
+    h2
+      font-size: 1.25rem
+      font-weight: 600
+      color: $text-primary-color
+      margin: 0
+
+  &__list
+    margin-top: 1.25rem
+    list-style: none
+    padding: 0
+    @include flexAndGap(12px)
+    flex-direction: column
+
+  &__item
+    background: $background-light
+    border-radius: 12px
+    padding: 1rem
+    border: 1px solid $border-color
+    transition: box-shadow 0.3s ease
+
+    &:hover
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05)
+
+  &__header
+    display: flex
+    justify-content: space-between
+    align-items: center
+    flex-wrap: wrap
+    gap: 8px
+    margin-bottom: 0.5rem
+
+    strong
+      font-size: 1.125rem
+      color: $text-primary-color
+      font-weight: 600
+
+    span
+      font-size: 0.875rem
+      color: $primary-color
+      padding: 0.25rem 0.625rem
+      border-radius: 6px
+      white-space: nowrap
+
+  &__comment
+    font-size: 1rem
+    line-height: 1.5
+    color: $text-primary-color
+    margin: 0 0 0.75rem 0
+
+    p
+      margin: 0
+      word-break: break-word
+
+  &__meta
+    font-size: 0.75rem
+    color: $text-secondary-color
+    margin-top: 0.5rem
