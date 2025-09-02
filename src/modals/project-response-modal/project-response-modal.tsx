@@ -88,7 +88,7 @@ export const ProjectResponseModal = forwardRef(
       <Box ref={ref}>
         <div className={style["project-response"]}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Какую бы роль вы хотели взять?
+            Какую роль вы бы хотели занять?
           </Typography>
 
           <Formik
