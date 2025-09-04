@@ -13,6 +13,7 @@ type Props = {
   sizeStyle: "small" | "big";
   value: string;
   onChange: (event: SelectChangeEvent<string>) => void;
+  menuMaxHeight?: number;
 };
 
 export const SelectFilter = (props: Props) => {
@@ -44,10 +45,35 @@ export const SelectFilter = (props: Props) => {
               </span>
             );
           }}
+          MenuProps={{
+          PaperProps: {
+            style: {
+              maxHeight: props.menuMaxHeight || 200, // по умолчанию 200px
+            },
+            className: props.menuMaxHeight
+              ? undefined
+              : "", // можно добавить className, если нужно
+            },
+          }}
           >
 
         {props.menuItems.map((item, index) => (
-          <MenuItem key={index} value={item}>
+          <MenuItem key={index} value={item}
+          
+                  sx={{
+              // Для "Другое" — закрепляем внизу
+              ...(item === "Другое" && {
+                position: "sticky",
+                bottom: 0,
+                backgroundColor: "#fff",
+                fontWeight: 600,
+                color: "#1976d2",
+                borderTop: "1px solid #e0e0e0",
+                zIndex: 99,
+                boxShadow: "0 -2px 4px -1px rgba(0,0,0,0.1)", // тень сверху
+              }),
+            }}>
+            
             {item}
           </MenuItem>
         ))}

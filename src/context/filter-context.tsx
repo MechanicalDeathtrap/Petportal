@@ -1,13 +1,20 @@
 // src/context/FilterContext.tsx
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
 import { StateOfProject } from "../types/project-type";
+import { Role } from "../types/role-type";
+
+
+const API_BASE = "http://localhost:5140";
 
 type FilterState = {
-  role: string;
+  roleId: string | null;
   terms:  StateOfProject | null;
   isCommercial: string;
   tags: string[];
+  // roles: Role[]
 };
+
+const FILTER_STORAGE_KEY = "projectFilters";
 
 export type FilterContextType = {
   filters: FilterState;
@@ -17,9 +24,30 @@ export type FilterContextType = {
   applyFilters: () => void;
   resetFilters: () => void;
   triggerFetch: number;
+  roles: Role[]
 };
 
 const FilterContext = createContext<FilterContextType | null>(null);
+
+const saveFiltersToStorage = (filters: FilterState) => {
+  try {
+    localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(filters));
+  } catch (error) {
+    console.error("Ошибка при сохранении фильтров:", error);
+  }
+};
+
+const loadFiltersFromStorage = (): FilterState | null => {
+  try {
+    const saved = localStorage.getItem(FILTER_STORAGE_KEY);
+    return saved ? JSON.parse(saved) : null;
+  } catch (error) {
+    console.error("Ошибка при загрузке фильтров:", error);
+    return null;
+  }
+};
+
+
 
 export const useFilterContext = () => {
   const context = useContext(FilterContext);
@@ -31,22 +59,43 @@ export const useFilterContext = () => {
 
 export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [triggerFetch, setTriggerFetch] = useState(0);
+  const [roles, setRoles] = useState<Role[]>([]);
 
   const initialFilterState = {
-    role: "",
+    roleId: "",
     terms: null,
     isCommercial: "",
     tags: []
   };  
 
-  const resetFilters = () => {
-    setTempFilters(initialFilterState);
-    setFilters(initialFilterState);
-    setTriggerFetch(prev => prev + 1);
-  };
+  const [filters, setFilters] = useState<FilterState>(() => {
+    const savedFilters = loadFiltersFromStorage();
+    return savedFilters || initialFilterState;
+  });
 
-  const [filters, setFilters] = useState<FilterState>(initialFilterState);
-  const [tempFilters, setTempFilters] = useState<FilterState>(initialFilterState);
+  const [tempFilters, setTempFilters] = useState<FilterState>(() => {
+    const savedFilters = loadFiltersFromStorage();
+    return savedFilters || initialFilterState;
+  });
+
+  useEffect(() => {
+    saveFiltersToStorage(filters);
+  }, [filters]);
+
+  useEffect(() => {
+    fetch(`${API_BASE}/api/Roles/AllRoles`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Не удалось загрузить роли");
+        return res.json();
+      })
+      .then((data: Role[]) => {
+        setRoles(data);
+      })
+      .catch((err) => {
+        console.error("Ошибка загрузки ролей:", err);
+        // Можно добавить fallback или уведомление
+      });
+  }, []);
 
   const handleSetTempFilters = (newFilters: Partial<FilterState>) => {
     setTempFilters((prev) => ({ ...prev, ...newFilters }));
@@ -57,13 +106,22 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setTriggerFetch(prev => prev + 1);
   };
 
+  const resetFilters = () => {
+    setTempFilters(initialFilterState);
+    setFilters(initialFilterState);
+    setTriggerFetch(prev => prev + 1);
+    // Удаляем фильтры из localStorage при сбросе
+    localStorage.removeItem(FILTER_STORAGE_KEY);
+  };
+
   const value = {
     filters,
     tempFilters,
     setTempFilters: handleSetTempFilters,
     applyFilters: handleApplyFilters,
     resetFilters,
-    triggerFetch
+    triggerFetch,
+    roles
   };
 
   return (

@@ -5,6 +5,7 @@ import { popupStore } from "../../stores/popups-store.ts";
 import { userStore } from "../../stores/user-store.ts";
 import { observer } from "mobx-react-lite";
 import { deleteAuthCookie } from "../../utils/cookies.ts";
+import { logout } from "../../utils/logout.ts";
 
 export const AccountPopup = observer(() => {
   const navigate = useNavigate();
@@ -12,10 +13,8 @@ export const AccountPopup = observer(() => {
   const userAvatar = user.avatarUrl || "/img/blank-avatar.png";
 
   const exitFromProfile = () => {
-    deleteAuthCookie();
-    authStore.setAuthorized(false);
     popupStore.toggleAccountPopupOpen();
-    navigate("/");
+    logout(navigate);
   };
 
   return (

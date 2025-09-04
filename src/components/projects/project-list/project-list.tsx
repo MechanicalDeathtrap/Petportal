@@ -9,6 +9,7 @@ import qs from "qs";
 import { useFilterContext } from "../../../context/filter-context.tsx";
 import { IsCommercialProjectFilter } from "../../filters/aside-filters.tsx";
 
+
 // import {tags} from "../../../data/tags.ts";
 
 
@@ -30,8 +31,10 @@ export const ProjectList = ({
   const [projectCount, setProjectCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const { filters, triggerFetch } = useFilterContext();
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchProjects = async (nextPage: number) => {
+    setIsLoading(true);
     try {
       const response = await axios.get<ProjectsDto>(
         "http://localhost:5140/api/Projects/",
@@ -41,7 +44,7 @@ export const ProjectList = ({
             Page: nextPage || undefined,
             SortItem: sort || undefined,
             SortOrtder: "asc",
-            [`Filters.Role`]: filters.role || undefined,
+            [`Filters.RoleId`]: filters.roleId || undefined,
             // [`Filters.Deadline`]: filters.terms || undefined,
             [`Filters.StateOfProject`]: filters.terms !== null && filters.terms !== undefined ? filters.terms : undefined,
             [`Filters.IsCommercial`]: filters.isCommercial  === IsCommercialProjectFilter.YES ? true : false || undefined,
@@ -55,7 +58,6 @@ export const ProjectList = ({
         },
       );  
 
-      console.log(filters.role);
       if (!Array.isArray(response.data.projects)) {
         console.error("projects is not an array!", response.data.projects);
         return;
@@ -65,11 +67,13 @@ export const ProjectList = ({
     } catch (error) {
       console.error("Ошибка при загрузке данных ПРОЕКТЫ:", error);
       return null;
+    }  finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    if (needToFetch) {
+    if (needToFetch && !isLoading) {
       const nextPage = currentPage + 1;
       fetchProjects(nextPage).then((response) => {
         if (response) {
@@ -90,13 +94,20 @@ export const ProjectList = ({
     }); 
   }, [searchQuery, sort, triggerFetch]);
 
-  // useEffect(() => {
+  // useEffect(() => {  
   //   fetchProjects();
   // }, []);
 
   return (
     <div className={styles["project-list"]}>
       <h2>Проектов найдено: {`${projectCount}`}</h2>
+
+      {isLoading && <div>Загрузка...</div>}
+
+      {!isLoading && projects.length === 0 && (
+        <div>По вашему запросу ничего не найдено</div>
+      )}
+
       <ul>
         {Array.isArray(projects) &&
           projects.map((project) => (

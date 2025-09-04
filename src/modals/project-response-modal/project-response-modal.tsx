@@ -16,6 +16,7 @@ type ProjectResponse = {
 type ProjectResponseModalProps = {
   onClose: () => void;
   projectId: string; 
+  roles: string[];
 };
 
 const validationSchema = Yup.object().shape({
@@ -24,21 +25,25 @@ const validationSchema = Yup.object().shape({
 });
 
 export const ProjectResponseModal = forwardRef(
-  ({ onClose, projectId }: ProjectResponseModalProps, ref) => {
-    const roles = ["Ux/Ui", "Backend developer"];
+  ({ onClose, projectId, roles }: ProjectResponseModalProps, ref) => {
 
     const initialValues: ProjectResponse = {
       radios: "",
       comment: "",
     };
 
+
+
+    const handleProjectResponse = async (values: ProjectResponse, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) => {
+
     const userId = userStore.user.id;
 
     if (!userId) {
-      console.error("Пользователь не авторизован");
+      alert("Пользователь не авторизован");
+      setSubmitting(false);
+      return; 
     }
 
-    const handleProjectResponse = async (values: ProjectResponse, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) => {
       const payload = {
         role: values.radios,
         comment: values.comment,
@@ -146,7 +151,7 @@ export const ProjectResponseModal = forwardRef(
                   text={isSubmitting ? "Отправка..." : "Отправить отклик"}
                   style="blue-button-header"
                   type="submit"
-                  disabled={isSubmitting}
+                  // disabled={isSubmitting}
                 />
               </Form>
             )}

@@ -1,20 +1,38 @@
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import styles from "./search-bar.module.sass";
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
 }
 
-export const SearchBar = ({ onSearch }: SearchBarProps) => {
+const SEARCH_STORAGE_KEY = "projectSearchQuery";
+
+export const SearchBar = ({ onSearch }: SearchBarProps) => {  
   const [searchString, setSearchString] = useState("");
 
+  useEffect(() => {
+    const saved = sessionStorage.getItem(SEARCH_STORAGE_KEY);
+    if (saved) {
+      setSearchString(saved);
+      onSearch(saved); // Восстанавливаем результат поиска
+    }
+  }, [onSearch]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchString(e.target.value);
+    const value = e.target.value;
+    setSearchString(value);
+    sessionStorage.setItem(SEARCH_STORAGE_KEY, value); // Сохраняем сразу
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Предотвращаем перезагрузку страницы
     onSearch(searchString); // Выполняем поиск только здесь
+  };
+
+  const handleClear = () => {
+    setSearchString("");
+    onSearch("");
+    sessionStorage.removeItem(SEARCH_STORAGE_KEY); 
   };
 
   return (
@@ -38,7 +56,11 @@ export const SearchBar = ({ onSearch }: SearchBarProps) => {
           onChange={handleChange}
         />
       </form>
-      <button className={styles["searchbar__erase-button"]} type="button">
+      <button
+        className={styles["searchbar__erase-button"]}
+        type="button"
+        onClick={handleClear}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="16"

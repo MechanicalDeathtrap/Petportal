@@ -16,6 +16,13 @@ export type Project = {
   budget: number;
   executors: string[];
   tags: { id: string; name: string }[];
+  requiredRoles: RequiredRole[];
+};
+
+export type RequiredRole = {
+  roleId: string;
+  systemRoleName: string | null;
+  customRoleName: string | null;
 };
 
 export const StateOfProject = {

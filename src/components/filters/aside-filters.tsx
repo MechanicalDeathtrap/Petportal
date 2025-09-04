@@ -12,11 +12,17 @@ export enum IsCommercialProjectFilter {
   NO = "Нет",
 }
 
+
+
 export const AsideFilters = () => {
-  const { tempFilters, setTempFilters, applyFilters, resetFilters } = useFilterContext();
+  const { tempFilters, setTempFilters, applyFilters, resetFilters, roles } = useFilterContext();
 
   const handleChangeRole = (e: SelectChangeEvent<string>) => {
-    setTempFilters({ role: e.target.value });
+    const selectedName = e.target.value;
+    const selectedRole = roles.find(role => role.name === selectedName);
+    setTempFilters({ 
+      roleId: selectedRole ? selectedRole.id : undefined 
+    });
   };
 
   const handleChangeTerms = (e: SelectChangeEvent<string>) => {
@@ -30,15 +36,26 @@ export const AsideFilters = () => {
     setTempFilters({ isCommercial: e.target.value });
   };
 
+  const roleNames = roles.map((r) => r.name);
+  const otherIndex = roleNames.indexOf("Другое");
+  const sortedRoleNames =
+    otherIndex > -1
+      ? [...roleNames.filter((n) => n !== "Другое"), "Другое"]
+      : roleNames;
+
   return (
     <aside className={styles["filters"]}>
       <div className={styles["filters--flex"]}>
         <SelectFilter
           sizeStyle="small"
           placeholder="Роль"
-          menuItems={["Фронтенд", "Бэкенд", "Дизайнер"]} //передавать сюда список ролей с бэка (или держать список ролей на  фронте)
-          value={tempFilters.role}
+          menuItems={sortedRoleNames}
+          value={tempFilters.roleId 
+            ? roles.find(role => role.id === tempFilters.roleId)?.name || "" 
+            : ""
+          }
           onChange={handleChangeRole}
+          menuMaxHeight={450} 
         />
          <SelectFilter
           sizeStyle="small"

@@ -9,7 +9,7 @@ export const InputFilters = () => {
       </div>
       <div className={styles["filter-form__input"]}>
         <span>До</span>
-        <input placeholder="100000" type="number" />
+        <input placeholder="10000*" type="number" />
       </div>
     </form>
   );

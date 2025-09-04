@@ -162,6 +162,11 @@ export const ProjectInfo = () => {
         <ProjectResponseModal 
           onClose={handleModalClose}
           projectId={projectId}
+          roles={
+            proj?.requiredRoles?.length
+              ? proj.requiredRoles.map(role => role.customRoleName || role.systemRoleName || "Неизвестная роль")
+              : []
+          }
         />
       </ParentModal>
     </>

@@ -79,7 +79,7 @@ export const Login = () => {
         stack: userData.stacks || [],
       });
 
-      navigate("/");
+      navigate("/projects");
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         const status = error.response?.status;

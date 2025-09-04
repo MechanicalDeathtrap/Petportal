@@ -114,11 +114,13 @@ export const MyCabinet = () => {
                   {
                     userData.country && userData.town && (<span> {userData.country}, {userData.town} </span>)
                   }
-                <p>Зарегистрирован: {/* нет даты регистрации */}</p>
-                <p>Проектов выполнено: 4</p>
-                <p>
-                  Рейтинг: 4,4
-                </p>
+                  
+                {/* <p>Зарегистрирован: нет даты регистрации</p> */}
+                {/* <p>Проектов выполнено: 4</p> */}
+                {/* <p> */}
+                  {/* Рейтинг: 4,4 */}
+                {/* </p> */}
+
               </div>
             </div>
             <div className={style["my-cabinet__contacts"]}>

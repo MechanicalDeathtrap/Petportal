@@ -16,7 +16,10 @@ export type ProjectFilters = {
 
 
 export const Catalogue = ( ) => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(() => {
+  const saved = sessionStorage.getItem("projectSearchQuery");
+  return saved || "";
+});
   const [sort, setSort] = useState("date");
   const [needToFetch, setNeedToFetch] = useState(false);
 
