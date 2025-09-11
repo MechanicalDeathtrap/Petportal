@@ -25,6 +25,8 @@ export const CreateProject = () => {
   const executorsTags = ["BackEnd-разработчик", "FrontEnd-разработчик"]
   const navigate = useNavigate()
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const initialValues: Project = {
     id: "",
     name: "",
@@ -42,7 +44,8 @@ export const CreateProject = () => {
     avatarImageBase64: "",
     budget: 0,
     tags: [],
-    executors: []
+    executors: [],
+    requiredRoles: []
   };
 
   const validationSchema = Yup.object().shape({
@@ -54,17 +57,11 @@ export const CreateProject = () => {
       .min(20, "Опишите проект более подробно!")
       .required("Введите описание проекта"),
 
-    requirements: Yup.string()
-      .min(20, "Опишите требования более подробно!")
-      .required("Введите ваши ожидания от исполнителя"),
+    teamDescription: Yup.string().nullable().notRequired(),
+    requirements: Yup.string().nullable().notRequired(),
+    result: Yup.string().nullable().notRequired(),
 
-    teamDescription: Yup.string()
-      .min(20, "Опишите состав исполнителей более подробно!")
-      .required("Опишите кого вы ищите"),
 
-    result: Yup.string()
-      .min(10, "Опишите формат результата подробнее")
-      .required("Опишите формат результата"),
 
     budget: Yup.number()
       .transform((value, originalValue) =>
@@ -82,7 +79,7 @@ export const CreateProject = () => {
         }
       ),
 
-    tags: Yup.array().of(Yup.string()).min(1, "Добавьте хотя бы один тег"),
+    tags: Yup.array().of(Yup.string()),
     executors: Yup.array().of(Yup.string()).min(1, "Добавьте хотя бы одного исполнителя"),
 
     applyingDeadline: Yup.date()
@@ -105,9 +102,54 @@ export const CreateProject = () => {
     setFieldValue(fieldName, value);
   }
 
-  const handleSubmit = () =>{
+const handleSubmit = async (values: Project, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) => {
+  setIsSubmitting(true);
 
+  try {
+    const payload = {
+      name: values.name,
+      description: values.description,
+      requirements: values.requirements || null,
+      teamDescription: values.teamDescription || null,
+      plan: values.plan || "", // если нет — пустая строка
+      result: values.result || null,
+      deadline: values.deadline ? new Date(values.deadline).toISOString() : undefined,
+      applyingDeadline: values.applyingDeadline ? new Date(values.applyingDeadline).toISOString() : undefined,
+      tags: values.tags.map(tag => ({
+        id: crypto.randomUUID(),
+        name: tag
+      })),
+      requiredRoles: values.executors.map(executor => ({
+        roleId: crypto.randomUUID(),
+        systemRoleName: executor,
+        customRoleName: executor
+      })),
+      isBusinesProject: values.isBusinessProject
+    };
+
+    const response = await fetch("http://localhost:5140/api/Projects", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+      credentials: "include"
+    });
+
+    if (!response.ok) {
+      throw new Error(`Ошибка: ${response.status}`);
+    }
+
+    handleCreateProjectSuccess();
+
+  } catch (error) {
+    console.error("Ошибка при создании проекта:", error);
+    alert("Не удалось создать проект. Проверьте данные и попробуйте снова.");
+  } finally {
+    setSubmitting(false);
+    setIsSubmitting(false);
   }
+};
 
   const handleCreateProjectSuccess = () =>{
     const isCreated = true
@@ -300,10 +342,12 @@ export const CreateProject = () => {
               </label>
 
               <div className={style["create-project__form-button"]}>
-                <Button              type="submit"
-                                     style="blue-button-header"
-                                     text="Опубликовать"
-                                     onClick={handleCreateProjectSuccess}/>
+                <Button
+                  type="submit"
+                  style="blue-button-header"
+                  text={isSubmitting ? "Публикуем..." : "Опубликовать"}
+                  disabled={isSubmitting}
+                />
               </div>
 
             </Form>

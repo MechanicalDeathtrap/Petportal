@@ -219,12 +219,14 @@ export const Header = observer(() => {
                 popupStore.toggleAccountPopupOpen();
               }}
             >
-              {/*TODO смена картинки на пользовательскую*/}
-              <img
-                className={styles.userAvatar}
-                src="/img/blank-avatar.png"
-                alt="blank-avatar-image"
-              />
+            <img
+              className={styles.userAvatar}
+              src={userStore.user.avatarUrl || "/img/blank-avatar.png"}
+              alt="User avatar"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = "/img/blank-avatar.png";
+              }}
+            />
             </button>
           ) : (
             <Link to="/login">

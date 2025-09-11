@@ -31,7 +31,7 @@ const FilterContext = createContext<FilterContextType | null>(null);
 
 const saveFiltersToStorage = (filters: FilterState) => {
   try {
-    localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(filters));
+    sessionStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(filters));
   } catch (error) {
     console.error("Ошибка при сохранении фильтров:", error);
   }
@@ -39,7 +39,7 @@ const saveFiltersToStorage = (filters: FilterState) => {
 
 const loadFiltersFromStorage = (): FilterState | null => {
   try {
-    const saved = localStorage.getItem(FILTER_STORAGE_KEY);
+    const saved = sessionStorage.getItem(FILTER_STORAGE_KEY);
     return saved ? JSON.parse(saved) : null;
   } catch (error) {
     console.error("Ошибка при загрузке фильтров:", error);
@@ -111,7 +111,7 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setFilters(initialFilterState);
     setTriggerFetch(prev => prev + 1);
     // Удаляем фильтры из localStorage при сбросе
-    localStorage.removeItem(FILTER_STORAGE_KEY);
+    sessionStorage.removeItem(FILTER_STORAGE_KEY);
   };
 
   const value = {

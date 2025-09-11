@@ -4,7 +4,7 @@ type Props = {
   text: string;
   style: string;
   type: "button" | "submit" | "reset";
-  // disabled?: boolean;
+  disabled?: boolean;
   onClick?: () => void;
 };
 export const Button = (props: Props) => {
