@@ -8,6 +8,9 @@
   display: flex
   flex-direction: column
   position: relative
+  box-sizing: border-box
+  border-radius: $border-radius-dialog-window
+  overflow: hidden
 
   &__no-dialog
     display: flex
@@ -51,8 +54,6 @@
     font-size: 14px
 
   &__dialog-header
-    border-top-left-radius: $border-radius-dialog-window
-    border-top-right-radius: $border-radius-dialog-window
     position: sticky
     z-index: 5
     width: 64vw
@@ -64,6 +65,7 @@
     box-sizing: border-box
     background-color: $background-white
     @include flexAndGap(8px)
+    flex-shrink: 0
 
   &__dialog-main
     padding: 20px 30px 0 30px
@@ -71,6 +73,17 @@
     overflow-y: auto
     position: relative
     box-sizing: border-box
+    flex: 1
+    min-height: 0
+
+  &__loading,
+  &__empty
+    display: flex
+    align-items: center
+    justify-content: center
+    height: 200px
+    color: $text-primary-color
+    font-size: 14px
 
   &__message-input
     position: sticky
@@ -78,3 +91,4 @@
     width: 100%
     border-bottom-left-radius: $border-radius-dialog-window
     border-bottom-right-radius: $border-radius-dialog-window
+    flex-shrink: 0

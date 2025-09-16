@@ -4,8 +4,6 @@
 
 .message-input-bar
   background-color: $background-white
-  border-bottom-left-radius: $border-radius-dialog-window
-  border-bottom-right-radius: $border-radius-dialog-window
   padding: 13px 22px
 
   &__message-input-container
@@ -19,7 +17,9 @@
     align-items: center
 
   &__form
-    width: 90%
+    width: 100%
+    display: flex
+    justify-content: space-between
 
   &__form-field
     width: 100%
@@ -27,4 +27,27 @@
     background-color: $background-grey-plain
     border: none
     outline: none
+
+  &__disabled
+    display: flex
+    align-items: center
+    justify-content: center
+    height: 60px
+    color: $text-primary-color
+    font-size: 14px
+
+  &__send-button
+    background: none
+    border: none
+    cursor: pointer
+    padding: 5px
+    border-radius: 50%
+    transition: background-color 0.3s
+
+    &:hover:not(:disabled)
+      background-color: rgba(0, 149, 255, 0.1)
+
+    &:disabled
+      opacity: 0.5
+      cursor: not-allowed
 
