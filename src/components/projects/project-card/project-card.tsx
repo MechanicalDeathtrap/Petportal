@@ -9,9 +9,9 @@ interface ProjectCardProps {
 }
 
 export const ProjectCard = ({ project }: ProjectCardProps) => {
-  const base64Image = project.avatarImageBase64
-    ? `data:image/jpeg;base64,${project.avatarImageBase64}`
-    : "/img/blank-avatar.png"; // Запасной вариант
+  const avatarUrl = project.avatarImageBase64 || "/img/blank-avatar.png";
+
+
 
 
 const getFooterConfig = () => {
@@ -56,9 +56,9 @@ const getFooterConfig = () => {
           <h6 className={styles["project-card__company-logo"]}>
             <picture className={styles["project-card__header"]}>
               <img
-                src={base64Image}
+                src={avatarUrl}//
                 className={`${styles["project-card__company-logo-image"]}
-                   ${project.isBusinessProject ? styles["project-card__company-logo-image--rounded"] : ""}`}
+                   ${styles["project-card__company-logo-image--rounded"]}`}
                 alt="company-logo"
                 onError={(e) => {
                   e.currentTarget.src = "/img/blank-avatar.png";

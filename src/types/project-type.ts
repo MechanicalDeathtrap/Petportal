@@ -13,6 +13,7 @@ export type Project = {
   stateOfProject: StateOfProject;
   isBusinessProject: boolean;
   avatarImageBase64: string;
+  avatarUrl: string;
   budget: number;
   executors: string[];
   tags: { id: string; name: string }[];
