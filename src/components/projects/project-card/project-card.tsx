@@ -11,7 +11,7 @@ interface ProjectCardProps {
 export const ProjectCard = ({ project }: ProjectCardProps) => {
   const base64Image = project.avatarImageBase64
     ? `data:image/jpeg;base64,${project.avatarImageBase64}`
-    : "public/img/blank-avatar.png"; // Запасной вариант
+    : "/img/blank-avatar.png"; // Запасной вариант
 
 
 const getFooterConfig = () => {
@@ -61,7 +61,7 @@ const getFooterConfig = () => {
                    ${project.isBusinessProject ? styles["project-card__company-logo-image--rounded"] : ""}`}
                 alt="company-logo"
                 onError={(e) => {
-                  e.currentTarget.src = "public/img/blank-avatar.png";
+                  e.currentTarget.src = "/img/blank-avatar.png";
                 }}
               />
             </picture>
