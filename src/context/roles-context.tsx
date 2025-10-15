@@ -1,5 +1,6 @@
 // src/context/roles-context.tsx
 import React, { createContext, useContext, useState, useEffect, useRef } from "react";
+import { API_BASE_URL, API_BASE_PATH } from "../config/api";
 
 export interface Role {
   id: string;
@@ -30,7 +31,7 @@ const loadRoles = async () => {
   loadingCache = true;
 
   try {
-    const response = await fetch("http://localhost:5140/api/Roles");
+    const response = await fetch(`${API_BASE_URL}${API_BASE_PATH}/Roles`);
     if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     const data: Role[] = await response.json();
     rolesCache = data;

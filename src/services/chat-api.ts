@@ -1,8 +1,10 @@
 import { ChatRoom, ChatMessage, CreateRoomRequest, SendMessageRequest } from '../types/chat-types';
 
+import { buildApiUrl } from '../config/api';
+
 class ChatApiService {
   private async request<T>(url: string, options?: RequestInit): Promise<T> {
-    const response = await fetch(`http://localhost:5140/api${url}`, {
+    const response = await fetch(buildApiUrl(url), {
       headers: {
         'Content-Type': 'application/json',
         ...options?.headers,

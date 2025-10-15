@@ -5,6 +5,7 @@ import { Button } from "../../button/button.tsx";
 import * as Yup from "yup";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { API_BASE_URL, API_BASE_PATH } from "../../../config/api";
 import { userStore } from "../../../stores/user-store.ts";
 
 type RegistrationProps = {
@@ -64,7 +65,7 @@ export const Registration = () => {
       };
 
       await axios.post(
-        "http://localhost:5140/api/Authorization/register",
+        `${API_BASE_URL}${API_BASE_PATH}/Authorization/register`,
         requestBody,
         {
           headers: {
@@ -74,7 +75,7 @@ export const Registration = () => {
         },
       );
 
-      const meResponse = await axios.get("http://localhost:5140/api/Authorization/me", {
+      const meResponse = await axios.get(`${API_BASE_URL}${API_BASE_PATH}/Authorization/me`, {
         headers: { accept: "*/*" },
         withCredentials: true,
       });

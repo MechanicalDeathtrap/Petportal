@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Button } from "../../button/button.tsx";
 import { TagsInput } from "../../tags-input/tags-input.tsx";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL, API_BASE_PATH } from "../../../config/api";
 
 export const CreateProject = () => {
   const [charCounts, setCharCounts] = useState<Record<string, number>>({
@@ -127,7 +128,7 @@ const handleSubmit = async (values: Project, { setSubmitting }: { setSubmitting:
       isBusinesProject: values.isBusinessProject
     };
 
-    const response = await fetch("http://localhost:5140/api/Projects", {
+    const response = await fetch(`${API_BASE_URL}${API_BASE_PATH}/Projects`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

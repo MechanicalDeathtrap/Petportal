@@ -4,6 +4,7 @@ import { EmptyStateMessage } from "../empty-state-message/empty-state-message.ts
 import axios from "axios";
 import { respond } from "../../../types/respond-type.ts";
 import { Project } from "../../../types/project-type.ts";
+import { API_BASE_URL, API_BASE_PATH } from "../../../config/api";
 
 interface ResponseWithProject extends respond {
   projectName: string;
@@ -22,7 +23,7 @@ export const ProjectResponses = () => {
         setError(null);
 
         const userResponse = await axios.get(
-          "http://localhost:5140/api/Authorization/me", 
+          `${API_BASE_URL}${API_BASE_PATH}/Authorization/me`, 
           {
             withCredentials: true,
           }
@@ -37,7 +38,7 @@ export const ProjectResponses = () => {
         }
 
         const projectsResponse = await axios.get<Project[]>(
-          `http://localhost:5140/api/Users/Projects/${userId}`
+          `${API_BASE_URL}${API_BASE_PATH}/Users/Projects/${userId}`
         );
         const myProjects = projectsResponse.data;
 
@@ -50,7 +51,7 @@ export const ProjectResponses = () => {
         const responsesPromises = myProjects.map((project) =>
           axios
             .get<respond[]>(
-              `http://localhost:5140/api/Responds/RespondsByProject/${project.id}`
+              `${API_BASE_URL}${API_BASE_PATH}/Responds/RespondsByProject/${project.id}`
             )
             .then((res) => {
               return res.data.map((response) => ({

@@ -5,6 +5,7 @@ import { Button } from "../../button/button.tsx";
 import * as Yup from "yup";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { API_BASE_URL, API_BASE_PATH } from "../../../config/api";
 import { userStore } from "../../../stores/user-store.ts";
 
 type AuthorizationProps = {
@@ -40,7 +41,7 @@ export const Login = () => {
   const handleSubmit = async (values: AuthorizationProps) => {
     try {
       await axios.post(
-        "http://localhost:5140/api/Authorization/login",
+        `${API_BASE_URL}${API_BASE_PATH}/Authorization/login`,
         {
           email: values.email,
           password: values.password,
@@ -53,7 +54,7 @@ export const Login = () => {
         },
       );
 
-      const meResponse = await axios.get("http://localhost:5140/api/Authorization/me", {
+      const meResponse = await axios.get(`${API_BASE_URL}${API_BASE_PATH}/Authorization/me`, {
         headers: { accept: "*/*" },
         withCredentials: true,
       });

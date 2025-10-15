@@ -3,14 +3,13 @@ import { useEffect } from "react";
 import { userStore } from "../../stores/user-store";
 import { authStore } from "../../stores/auth-store";
 import axios from "axios";
-
-const API_BASE = "http://localhost:5140";
+import { API_BASE_URL, API_BASE_PATH } from "../../config/api";
 
 export const AuthInitializer = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await axios.get(`${API_BASE}/api/Authorization/me`, {
+        const response = await axios.get(`${API_BASE_URL}${API_BASE_PATH}/Authorization/me`, {
           withCredentials: true,
         });
 
@@ -25,7 +24,7 @@ export const AuthInitializer = ({ children }: { children: React.ReactNode }) => 
         if (userData.avatarUrl) {
           try {
             const avatarResponse = await axios.get(
-              `${API_BASE}/api/Avatar/download/${userData.avatarUrl}`,
+              `${API_BASE_URL}${API_BASE_PATH}/Avatar/download/${userData.avatarUrl}`,
               {
                 responseType: "blob",
                 withCredentials: true,

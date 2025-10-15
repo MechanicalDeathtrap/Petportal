@@ -2,9 +2,10 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { StateOfProject } from "../types/project-type";
 import { Role } from "../types/role-type";
+import { API_BASE_URL, API_BASE_PATH } from "../config/api";
 
 
-const API_BASE = "http://localhost:5140";
+const API_BASE = `${API_BASE_URL}`;
 
 type FilterState = {
   roleId: string | null;
@@ -83,7 +84,7 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   }, [filters]);
 
   useEffect(() => {
-    fetch(`${API_BASE}/api/Roles/AllRoles`)
+    fetch(`${API_BASE}${API_BASE_PATH}/Roles/AllRoles`)
       .then((res) => {
         if (!res.ok) throw new Error("Не удалось загрузить роли");
         return res.json();

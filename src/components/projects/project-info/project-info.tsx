@@ -1,6 +1,7 @@
 import style from "./project-info.module.sass";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { API_BASE_URL, API_BASE_PATH } from "../../../config/api";
 import { Project } from "../../../types/project-type.ts";
 import { useEffect, useState } from "react";
 import { Button } from "../../button/button.tsx";
@@ -32,7 +33,7 @@ export const ProjectInfo = () => {
   const getProject = async () => {
     try {
       const response = await axios.get<Project>(
-        `http://localhost:5140/api/Projects/${projectId}`,
+        `${API_BASE_URL}${API_BASE_PATH}/Projects/${projectId}`,
       );
       handleProject(response.data);
     } catch (error) {

@@ -6,6 +6,7 @@ import { Button } from "../../components/button/button.tsx";
 import * as Yup from "yup";
 import axios from "axios";
 import { userStore } from "../../stores/user-store.ts";
+import { API_BASE_URL, API_BASE_PATH } from "../../config/api";
 
 
 type ProjectResponse = {
@@ -53,7 +54,7 @@ export const ProjectResponseModal = forwardRef(
 
       try {
         const response = await axios.post(
-          "http://localhost:5140/api/Responds/AddRespond",
+          `${API_BASE_URL}${API_BASE_PATH}/Responds/AddRespond`,
           payload,
           {
             headers: {

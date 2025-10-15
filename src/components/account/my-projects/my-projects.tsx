@@ -4,6 +4,7 @@ import { ProjectCard } from "../../projects/project-card/project-card.tsx";
 import { EmptyStateMessage } from "../empty-state-message/empty-state-message.tsx";
 import axios from "axios";
 import { Project } from "../../../types/project-type.ts";
+import { API_BASE_URL, API_BASE_PATH } from "../../../config/api";
 
 export const MyProjects = () => {
   const [myProjects, setMyProjects] = useState<Project[]>([]);
@@ -14,7 +15,7 @@ export const MyProjects = () => {
 
   const getProjects = async () => {
     await axios
-      .get<Project[]>("http://localhost:5140/api/Users/MyProjects/")
+      .get<Project[]>(`${API_BASE_URL}${API_BASE_PATH}/Users/MyProjects/`)
       .then((response) => {
         const projects = response.data;
         handleMyProjects(projects);

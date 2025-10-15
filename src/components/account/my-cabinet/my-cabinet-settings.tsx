@@ -8,6 +8,7 @@ import { useRef, useState, useEffect } from "react";
 import axios from "axios";
 import { CabinetSettings } from "../../../types/user-data";
 import { Link, useNavigate } from "react-router-dom";
+import { API_BASE_URL, API_BASE_PATH } from "../../../config/api";
 
 // Валидация формы
 const validationSchema = Yup.object().shape({
@@ -64,7 +65,7 @@ export const MyCabinetSettings = observer(({ onSave, onClose }: Props) => {
     const fetchUserData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5140/api/Authorization/me",
+          `${API_BASE_URL}${API_BASE_PATH}/Authorization/me`,
           {
             withCredentials: true,
           },
@@ -130,7 +131,7 @@ export const MyCabinetSettings = observer(({ onSave, onClose }: Props) => {
       const formData = new FormData();
       formData.append("avatar", file);
       const res = await axios.post(
-        `http://localhost:5140/api/Avatar/upload-avatar/${initialData.id}`,
+        `${API_BASE_URL}${API_BASE_PATH}/Avatar/upload-avatar/${initialData.id}`,
         formData,
         {
           headers: {
@@ -189,7 +190,7 @@ export const MyCabinetSettings = observer(({ onSave, onClose }: Props) => {
     try {
       const payload = preparePayload(values);
       await axios.put(
-        "http://localhost:5140/api/Authorization/ChangeProfileData",
+        `${API_BASE_URL}${API_BASE_PATH}/Authorization/ChangeProfileData`,
         payload,
         {
           withCredentials: true,

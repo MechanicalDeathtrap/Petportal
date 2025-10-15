@@ -1,12 +1,16 @@
 import { ChatsSideList } from "../../components/chat/chats-side-list/chats-side-list.tsx";
 import { ChatWindow } from "../../components/chat/chat-window/chat-window.tsx";
 import { HubConnectionBuilder } from "@microsoft/signalr";
+import { API_BASE_URL, API_BASE_PATH } from "../../config/api";
 
 export const Chat = () => {
   const connection = new HubConnectionBuilder()
-    .withUrl("http://localhost:5140/api/Chat")
+    .withUrl(`${API_BASE_URL}${API_BASE_PATH}/Chat`)
     .withAutomaticReconnect()
     .build();
+
+  // Establish the connection when the component is mounted
+  connection.start().catch(() => {/* no-op for linter */});
 
   return (
     <div

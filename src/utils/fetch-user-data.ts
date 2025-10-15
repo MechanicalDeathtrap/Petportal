@@ -1,9 +1,10 @@
 import axios from "axios";
+import { API_BASE_URL, API_BASE_PATH } from "../config/api";
 
 export const fetchUserData = async () => {
   try {
     const response = await axios.get(
-      "http://localhost:5140/api/Authorization/me",
+      `${API_BASE_URL}${API_BASE_PATH}/Authorization/me`,
       {
         withCredentials: true,
       },

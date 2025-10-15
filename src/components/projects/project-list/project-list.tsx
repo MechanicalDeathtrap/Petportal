@@ -2,12 +2,12 @@ import styles from "./project-list.module.sass";
 import { ProjectCard } from "../project-card/project-card.tsx";
 import { Project } from "../../../types/project-type.ts";
 import { ProjectsDto } from "../../../types/projects-dto-type.ts";
-import { ProjectFilters } from "../../catalogue/catalogue.tsx";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import qs from "qs";
 import { useFilterContext } from "../../../context/filter-context.tsx";
 import { IsCommercialProjectFilter } from "../../filters/aside-filters.tsx";
+import { API_BASE_URL, API_BASE_PATH } from "../../../config/api";
 
 
 // import {tags} from "../../../data/tags.ts";
@@ -37,7 +37,7 @@ export const ProjectList = ({
     setIsLoading(true);
     try {
       const response = await axios.get<ProjectsDto>(
-        "http://localhost:5140/api/Projects/",
+        `${API_BASE_URL}${API_BASE_PATH}/Projects/`,
         {
           params: {
             SearchElement: searchQuery || undefined,

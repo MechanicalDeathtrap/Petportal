@@ -10,6 +10,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useState, useEffect } from "react";
 import { MyCabinetSettings } from "./my-cabinet-settings.tsx";
 import axios from "axios";
+import { API_BASE_URL, API_BASE_PATH } from "../../../config/api";
 
 export const MyCabinet = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
@@ -20,7 +21,7 @@ export const MyCabinet = () => {
     if (!userData?.avatarUrl) return;
 
     axios
-      .get(`http://localhost:5140/api/Avatar/download/${userData.avatarUrl}`, {
+      .get(`${API_BASE_URL}${API_BASE_PATH}/Avatar/download/${userData.avatarUrl}`, {
         responseType: "blob",
         withCredentials: true,
       })
@@ -37,7 +38,7 @@ export const MyCabinet = () => {
   const fetchUserData = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5140/api/Authorization/me",
+        `${API_BASE_URL}${API_BASE_PATH}/Authorization/me`,
         {
           withCredentials: true,
         },
