@@ -4,15 +4,17 @@ export const Partners = () => {
   return (
     <div className={styles["partners"]}>
       <h1 className={styles["partners__heading"]}>Работаем с лучшими</h1>
-      <div>
-        <ul className={styles["partners__list"]}>
-          <li>
-            <img src="/img/surface1.png" alt="sberbank-logo" />
-          </li>
-          <li>
-            <img src="/img/IU_logo%201.png" alt="innopolis-logo" />
-          </li>
-        </ul>
+      <div className={styles["partners__list"]}>
+        <img
+          className={styles["partners__fsi-logo"]}
+          src="/img/fsi.png"
+          alt="Фонд Содействия Инновациям"
+        />
+        <img
+          className={styles["footer__fsi-image"]}
+          src="/img/kfu_logo_3l_rus.png"
+          alt="Казанский федеральный университет"
+        />
       </div>
     </div>
   );

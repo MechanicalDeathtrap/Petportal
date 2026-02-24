@@ -1,7 +1,10 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import styles from "./footer.module.sass";
 
 export const Footer = () => {
+  const { pathname } = useLocation();
+  const isProjectsPage = pathname === "/projects";
+
   return (
     <footer className={styles.footer}>
       <div className={styles["footer__logo-and-contacts"]}>
@@ -145,6 +148,18 @@ export const Footer = () => {
               </a>
             </li>
           </ul>
+          {isProjectsPage ? (
+            <div className={styles["footer__fsi-support"]}>
+              <img
+                className={styles["footer__fsi-image"]}
+                src="/img/fsi.png"
+                alt="Фонд Содействия Инновациям"
+              />
+              <p className={styles["footer__fsi-text"]}>
+                Создано при поддержке Фонда Содействия Инновациям
+              </p>
+            </div>
+          ) : null}
         </div>
       </div>
       <div className={styles["footer__copyright-and-links"]}>
