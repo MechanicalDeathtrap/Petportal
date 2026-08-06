@@ -5,6 +5,8 @@ import style from "./delete-account-modal.module.sass";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/button/button.tsx";
 import * as Yup from "yup";
+import axios from "axios";
+import { API_BASE_URL, API_BASE_PATH } from "../../config/api";
 
 type DeleteAccountProps = {
   password: string;
@@ -31,20 +33,19 @@ export const DeleteAccountModal = forwardRef(
         .required("Введите пароль"),
     });
 
-    const save = async () => {
-      console.log("save");
-      return {
-        error: Math.random() > 0.5 ? "500" : "200",
-      };
-    };
-
-    const handleDelete = async (values: DeleteAccountProps) => {
-      const { error } = await save();
-      console.log(values);
-      switch (error) {
-        case "200":
-          navigate("/");
-          break;
+    const handleDelete = async (_values: DeleteAccountProps) => {
+      try {
+        await axios.delete(`${API_BASE_URL}${API_BASE_PATH}/Users`, {
+          withCredentials: true,
+        });
+        document.cookie = "jwttoken=; Max-Age=0; path=/";
+        navigate("/");
+        window.location.reload();
+      } catch (error) {
+        console.error("Ошибка удаления аккаунта:", error);
+        alert(
+          "Не удалось удалить аккаунт. Проверьте авторизацию и попробуйте снова.",
+        );
       }
     };
 

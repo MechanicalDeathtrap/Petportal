@@ -31,7 +31,7 @@ const loadRoles = async () => {
   loadingCache = true;
 
   try {
-    const response = await fetch(`${API_BASE_URL}${API_BASE_PATH}/Roles`);
+    const response = await fetch(`${API_BASE_URL}${API_BASE_PATH}/Roles/AllRoles`);
     if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     const data: Role[] = await response.json();
     rolesCache = data;

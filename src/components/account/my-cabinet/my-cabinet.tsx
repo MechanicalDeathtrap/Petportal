@@ -16,6 +16,11 @@ export const MyCabinet = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isSettingsOpen, setSettingsOpen] = useState(false);
   const [avatarBlobUrl, setAvatarBlobUrl] = useState<string | null>(null);
+  const [quota, setQuota] = useState<{
+    projectsCount: number;
+    freeProjectsLimit: number;
+    freeProjectsRemaining: number;
+  } | null>(null);
 
   useEffect(() => {
     if (!userData?.avatarUrl) return;
@@ -79,9 +84,25 @@ export const MyCabinet = () => {
     }
   };
 
+  const fetchQuota = async () => {
+    try {
+      const res = await axios.get(
+        `${API_BASE_URL}${API_BASE_PATH}/Projects/quota`,
+        { withCredentials: true },
+      );
+      setQuota({
+        projectsCount: res.data.projectsCount ?? 0,
+        freeProjectsLimit: res.data.freeProjectsLimit ?? 5,
+        freeProjectsRemaining: res.data.freeProjectsRemaining ?? 0,
+      });
+    } catch (err) {
+      console.error("Ошибка загрузки квоты проектов:", err);
+    }
+  };
+
   useEffect(() => {
-    console.log(userData?.id);
     fetchUserData();
+    fetchQuota();
   }, []);
 
   const handleSettingsOpen = () => {
@@ -115,12 +136,19 @@ export const MyCabinet = () => {
                   {
                     userData.country && userData.town && (<span> {userData.country}, {userData.town} </span>)
                   }
-                  
-                {/* <p>Зарегистрирован: нет даты регистрации</p> */}
-                {/* <p>Проектов выполнено: 4</p> */}
-                {/* <p> */}
-                  {/* Рейтинг: 4,4 */}
-                {/* </p> */}
+                {quota && (
+                  <>
+                    <p>Проектов создано: {quota.projectsCount}</p>
+                    <p>
+                      Бесплатных размещений:{" "}
+                      {Math.min(quota.projectsCount, quota.freeProjectsLimit)} /{" "}
+                      {quota.freeProjectsLimit}
+                      {quota.freeProjectsRemaining > 0
+                        ? ` (осталось ${quota.freeProjectsRemaining})`
+                        : " (лимит исчерпан)"}
+                    </p>
+                  </>
+                )}
 
               </div>
             </div>

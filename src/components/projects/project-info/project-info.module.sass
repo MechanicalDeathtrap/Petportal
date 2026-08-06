@@ -24,12 +24,6 @@
     & > div p
       font-weight: 500
 
-    &__favourite-button
-      color: $text-secondary-color
-
-    &__favourite-button--checked
-      color: $primary-color
-
     & > div p span
       color: $primary-color
 
@@ -45,6 +39,14 @@
       color: $text-secondary-color
       font-size: 1rem
       font-weight: 600
+
+  &__favourite-button-icon
+    color: $text-secondary-color
+    transition: color 0.2s
+
+    &--checked
+      color: $primary-color
+      fill: $primary-color
 
   &__logo
     display: block

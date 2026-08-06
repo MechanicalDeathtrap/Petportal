@@ -14,16 +14,27 @@ export const MyProjects = () => {
   const handleMyProjects = (projects: Project[]) => setMyProjects(projects);
 
   const getProjects = async () => {
-    await axios
-      .get<Project[]>(`${API_BASE_URL}${API_BASE_PATH}/Users/MyProjects/`)
-      .then((response) => {
-        const projects = response.data;
-        handleMyProjects(projects);
-        handleMyProjectCount(projects.length);
-      })
-      .catch((error) => {
-        console.error("Ошибка при загрузке данных МОИ ПРОЕКТЫ:", error);
-      });
+    try {
+      const userResponse = await axios.get(
+        `${API_BASE_URL}${API_BASE_PATH}/Authorization/me`,
+        { withCredentials: true },
+      );
+      const userId = userResponse.data.id;
+      if (!userId) {
+        console.error("Не удалось получить id пользователя");
+        return;
+      }
+
+      const response = await axios.get<Project[]>(
+        `${API_BASE_URL}${API_BASE_PATH}/Users/Projects/${userId}`,
+        { withCredentials: true },
+      );
+      const projects = response.data;
+      handleMyProjects(projects);
+      handleMyProjectCount(projects.length);
+    } catch (error) {
+      console.error("Ошибка при загрузке данных МОИ ПРОЕКТЫ:", error);
+    }
   };
 
   // фильтрация по старости

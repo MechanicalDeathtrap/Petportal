@@ -1,13 +1,13 @@
 import { Box, Typography } from "@mui/material";
 import style from "./project-response-modal.module.sass";
-import { forwardRef } from "react";
+import { forwardRef, useState } from "react";
 import { Field, Form, Formik, FieldProps } from "formik";
 import { Button } from "../../components/button/button.tsx";
 import * as Yup from "yup";
 import axios from "axios";
 import { userStore } from "../../stores/user-store.ts";
 import { API_BASE_URL, API_BASE_PATH } from "../../config/api";
-
+import { useNavigate } from "react-router-dom";
 
 type ProjectResponse = {
   radios: string;
@@ -16,7 +16,7 @@ type ProjectResponse = {
 
 type ProjectResponseModalProps = {
   onClose: () => void;
-  projectId: string; 
+  projectId: string;
   roles: string[];
 };
 
@@ -27,23 +27,25 @@ const validationSchema = Yup.object().shape({
 
 export const ProjectResponseModal = forwardRef(
   ({ onClose, projectId, roles }: ProjectResponseModalProps, ref) => {
+    const [success, setSuccess] = useState(false);
+    const navigate = useNavigate();
 
     const initialValues: ProjectResponse = {
       radios: "",
       comment: "",
     };
 
+    const handleProjectResponse = async (
+      values: ProjectResponse,
+      { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void },
+    ) => {
+      const userId = userStore.user.id;
 
-
-    const handleProjectResponse = async (values: ProjectResponse, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) => {
-
-    const userId = userStore.user.id;
-
-    if (!userId) {
-      alert("Пользователь не авторизован");
-      setSubmitting(false);
-      return; 
-    }
+      if (!userId) {
+        alert("Пользователь не авторизован");
+        setSubmitting(false);
+        return;
+      }
 
       const payload = {
         role: values.radios,
@@ -61,13 +63,12 @@ export const ProjectResponseModal = forwardRef(
               "Content-Type": "application/json",
               accept: "text/plain",
             },
-            withCredentials: true, 
-          }
+            withCredentials: true,
+          },
         );
 
         if (response.status === 200 || response.status === 201) {
-          console.log("Отклик успешно отправлен");
-          onClose(); 
+          setSuccess(true);
         } else {
           alert("Не удалось отправить отклик. Попробуйте позже.");
         }
@@ -78,7 +79,14 @@ export const ProjectResponseModal = forwardRef(
           if (error.response?.status === 409) {
             alert("Вы уже откликнулись на этот проект.");
           } else if (error.response?.status === 400) {
-            alert("Некорректные данные. Попробуйте снова.");
+            const msg =
+              typeof error.response.data === "string"
+                ? error.response.data
+                : "Некорректные данные. Попробуйте снова.";
+            alert(msg);
+          } else if (error.response?.status === 401) {
+            alert("Нужна авторизация.");
+            navigate("/login");
           } else {
             alert("Ошибка сети или сервера. Попробуйте позже.");
           }
@@ -89,6 +97,57 @@ export const ProjectResponseModal = forwardRef(
         setSubmitting(false);
       }
     };
+
+    if (success) {
+      return (
+        <Box ref={ref}>
+          <div className={`${style["project-response"]} ${style["project-response--success"]}`}>
+            <div className={style["project-response__success-check"]} aria-hidden>
+              <svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="36" cy="36" r="36" fill="#2E7D32" />
+                <path
+                  d="M20 37.5L31 48.5L52 25.5"
+                  stroke="white"
+                  strokeWidth="5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+            <p className={style["project-response__success-text"]}>
+              Вы успешно откликнулись
+            </p>
+            <div className={style["project-response__success-actions"]}>
+              <Button
+                text="Перейти в чат"
+                style="blue-button-header"
+                type="button"
+                onClick={() => {
+                  onClose();
+                  navigate("/chat");
+                }}
+              />
+              <Button
+                text="Закрыть"
+                style="grey-button"
+                type="button"
+                onClick={onClose}
+              />
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className={style["project-response__close-button"]}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 14 14" fill="none">
+                <path d="M1.23242 1L12.9999 13" stroke="#666666" strokeWidth="2" strokeLinecap="round" />
+                <path d="M12.7676 1L1.00011 13" stroke="#666666" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </button>
+          </div>
+        </Box>
+      );
+    }
 
     return (
       <Box ref={ref}>
@@ -152,7 +211,6 @@ export const ProjectResponseModal = forwardRef(
                   text={isSubmitting ? "Отправка..." : "Отправить отклик"}
                   style="blue-button-header"
                   type="submit"
-                  // disabled={isSubmitting}
                 />
               </Form>
             )}
@@ -187,8 +245,7 @@ export const ProjectResponseModal = forwardRef(
         </div>
       </Box>
     );
-  }
+  },
 );
 
-// Рекомендуется указывать displayName для forwardRef
 ProjectResponseModal.displayName = "ProjectResponseModal";

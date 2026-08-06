@@ -117,12 +117,39 @@ export const ProjectResponses = () => {
                 <div className={style["project-responses__header"]}>
                   <strong>{response.projectName}</strong>
                   {response.role && <span>Роль: {response.role}</span>}
+                  {response.status && <span>Статус: {response.status}</span>}
                 </div>
                 <div className={style["project-responses__comment"]}>
                   <p>{response.comment || "Без комментария"}</p>
                 </div>
                 <div className={style["project-responses__meta"]}>
                   <small>Отклик ID: {response.id.substring(0, 8)}...</small>
+                  {response.status !== "Accepted" && (
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        try {
+                          await axios.post(
+                            `${API_BASE_URL}${API_BASE_PATH}/Responds/Accept/${response.id}`,
+                            null,
+                            { withCredentials: true },
+                          );
+                          setResponses((prev) =>
+                            prev.map((r) =>
+                              r.id === response.id
+                                ? { ...r, status: "Accepted" }
+                                : r,
+                            ),
+                          );
+                        } catch (err) {
+                          console.error("Не удалось принять отклик", err);
+                          alert("Не удалось принять отклик");
+                        }
+                      }}
+                    >
+                      Принять
+                    </button>
+                  )}
                 </div>
               </li>
             ))}

@@ -8,23 +8,27 @@ import { Button } from "../../button/button.tsx";
 import { ParentModal } from "../../../modals/parent-modal.tsx";
 import { ProjectResponseModal } from "../../../modals/project-response-modal/project-response-modal.tsx";
 import { formatDate } from "../../../utils/format-date.ts";
+import { userStore } from "../../../stores/user-store.ts";
+import { authStore } from "../../../stores/auth-store.ts";
+import { observer } from "mobx-react-lite";
 
-export const ProjectInfo = () => {
+export const ProjectInfo = observer(() => {
   const { projectId } = useParams() as { projectId: string };
   const [proj, setProj] = useState<Project>({} as Project);
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isFavourite, setIsFavourite] = useState(false);
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
 
   const navigate = useNavigate();
+  const isOwner =
+    Boolean(userStore.user.id) &&
+    Boolean(proj.ownerId) &&
+    userStore.user.id === proj.ownerId;
 
   const handleProject = (project: Project) => {
     setProj(project);
   };
-
-  // const handleError = () => {
-  //   setError((prevState) => !prevState);
-  // };
 
   const handlePreviousPage = () => {
     navigate(-1);
@@ -38,15 +42,58 @@ export const ProjectInfo = () => {
       handleProject(response.data);
     } catch (error) {
       console.error("Ошибка при загрузке данных проекта:", error);
-      //handleError();
     }
   };
 
-  
+  const getIsFavouriteProject = async () => {
+    if (!authStore.isAuthorized) {
+      setIsFavourite(false);
+      return;
+    }
+    try {
+      const response = await axios.get<boolean>(
+        `${API_BASE_URL}${API_BASE_PATH}/Favourites/contains/${projectId}`,
+        { withCredentials: true },
+      );
+      setIsFavourite(Boolean(response.data));
+    } catch {
+      setIsFavourite(false);
+    }
+  };
+
+  const postToFavourites = async () => {
+    if (!authStore.isAuthorized) {
+      navigate("/login");
+      return;
+    }
+    try {
+      if (isFavourite) {
+        await axios.delete(
+          `${API_BASE_URL}${API_BASE_PATH}/Favourites/${projectId}`,
+          { withCredentials: true },
+        );
+        setIsFavourite(false);
+      } else {
+        await axios.post(
+          `${API_BASE_URL}${API_BASE_PATH}/Favourites/${projectId}`,
+          null,
+          { withCredentials: true },
+        );
+        setIsFavourite(true);
+      }
+    } catch (error) {
+      console.error("Ошибка избранного:", error);
+      alert("Не удалось обновить избранное. Войдите в аккаунт и попробуйте снова.");
+    }
+  };
+
   useEffect(() => {
     getProject();
-    //getIsFavouriteProject();
-  }, []);
+    getIsFavouriteProject();
+  }, [projectId]);
+
+  const tagLabel = (tag: { id?: string; name?: string } | string) =>
+    typeof tag === "string" ? tag : tag?.name ?? "";
 
   return (
     <>
@@ -73,18 +120,24 @@ export const ProjectInfo = () => {
                 Прием заявок до{" "}
                 <span>{formatDate(proj?.applyingDeadline)}</span>
               </p>
-              <button>
-                {/*onClick={postToFavourites}>*/}
+              <button
+                onClick={postToFavourites}
+                type="button"
+                aria-label={isFavourite ? "Убрать из избранного" : "В избранное"}
+                title={isFavourite ? "Убрать из избранного" : "В избранное"}
+              >
                 <svg
-                  className={`${style["project-info__favourite-button-icon"]}`}
+                  className={`${style["project-info__favourite-button-icon"]} ${
+                    isFavourite
+                      ? style["project-info__favourite-button-icon--checked"]
+                      : ""
+                  }`}
                   width="21"
                   height="24"
                   viewBox="0 0 21 24"
-                  fill="none"
+                  fill={isFavourite ? "currentColor" : "none"}
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  {" "}
-                  {/*${isAuthorized && isFavourite ? style["project-info__favourite-button-icon--checked"] : ""}*/}
                   <path
                     d="M17 1H4C2.89543 1 2 1.89543 2 3V20.9893C2 21.9131 2.97218 22.5139 3.79845 22.1008C3.93173 22.0341 4.05194 21.9441 4.15334 21.8349L9.08776 16.5209C9.85912 15.6902 11.166 15.666 11.9676 16.4676L17.4358 21.9358C17.4785 21.9785 17.5253 22.0169 17.5755 22.0503C18.1844 22.4563 19 22.0198 19 21.288V3C19 1.89543 18.1046 1 17 1Z"
                     stroke="currentColor"
@@ -113,7 +166,7 @@ export const ProjectInfo = () => {
               <ul className={style["project-info__stack-list"]}>
                 {proj.tags &&
                   proj.tags.map((tag, key) => {
-                    return <li key={key}>{tag}</li>;
+                    return <li key={key}>{tagLabel(tag as any)}</li>;
                   })}
               </ul>
 
@@ -149,27 +202,47 @@ export const ProjectInfo = () => {
                 </h3>
               </div>
 
-              <Button
-                text="Откликнуться"
-                style="blue-button-header"
-                type="submit"
-                onClick={handleModalOpen}
-              />
+              {isOwner ? (
+                <Button
+                  text="Изменить"
+                  style="blue-button-header"
+                  type="button"
+                  onClick={() => navigate(`/projects/${projectId}/edit`)}
+                />
+              ) : (
+                <Button
+                  text="Откликнуться"
+                  style="blue-button-header"
+                  type="button"
+                  onClick={() => {
+                    if (!authStore.isAuthorized) {
+                      navigate("/login");
+                      return;
+                    }
+                    handleModalOpen();
+                  }}
+                />
+              )}
             </div>
           </div>
         </div>
       </section>
       <ParentModal isOpen={isModalOpen} onClose={handleModalClose}>
-        <ProjectResponseModal 
+        <ProjectResponseModal
           onClose={handleModalClose}
           projectId={projectId}
           roles={
             proj?.requiredRoles?.length
-              ? proj.requiredRoles.map(role => role.customRoleName || role.systemRoleName || "Неизвестная роль")
+              ? proj.requiredRoles.map(
+                  (role) =>
+                    role.customRoleName ||
+                    role.systemRoleName ||
+                    "Неизвестная роль",
+                )
               : []
           }
         />
       </ParentModal>
     </>
   );
-};
+});

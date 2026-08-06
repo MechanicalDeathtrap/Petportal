@@ -1,6 +1,6 @@
 import style from "./tags-input.module.sass";
 import { useField, useFormikContext } from "formik";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 type TagsInputProps = {
   availableTags: string[]
@@ -24,31 +24,45 @@ export const TagsInput = ({
   const [field] = useField<string[]>(name);
   const { setFieldValue } = useFormikContext();
   const [inputVisible, setInputVisible] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
 
   const tags = field.value || [];
+
+  const closeDropdown = () => {
+    setInputVisible(false);
+    setSuggestions([]);
+    setInputTag("");
+  };
+
+  useEffect(() => {
+    if (!inputVisible) return;
+
+    const handlePointerDown = (e: MouseEvent | TouchEvent) => {
+      const target = e.target as Node | null;
+      if (rootRef.current && target && !rootRef.current.contains(target)) {
+        closeDropdown();
+      }
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("touchstart", handlePointerDown);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("touchstart", handlePointerDown);
+    };
+  }, [inputVisible]);
 
   const handleAddTag = (tag: string) => {
     if (!tags.includes(tag)) {
       setFieldValue(name, [...tags, tag]);
     }
-    setInputTag("");
-    setSuggestions([]);
-    setInputVisible(false);
+    closeDropdown();
   };
 
-  useEffect(() => {
-    console.log("Current tags in state:", tags);
-  }, [tags]);
-
   const handleRemoveTag = (tagToRemove: number) => {
-    console.log('Removing tag:', tagToRemove);
-    console.log('Current tags before removal:', tags);
     const newTags = [...tags];
     newTags.splice(tagToRemove, 1);
-    console.log('New tags after removal:', newTags);
-    setTimeout(() => {
-      setFieldValue(name, newTags, false);
-    }, 0);
+    setFieldValue(name, newTags, false);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,12 +82,9 @@ export const TagsInput = ({
       setSuggestions(filtered);
     } else {
       setSuggestions([]);
+      setInputTag("");
     }
   };
-
-  useEffect(() => {
-    console.log('Tags state updated:', tags);
-  }, [tags]);
 
   const handleContainerClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -82,7 +93,7 @@ export const TagsInput = ({
   };
 
   return (
-    <div className={style["tags-input"]}>
+    <div className={style["tags-input"]} ref={rootRef}>
       <div className={style["tags-input__container"]}>
         <div 
           className={style["tags-input__tags"]}
@@ -141,6 +152,9 @@ export const TagsInput = ({
                     className={style["tags-input__input"]}
                     autoFocus
                     onMouseDown={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => {
+                      if (e.key === "Escape") closeDropdown();
+                    }}
                   />
                 </div>
                 <ul className={style["tags-input__suggestions-list"]}>

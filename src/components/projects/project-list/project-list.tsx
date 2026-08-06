@@ -42,8 +42,8 @@ export const ProjectList = ({
           params: {
             SearchElement: searchQuery || undefined,
             Page: nextPage || undefined,
-            SortItem: sort || undefined,
-            SortOrtder: "asc",
+            SortItem: sort || "date",
+            SortOrder: false, // false = по убыванию (новизна / больший бюджет сверху)
             [`Filters.RoleId`]: filters.roleId || undefined,
             // [`Filters.Deadline`]: filters.terms || undefined,
             [`Filters.StateOfProject`]: filters.terms !== null && filters.terms !== undefined ? filters.terms : undefined,

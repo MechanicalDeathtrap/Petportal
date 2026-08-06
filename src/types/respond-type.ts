@@ -4,4 +4,5 @@ export type respond = {
   comment: string | null;
   userId: string;
   projectId: string;
+  status?: string;
 }

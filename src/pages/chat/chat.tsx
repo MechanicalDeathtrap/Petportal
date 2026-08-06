@@ -1,11 +1,11 @@
 import { ChatsSideList } from "../../components/chat/chats-side-list/chats-side-list.tsx";
 import { ChatWindow } from "../../components/chat/chat-window/chat-window.tsx";
 import { HubConnectionBuilder } from "@microsoft/signalr";
-import { API_BASE_URL, API_BASE_PATH } from "../../config/api";
+import { API_BASE_URL } from "../../config/api";
 
 export const Chat = () => {
   const connection = new HubConnectionBuilder()
-    .withUrl(`${API_BASE_URL}${API_BASE_PATH}/Chat`)
+    .withUrl(`${API_BASE_URL}/chat`)
     .withAutomaticReconnect()
     .build();
 

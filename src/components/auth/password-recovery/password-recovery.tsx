@@ -2,15 +2,12 @@ import styles from "../auth-layout/auth-layout.module.sass";
 import { Field, Form, Formik } from "formik";
 import { Button } from "../../button/button.tsx";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import * as Yup from "yup";
+import { API_BASE_URL, API_BASE_PATH } from "../../../config/api";
 
 type emailProps = {
   email: string;
-};
-
-type codeProps = {
-  code: string;
 };
 
 type passwdProps = {
@@ -20,38 +17,25 @@ type passwdProps = {
 
 export const PasswordRecovery = () => {
   const [step, setStep] = useState(1);
-  const [userEmail, setEmail] = useState("");
   const [isMessageOpen, setMessageOpen] = useState(0);
-
+  const [searchParams] = useSearchParams();
+  const tokenFromUrl = searchParams.get("token");
+  const userIdFromUrl = searchParams.get("userId");
   const navigate = useNavigate();
 
-  const handleNextStep = () => setStep((prev) => prev + 1);
-  const handlePrevStep = () => setStep((prev) => prev - 1);
-  const handleEmail = (email: string) => setEmail(email);
+  useEffect(() => {
+    if (tokenFromUrl && userIdFromUrl) {
+      setStep(3);
+    }
+  }, [tokenFromUrl, userIdFromUrl]);
+
   const closeMessage = () => setMessageOpen(0);
-  const handleMessage = () =>
-    setMessageOpen(() => {
-      switch (step) {
-        case 1:
-          return 1;
-        case 2:
-          return 2;
-        case 3:
-          return 3;
-        default:
-          return 0;
-      }
-    });
+  const handleMessage = (code: number) => setMessageOpen(code);
 
   const validationEmailSchema = Yup.object().shape({
     email: Yup.string()
       .email("Некорректная почта. Она должна содержать знак @")
       .required("Введите почту"),
-  });
-  const validationCodeSchema = Yup.object().shape({
-    code: Yup.string()
-      .min(6, "Код слишком короткий. Он должен содержать 6 символов")
-      .required("Введите код"),
   });
   const validationPasswordSchema = Yup.object().shape({
     password: Yup.string()
@@ -66,66 +50,54 @@ export const PasswordRecovery = () => {
       .required("Повторите новый пароль"),
   });
 
-  const setMessageTimer = () => {
-    setTimeout(closeMessage, 5000);
-  };
-
-  // Имитация сервера
-  const save = async () => {
-    console.log("save");
-    return {
-      error: Math.random() > 0.5 ? "500" : "200",
-    };
-  };
-
-  // Имитация сервера
-  const sendEmail = async (value: emailProps) => {
-    const { error } = await save();
-    console.log(error);
-    switch (error) {
-      case "200":
-        handleEmail(value.email);
-        handleNextStep();
-        break;
-      case "500":
-        handleMessage();
-        break;
-    }
-  };
-
-  // Имитация сервера
-  const sendCode = async (value: codeProps) => {
-    const { error } = await save();
-    console.log(value);
-    switch (error) {
-      case "200":
-        handleNextStep();
-        break;
-      case "500":
-        handleMessage();
-        break;
-    }
-  };
-  // Имитация сервера
-  const sendPassword = async (value: passwdProps) => {
-    const { error } = await save();
-    console.log(value);
-    switch (error) {
-      case "200":
-        alert("Пароль успешно сменён! 😊"); /*TODO переделать ибо жуть*/
-        navigate("/login");
-        break;
-      case "500":
-        handleMessage();
-        break;
-    }
-  };
-
   useEffect(() => {
     if (isMessageOpen) {
-      setMessageTimer();
+      setTimeout(closeMessage, 5000);
     }
   }, [isMessageOpen]);
+
+  const sendEmail = async (value: emailProps) => {
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}${API_BASE_PATH}/Authorization/ForgotPassword?Email=${encodeURIComponent(value.email)}`,
+        { method: "POST", credentials: "include" },
+      );
+      if (!res.ok) {
+        handleMessage(1);
+        return;
+      }
+      setStep(2);
+    } catch {
+      handleMessage(1);
+    }
+  };
+
+  const sendPassword = async (value: passwdProps) => {
+    if (!tokenFromUrl || !userIdFromUrl) {
+      handleMessage(3);
+      return;
+    }
+    try {
+      const params = new URLSearchParams({
+        token: tokenFromUrl,
+        userId: userIdFromUrl,
+        newPassword1: value.password,
+        newPassword2: value.confirmPassword,
+      });
+      const res = await fetch(
+        `${API_BASE_URL}${API_BASE_PATH}/Authorization/ResetPassword?${params.toString()}`,
+        { method: "POST", credentials: "include" },
+      );
+      if (!res.ok) {
+        handleMessage(3);
+        return;
+      }
+      alert("Пароль успешно сменён");
+      navigate("/login");
+    } catch {
+      handleMessage(3);
+    }
+  };
 
   return (
     <div
@@ -137,7 +109,7 @@ export const PasswordRecovery = () => {
         <>
           <p>
             Введите адрес электронной почты, указанный при создании аккаунта. На
-            него мы отправим письмо с кодом для восстановления пароля.
+            него мы отправим ссылку для восстановления пароля.
           </p>
           <Formik
             initialValues={{ email: "" }}
@@ -186,58 +158,12 @@ export const PasswordRecovery = () => {
       {step === 2 && (
         <>
           <p>
-            Введите адрес электронной почты, указанный при создании аккаунта. На
-            него мы отправим письмо с кодом для восстановления пароля.
+            Если аккаунт с такой почтой существует, мы отправили ссылку для
+            сброса пароля. Откройте письмо и перейдите по ссылке.
           </p>
-          <Formik
-            initialValues={{ code: "" }}
-            onSubmit={sendCode}
-            validationSchema={validationCodeSchema}
-          >
-            {({ handleSubmit, errors, touched }) => (
-              <Form
-                noValidate
-                onSubmit={handleSubmit}
-                className={styles["authorization__form"]}
-              >
-                <Field
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder={userEmail || "Электронная почта"}
-                  className={styles["authorization__form-field"]}
-                  disabled
-                />
-                <label htmlFor="forgetpaswdCode">
-                  <p>Введите 6-значный код из письма </p>
-                  <Field
-                    id="code"
-                    name="code"
-                    type="text"
-                    placeholder="Код"
-                    className={styles["authorization__form-field"]}
-                    maxLength={6}
-                  />
-
-                  {errors.code && touched.code ? (
-                    <div className={styles["authorization__form--error"]}>
-                      {errors.code}
-                    </div>
-                  ) : null}
-                </label>
-                <div
-                  className={styles["authorization__forget-password-buttons"]}
-                >
-                  <Button
-                    type="submit"
-                    style="blue-button-header"
-                    text="Продолжить"
-                  />
-                  <p onClick={handlePrevStep}>Назад</p>
-                </div>
-              </Form>
-            )}
-          </Formik>
+          <div className={styles["authorization__forget-password-buttons"]}>
+            <Link to="/login">Вернуться ко входу</Link>
+          </div>
         </>
       )}
 
@@ -261,7 +187,7 @@ export const PasswordRecovery = () => {
                 <Field
                   id="password"
                   name="password"
-                  type="text"
+                  type="password"
                   placeholder="Пароль"
                   className={styles["authorization__form-field"]}
                 />
@@ -275,7 +201,7 @@ export const PasswordRecovery = () => {
                 <Field
                   id="confirmPassword"
                   name="confirmPassword"
-                  type="text"
+                  type="password"
                   placeholder="Повторите пароль"
                   className={styles["authorization__form-field"]}
                 />
@@ -289,7 +215,7 @@ export const PasswordRecovery = () => {
                 <Button
                   type="submit"
                   style="blue-button-header"
-                  text="Продолжить"
+                  text="Сохранить пароль"
                 />
               </Form>
             )}
@@ -300,17 +226,7 @@ export const PasswordRecovery = () => {
       {isMessageOpen === 1 && (
         <div className={styles["authorization__message"]}>
           <p className={styles["authorization__message--error"]}>
-            {" "}
-            Аккаунта с такой почтой не существует! 😓
-          </p>
-        </div>
-      )}
-
-      {isMessageOpen === 2 && (
-        <div className={styles["authorization__message"]}>
-          <p className={styles["authorization__message--error"]}>
-            {" "}
-            Код введён неправильно! Повторите попытку! 😓
+            Не удалось отправить письмо. Попробуйте позже.
           </p>
         </div>
       )}
@@ -318,8 +234,7 @@ export const PasswordRecovery = () => {
       {isMessageOpen === 3 && (
         <div className={styles["authorization__message"]}>
           <p className={styles["authorization__message--error"]}>
-            {" "}
-            Произошла ошибка при смене пароля! Пожалуйста, повторите попытку 😓
+            Произошла ошибка при смене пароля. Ссылка могла устареть.
           </p>
         </div>
       )}

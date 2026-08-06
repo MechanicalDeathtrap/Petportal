@@ -22,6 +22,7 @@ import { ProjectPage } from "../pages/project/project-page.tsx";
 import { CreateProject } from "../components/projects/create-project/create-project.tsx";
 import { SuccessfulCreatedProject } from "../components/projects/create-project/successful-created-project.tsx";
 import { ProjectResponses } from "../components/account/project-responses/project-responses.tsx";
+import { EditProject } from "../components/projects/edit-project/edit-project.tsx";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -42,6 +43,7 @@ export const router = createBrowserRouter(
           <Route path={"/account/favourites"} element={<MyFavourites />} />
           <Route path={"/account/settings"} element={<AccountSettings />} />
         </Route>
+        <Route path={"/projects/:projectId/edit"} element={<EditProject />} />
         <Route path={"/projects/:projectId"} element={<ProjectPage />} />
       </Route>
       <Route element={<Auth />}>
