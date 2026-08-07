@@ -40,6 +40,28 @@
       font-size: 1rem
       font-weight: 600
 
+    // кликабельная дата приёма заявок — ведёт на редактирование проекта
+    & .applying-deadline
+      background: none
+      border: none
+      padding: 0
+      font: inherit
+      font-weight: 500
+      color: $text-primary-color
+      cursor: pointer
+      text-decoration: underline
+      text-decoration-color: $border-color
+      text-underline-offset: 3px
+      transition: text-decoration-color 0.2s
+
+    & .applying-deadline:hover
+      text-decoration-color: $primary-color
+
+    & .applying-deadline span
+      color: $primary-color
+      font-size: inherit
+      font-weight: 600
+
   &__favourite-button-icon
     color: $text-secondary-color
     transition: color 0.2s

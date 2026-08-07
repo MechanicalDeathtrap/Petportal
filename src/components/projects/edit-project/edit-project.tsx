@@ -6,7 +6,12 @@ import { Button } from "../../button/button.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { API_BASE_URL, API_BASE_PATH } from "../../../config/api";
 import axios from "axios";
-import { Project } from "../../../types/project-type.ts";
+import { Project, StateOfProject } from "../../../types/project-type.ts";
+import {
+  getMaxApplyingDeadline,
+  MAX_APPLYING_DEADLINE_MESSAGE,
+  toDateInputValue,
+} from "../../../utils/applying-deadline.ts";
 
 const toDateInput = (value?: string) => {
   if (!value) return "";
@@ -21,6 +26,29 @@ export const EditProject = () => {
   const [project, setProject] = useState<Project | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isArchiving, setIsArchiving] = useState(false);
+
+  const archiveProject = async () => {
+    if (!window.confirm("Перевести проект в архив? Вернуть его обратно нельзя.")) {
+      return;
+    }
+
+    setError(null);
+    setIsArchiving(true);
+    try {
+      await axios.post(
+        `${API_BASE_URL}${API_BASE_PATH}/Projects/${projectId}/archive`,
+        null,
+        { withCredentials: true },
+      );
+      navigate(`/projects/${projectId}`);
+    } catch (e) {
+      console.error(e);
+      setError("Не удалось перевести проект в архив");
+    } finally {
+      setIsArchiving(false);
+    }
+  };
 
   useEffect(() => {
     axios
@@ -57,10 +85,15 @@ export const EditProject = () => {
     deadline: toDateInput(project.deadline),
   };
 
+  // потолок отсчитывается от даты публикации объявления, а не от сегодняшнего дня
+  const maxApplyingDeadline = getMaxApplyingDeadline(project.createdDate);
+
   const validationSchema = Yup.object().shape({
     name: Yup.string().min(8, "Минимум 8 символов").required("Введите название"),
     description: Yup.string().min(20, "Опишите подробнее").required("Введите описание"),
-    applyingDeadline: Yup.date().required("Укажите срок приёма заявок"),
+    applyingDeadline: Yup.date()
+      .max(maxApplyingDeadline, MAX_APPLYING_DEADLINE_MESSAGE)
+      .required("Укажите срок приёма заявок"),
     deadline: Yup.date()
       .min(Yup.ref("applyingDeadline"), "Срок выполнения должен быть позже")
       .required("Укажите срок выполнения"),
@@ -137,7 +170,12 @@ export const EditProject = () => {
               </label>
               <label>
                 Крайний срок приёма заявок
-                <Field type="date" name="applyingDeadline" className={style["create-project__form-field"]} />
+                <Field
+                  type="date"
+                  name="applyingDeadline"
+                  max={toDateInputValue(maxApplyingDeadline)}
+                  className={style["create-project__form-field"]}
+                />
               </label>
               <label>
                 Сроки выполнения
@@ -178,6 +216,15 @@ export const EditProject = () => {
                   text="Отмена"
                   onClick={() => navigate(`/projects/${projectId}`)}
                 />
+                {project.stateOfProject !== StateOfProject.Archived && (
+                  <Button
+                    type="button"
+                    style="grey-button"
+                    text={isArchiving ? "Переносим..." : "В архив"}
+                    onClick={archiveProject}
+                    disabled={isArchiving || isSubmitting}
+                  />
+                )}
                 <Button
                   type="submit"
                   style="blue-button-header"

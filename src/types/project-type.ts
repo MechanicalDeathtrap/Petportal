@@ -8,6 +8,8 @@ export type Project = {
   result: string;
   ownerId: string;
   ownerName: string;
+  /** Дата публикации объявления. */
+  createdDate: string | null;
   deadline: string;
   applyingDeadline: string;
   stateOfProject: StateOfProject;
@@ -26,29 +28,22 @@ export type RequiredRole = {
   customRoleName: string | null;
 };
 
+/**
+ * Состояний у проекта два: идёт набор и архив.
+ * NotSelected и InProgress — legacy-значения из старых записей БД,
+ * они трактуются как «идёт набор».
+ */
 export const StateOfProject = {
   NotSelected: 0,
   Open: 1,
   InProgress: 2,
-  Closed: 3,
+  Archived: 3,
 } as const;
 
 export type StateOfProject = typeof StateOfProject[keyof typeof StateOfProject];
 
-export const getStateLabel = (state: StateOfProject): string => {
-  switch(state) {
-    case StateOfProject.Open: return "Открытый";
-    case StateOfProject.InProgress: return "В процессе";
-    case StateOfProject.Closed: return "Закрытый";
-    default: return "";
-  }
-};
+export const isArchived = (state?: StateOfProject): boolean =>
+  state === StateOfProject.Archived;
 
-export const getStateValue = (label: string): StateOfProject | undefined => {
-  switch(label) {
-    case "Открытый": return StateOfProject.Open;
-    case "В процессе": return StateOfProject.InProgress;
-    case "Закрытый": return StateOfProject.Closed;
-    default: return undefined;
-  }
-};
+export const getStateLabel = (state?: StateOfProject): string =>
+  isArchived(state) ? "В архиве" : "Идёт набор";

@@ -38,12 +38,18 @@ h1, h2, h3, h4, h5, h6
 p
   margin: 0
 
-input
+// Чекбоксы и радио исключены из сброса: без рамки браузер перестаёт рисовать
+// сам контрол, и нажатие визуально никак не отображается
+input:not([type="checkbox"]):not([type="radio"])
   border: none
   padding: 0
 
-input:focus-visible
+input:not([type="checkbox"]):not([type="radio"]):focus-visible
   outline: none
+
+input[type="checkbox"], input[type="radio"]
+  accent-color: $primary-color
+  cursor: pointer
 
 input::-webkit-outer-spin-button, input::-webkit-inner-spin-button
   -webkit-appearance: none

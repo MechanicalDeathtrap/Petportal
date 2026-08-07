@@ -2,7 +2,7 @@ import style from "./project-info.module.sass";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { API_BASE_URL, API_BASE_PATH } from "../../../config/api";
-import { Project } from "../../../types/project-type.ts";
+import { Project, StateOfProject } from "../../../types/project-type.ts";
 import { useEffect, useState } from "react";
 import { Button } from "../../button/button.tsx";
 import { ParentModal } from "../../../modals/parent-modal.tsx";
@@ -21,6 +21,7 @@ export const ProjectInfo = observer(() => {
   const handleModalClose = () => setModalOpen(false);
 
   const navigate = useNavigate();
+  const archived = proj.stateOfProject === StateOfProject.Archived;
   const isOwner =
     Boolean(userStore.user.id) &&
     Boolean(proj.ownerId) &&
@@ -117,8 +118,25 @@ export const ProjectInfo = observer(() => {
             </button>
             <div>
               <p>
-                Прием заявок до{" "}
-                <span>{formatDate(proj?.applyingDeadline)}</span>
+                {archived ? (
+                  <>Проект в архиве</>
+                ) : isOwner ? (
+                  // владелец может поправить срок приёма заявок прямо отсюда
+                  <button
+                    type="button"
+                    className={style["applying-deadline"]}
+                    onClick={() => navigate(`/projects/${projectId}/edit`)}
+                    title="Изменить срок приёма заявок"
+                  >
+                    Прием заявок до{" "}
+                    <span>{formatDate(proj?.applyingDeadline)}</span>
+                  </button>
+                ) : (
+                  <>
+                    Прием заявок до{" "}
+                    <span>{formatDate(proj?.applyingDeadline)}</span>
+                  </>
+                )}
               </p>
               <button
                 onClick={postToFavourites}
@@ -211,9 +229,10 @@ export const ProjectInfo = observer(() => {
                 />
               ) : (
                 <Button
-                  text="Откликнуться"
+                  text={archived ? "Набор закрыт" : "Откликнуться"}
                   style="blue-button-header"
                   type="button"
+                  disabled={archived}
                   onClick={() => {
                     if (!authStore.isAuthorized) {
                       navigate("/login");

@@ -1,6 +1,5 @@
 // src/context/FilterContext.tsx
 import React, { createContext, useState, useContext, useEffect } from "react";
-import { StateOfProject } from "../types/project-type";
 import { Role } from "../types/role-type";
 import { API_BASE_URL, API_BASE_PATH } from "../config/api";
 
@@ -9,7 +8,8 @@ const API_BASE = `${API_BASE_URL}`;
 
 type FilterState = {
   roleId: string | null;
-  terms:  StateOfProject | null;
+  /** Показывать ли архивные проекты. По умолчанию каталог отдаёт только активные. */
+  showArchived: boolean;
   isCommercial: string;
   tags: string[];
   // roles: Role[]
@@ -64,7 +64,7 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const initialFilterState = {
     roleId: "",
-    terms: null,
+    showArchived: false,
     isCommercial: "",
     tags: []
   };  

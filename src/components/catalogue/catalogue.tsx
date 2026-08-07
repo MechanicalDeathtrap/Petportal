@@ -6,14 +6,6 @@ import { ProjectList } from "../projects/project-list/project-list.tsx";
 import { Button } from "../button/button.tsx";
 import { useState } from "react";
 
-export type ProjectFilters = {
-  role: string;
-  terms: string;
-  isCommercial: string;
-  tags: string[];
-};
-
-
 export const Catalogue = ( ) => {
   const [searchQuery, setSearchQuery] = useState(() => {
   const saved = sessionStorage.getItem("projectSearchQuery");

@@ -8,6 +8,11 @@ import { TagsInput } from "../../tags-input/tags-input.tsx";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL, API_BASE_PATH } from "../../../config/api";
 import { groupRoleNames } from "../../../data/role-categories.ts";
+import {
+  getMaxApplyingDeadline,
+  MAX_APPLYING_DEADLINE_MESSAGE,
+  toDateInputValue,
+} from "../../../utils/applying-deadline.ts";
 
 type CatalogueRole = { id: string; name: string };
 
@@ -17,12 +22,7 @@ const startOfToday = () => {
   return d;
 };
 
-const formatDateInput = (date: Date) => {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
-};
+const formatDateInput = toDateInputValue;
 
 const defaultApplyingDeadline = () => {
   const d = startOfToday();
@@ -106,11 +106,15 @@ export const CreateProject = () => {
     isBusinessProject: false,
     avatarImageBase64: "",
     avatarUrl: "",
+    createdDate: null,
     budget: 0,
     tags: [],
     executors: [],
     requiredRoles: []
   };
+
+  // объявление публикуется сегодня, значит потолок — сегодня + 2 месяца
+  const maxApplyingDeadline = getMaxApplyingDeadline();
 
   const validationSchema = Yup.object().shape({
     name: Yup.string()
@@ -147,6 +151,7 @@ export const CreateProject = () => {
     applyingDeadline: Yup.date()
       .typeError("Укажите крайний срок приёма заявок")
       .min(startOfToday(), "Дата не может быть в прошлом")
+      .max(maxApplyingDeadline, MAX_APPLYING_DEADLINE_MESSAGE)
       .required("Укажите крайний срок приёма заявок"),
 
     deadline: Yup.date()
@@ -377,7 +382,12 @@ const handleSubmit = async (values: Project, { setSubmitting }: { setSubmitting:
 
               <label>
                 Крайний срок приёма заявок
-                <Field type="date" name="applyingDeadline" className={style["create-project__form-field create-project__date-input"]}/>
+                <Field
+                  type="date"
+                  name="applyingDeadline"
+                  max={formatDateInput(maxApplyingDeadline)}
+                  className={style["create-project__form-field create-project__date-input"]}
+                />
                 {showError(errors as any, touched as any, submitCount, "applyingDeadline") && (
                   <div className={style["create-project__form--error-no-floating"]}>{errors.applyingDeadline}</div>
                 )}

@@ -24,5 +24,13 @@
     background: $background-white
     padding: 7px 11px
     align-items: center
+    cursor: pointer
     @include flexAndGap(10px)
+
+    & svg
+      transition: transform 0.15s ease-in-out
+
+    // «сначала старые» — разворачиваем стрелку
+    &--reversed svg
+      transform: rotate(180deg)
 

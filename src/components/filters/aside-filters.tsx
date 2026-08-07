@@ -5,7 +5,6 @@ import { MultiSelectFilter } from "./selects/multi-select-filter.tsx";
 import { SelectChangeEvent } from "@mui/material";
 import { useMemo } from "react";
 import { useFilterContext } from "../../context/filter-context.tsx";
-import { getStateLabel, getStateValue, StateOfProject } from "../../types/project-type.ts";
 import { groupRoleNames, OTHER_ROLE_NAME } from "../../data/role-categories.ts";
 import { Button } from "../button/button.tsx";
 
@@ -34,18 +33,6 @@ export const AsideFilters = () => {
     });
   };
 
-  const handleChangeTerms = (e: SelectChangeEvent<string>) => {
-    if (!e.target.value) {
-      setTempFilters({ terms: null });
-      return;
-    }
-
-    const value = getStateValue(e.target.value);
-      if (value !== undefined) {
-        setTempFilters({ terms: value });
-      }
-  };
-
   const handleChangeCommercial = (e: SelectChangeEvent<string>) => {
     setTempFilters({ isCommercial: e.target.value });
   };
@@ -57,9 +44,8 @@ export const AsideFilters = () => {
 
   return (
     <aside className={styles["filters"]}>
-      <div className={styles["filters--flex"]}>
         <SelectFilter
-          sizeStyle="small"
+          sizeStyle="big"
           placeholder="Роль"
           groups={roleGroups}
           emptyOptionLabel={NOT_SPECIFIED_LABEL}
@@ -72,22 +58,9 @@ export const AsideFilters = () => {
           }
           onChange={handleChangeRole}
           menuMaxHeight={450}
-          // селект узкий (105px), а названия ролей и групп длинные
+          // селект уже, чем названия ролей и групп
           menuMinWidth={280}
         />
-         <SelectFilter
-          sizeStyle="small"
-          placeholder="Статус"
-          emptyOptionLabel={NOT_SPECIFIED_LABEL}
-          menuItems={[
-          getStateLabel(StateOfProject.Open),
-          getStateLabel(StateOfProject.InProgress),
-          getStateLabel(StateOfProject.Closed),
-          ]}
-          value={tempFilters.terms !== null ? getStateLabel(tempFilters.terms) : ""}
-          onChange={handleChangeTerms}
-        />
-      </div >
         <SelectFilter
           sizeStyle="big"
           placeholder="Коммерческий"
@@ -101,6 +74,16 @@ export const AsideFilters = () => {
         <InputFilters />
       </div>
       <MultiSelectFilter />
+
+      <label className={styles["checkbox-filter"]}>
+        <input
+          type="checkbox"
+          checked={tempFilters.showArchived}
+          onChange={(e) => setTempFilters({ showArchived: e.target.checked })}
+        />
+        Показать архивные
+      </label>
+
       <div className={styles["buttons"]}>
         <div className={styles["button-wrapper"]}>
           <Button

@@ -49,8 +49,7 @@ export const ProjectList = ({
             // true = по возрастанию, false = по убыванию
             SortOrder: sortDirection === "asc",
             [`Filters.RoleId`]: filters.roleId || undefined,
-            // [`Filters.Deadline`]: filters.terms || undefined,
-            [`Filters.StateOfProject`]: filters.terms !== null && filters.terms !== undefined ? filters.terms : undefined,
+            [`Filters.ShowArchived`]: filters.showArchived,
             // "Не указано" (пустая строка) => фильтр не отправляем
             [`Filters.IsCommercial`]:
               filters.isCommercial === IsCommercialProjectFilter.YES

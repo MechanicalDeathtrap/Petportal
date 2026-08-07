@@ -1,17 +1,47 @@
 import style from "./my-projects.module.sass";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ProjectCard } from "../../projects/project-card/project-card.tsx";
 import { EmptyStateMessage } from "../empty-state-message/empty-state-message.tsx";
 import axios from "axios";
-import { Project } from "../../../types/project-type.ts";
+import { Project, StateOfProject } from "../../../types/project-type.ts";
 import { API_BASE_URL, API_BASE_PATH } from "../../../config/api";
 
 export const MyProjects = () => {
   const [myProjects, setMyProjects] = useState<Project[]>([]);
   const [myProjectCount, setMyProjectCount] = useState(0);
+  const [archivingId, setArchivingId] = useState<string | null>(null);
+  // по умолчанию сначала новые
+  const [oldestFirst, setOldestFirst] = useState(false);
 
   const handleMyProjectCount = (count: number) => setMyProjectCount(count);
   const handleMyProjects = (projects: Project[]) => setMyProjects(projects);
+
+  const archiveProject = async (projectId: string) => {
+    if (!window.confirm("Перевести проект в архив? Вернуть его обратно нельзя.")) {
+      return;
+    }
+
+    setArchivingId(projectId);
+    try {
+      await axios.post(
+        `${API_BASE_URL}${API_BASE_PATH}/Projects/${projectId}/archive`,
+        null,
+        { withCredentials: true },
+      );
+      setMyProjects((prev) =>
+        prev.map((project) =>
+          project.id === projectId
+            ? { ...project, stateOfProject: StateOfProject.Archived }
+            : project,
+        ),
+      );
+    } catch (error) {
+      console.error("Ошибка при переводе проекта в архив:", error);
+      alert("Не удалось перевести проект в архив. Попробуйте ещё раз.");
+    } finally {
+      setArchivingId(null);
+    }
+  };
 
   const getProjects = async () => {
     try {
@@ -37,10 +67,27 @@ export const MyProjects = () => {
     }
   };
 
-  // фильтрация по старости
-  const filterOldProjects = () => {
-    //TODO
-  };
+  const sortedProjects = useMemo(() => {
+    const timestamp = (project: Project): number | null => {
+      if (!project.createdDate) return null;
+      const parsed = new Date(project.createdDate).getTime();
+      return Number.isNaN(parsed) ? null : parsed;
+    };
+
+    return [...myProjects].sort((a, b) => {
+      const aTime = timestamp(a);
+      const bTime = timestamp(b);
+
+      // проекты без даты публикации всегда в конце списка.
+      // Сравнивать их через ±Infinity нельзя: Infinity - Infinity === NaN,
+      // а компаратор, возвращающий NaN, оставляет массив неотсортированным
+      if (aTime === null && bTime === null) return 0;
+      if (aTime === null) return 1;
+      if (bTime === null) return -1;
+
+      return oldestFirst ? aTime - bTime : bTime - aTime;
+    });
+  }, [myProjects, oldestFirst]);
 
   useEffect(() => {
     getProjects();
@@ -53,10 +100,12 @@ export const MyProjects = () => {
         <div className={style["my-project-list__container"]}>
           <h2>Мои проекты: {myProjectCount}</h2>
           <button
-            onClick={filterOldProjects}
-            className={style["my-project-list__filter-old"]}
+            type="button"
+            onClick={() => setOldestFirst((prev) => !prev)}
+            className={`${style["my-project-list__filter-old"]} ${oldestFirst ? style["my-project-list__filter-old--reversed"] : ""}`}
+            title="Переключить порядок сортировки"
           >
-            Сначала старые
+            {oldestFirst ? "Сначала старые" : "Сначала новые"}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="7"
@@ -76,9 +125,13 @@ export const MyProjects = () => {
           </button>
           <ul>
             {" "}
-            {myProjects.map((project) => (
+            {sortedProjects.map((project) => (
               <li key={project.id}>
-                <ProjectCard project={project} />
+                <ProjectCard
+                  project={project}
+                  onArchive={archiveProject}
+                  isArchiving={archivingId === project.id}
+                />
               </li>
             ))}
           </ul>
