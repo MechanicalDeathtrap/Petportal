@@ -6,7 +6,6 @@ import * as Yup from "yup";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { API_BASE_URL, API_BASE_PATH } from "../../../config/api";
-import { userStore } from "../../../stores/user-store.ts";
 
 type RegistrationProps = {
   firstName: string;
@@ -20,6 +19,8 @@ type RegistrationProps = {
 export const Registration = () => {
   const [isMessageOpen, setMessageOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState("");
   const navigate = useNavigate();
 
   const validationSchema = Yup.object().shape({
@@ -75,33 +76,8 @@ export const Registration = () => {
         },
       );
 
-      const meResponse = await axios.get(`${API_BASE_URL}${API_BASE_PATH}/Authorization/me`, {
-        headers: { accept: "*/*" },
-        withCredentials: true,
-      });
-
-      const userData = meResponse.data;
-
-      const nameParts = userData.name?.split(" ").filter(Boolean) || [];
-      const firstName = nameParts[0] || "";
-      const lastName = nameParts[1] || "";
-
-      userStore.setUser({
-        id: userData.id,
-        email: userData.email,
-        firstName,
-        lastName,
-        country: userData.country || "",
-        town: userData.city || "", 
-        phoneNumber: userData.phone || "",
-        telegram: userData.telegram || "",
-        avatarUrl: userData.avatarUrl || "",
-        education: userData.educations || [],
-        experience: userData.experiences || [],
-        stack: userData.stacks || [],
-      });
-
-      navigate("/");
+      setRegisteredEmail(values.email);
+      setRegistrationSuccess(true);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         const status = error.response?.status;
@@ -147,6 +123,20 @@ export const Registration = () => {
   return (
     <div className={styles["authorization__form-side"]}>
       <h1>Регистрация</h1>
+      {registrationSuccess ? (
+        <div>
+          <p>
+            Аккаунт создан. Мы отправили письмо на <strong>{registeredEmail}</strong>.
+            Перейдите по ссылке в письме, чтобы подтвердить почту и войти.
+          </p>
+          <Button
+            type="button"
+            style="blue-button-header"
+            text="Перейти ко входу"
+            onClick={() => navigate("/login")}
+          />
+        </div>
+      ) : (
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}
@@ -262,6 +252,7 @@ export const Registration = () => {
           </Form>
         )}
       </Formik>
+      )}
 
       {isMessageOpen && (
         <div className={styles["authorization__message"]}>

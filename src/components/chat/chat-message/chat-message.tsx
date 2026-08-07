@@ -1,6 +1,7 @@
 import style from "./chat-message.module.sass";
 import { ChatMessage as ChatMessageType } from "../../../types/chat-types";
 import { userStore } from "../../../stores/user-store";
+import { isSystemChatMessage } from "../../../stores/chat-store";
 import { observer } from "mobx-react-lite";
 
 type MessageProps = {
@@ -8,7 +9,8 @@ type MessageProps = {
 };
 
 export const ChatMessage = observer(({ message }: MessageProps) => {
-  const isMyMessage = message.senderId === userStore.user.id;
+  const isSystem = isSystemChatMessage(message.message);
+  const isMyMessage = !isSystem && message.senderId === userStore.user.id;
 
   const formatTime = (timestamp: string) => {
     try {
@@ -28,11 +30,21 @@ export const ChatMessage = observer(({ message }: MessageProps) => {
         hour: "2-digit",
         minute: "2-digit"
       });
-    } catch (error) {
-      console.error('Ошибка форматирования времени:', error, timestamp);
-      return '--:--';
+    } catch {
+      return "--:--";
     }
   };
+
+  if (isSystem) {
+    return (
+      <div className={style["chat-message--system"]}>
+        <p>{message.message}</p>
+        <span className={style["chat-message__time--system"]}>
+          {formatTime(message.sentAt)}
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div className={`${style["chat-message"]} ${isMyMessage ? style["chat-message--mine"] : style["chat-message--other"]}`}>
@@ -47,7 +59,11 @@ export const ChatMessage = observer(({ message }: MessageProps) => {
         <div className={style["chat-message__text"]}>
           {message.message}
         </div>
-        <span className={style["chat-message__time"]} style={{ color: 'white' }}>
+        <span
+          className={`${style["chat-message__time"]} ${
+            isMyMessage ? style["chat-message__time--mine"] : style["chat-message__time--other"]
+          }`}
+        >
           {formatTime(message.sentAt)}
         </span>
       </div>

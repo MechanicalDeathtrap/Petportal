@@ -8,6 +8,7 @@ import { NotificationPopup } from "../../popups/notifications-popup/notification
 import { authStore } from "../../stores/auth-store.ts";
 import { popupStore } from "../../stores/popups-store.ts";
 import { userStore } from "../../stores/user-store.ts";
+import { chatStore } from "../../stores/chat-store.ts";
 import { observer } from "mobx-react-lite";
 import { findAllCookies } from "../../utils/cookies.ts";
 import { fetchUserData } from "../../utils/fetch-user-data.ts";
@@ -188,9 +189,9 @@ export const Header = observer(() => {
                 </svg>
               </button>
             </li>
-            <li>
+            <li className={styles.headerButtonsList__messageWrap}>
               <Link to="/chat">
-                <button type="button">
+                <button type="button" className={styles.headerButtonsList__messageBtn}>
                   <svg
                     className={styles.headerButtonsList__messageIcon}
                     xmlns="http://www.w3.org/2000/svg"
@@ -207,6 +208,11 @@ export const Header = observer(() => {
                       strokeLinejoin="round"
                     />
                   </svg>
+                  {chatStore.totalUnread > 0 && (
+                    <span className={styles.headerButtonsList__chatBadge}>
+                      {chatStore.totalUnread > 99 ? "99+" : chatStore.totalUnread}
+                    </span>
+                  )}
                 </button>
               </Link>
             </li>

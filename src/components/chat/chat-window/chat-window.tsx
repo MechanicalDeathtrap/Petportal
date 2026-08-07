@@ -2,7 +2,7 @@ import style from "./chat-window.module.sass";
 import { ChatMessage } from "../chat-message/chat-message.tsx";
 import { MessageInputBar } from "../message-input-bar/message-input-bar.tsx";
 import { observer } from "mobx-react-lite";
-import { chatStore } from "../../../stores/chat-store.ts";
+import { chatStore, getChatPeerName } from "../../../stores/chat-store.ts";
 import { userStore } from "../../../stores/user-store.ts";
 import { useEffect, useRef } from "react";
 
@@ -11,34 +11,18 @@ export const ChatWindow = observer(() => {
   const messages = chatStore.activeChatMessages;
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
-  // Прокрутка к последнему сообщению при загрузке новых
   useEffect(() => {
     if (messagesContainerRef.current && messages.length > 0) {
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     }
   }, [messages.length]);
 
-  // Функция для получения имени собеседника
-  const getChatDisplayName = () => {
-    if (!activeChat) return "";
-
-    // Если это чат с самим собой (один участник)
-    if (activeChat.participants.length === 1) {
-      return `${userStore.user.firstName} ${userStore.user.lastName}`.trim() || "Вы";
+  useEffect(() => {
+    if (activeChat?.id) {
+      chatStore.markChatRead(activeChat.id);
+      chatStore.stopTitleFlash();
     }
-
-    // Если это чат с одним собеседником
-    if (activeChat.participants.length === 2) {
-      const otherParticipant = activeChat.participants.find(id => id !== userStore.user.id);
-      if (otherParticipant) {
-        // Пока используем ID, в будущем можно добавить API для получения имени
-        return `${otherParticipant.slice(0, 8)}...`;
-      }
-    }
-
-    // Для групповых чатов или если не удалось определить собеседника
-    return activeChat.name;
-  };
+  }, [activeChat?.id, messages.length]);
 
   if (!activeChat) {
     return (
@@ -55,6 +39,8 @@ export const ChatWindow = observer(() => {
     );
   }
 
+  const displayName = getChatPeerName(activeChat, userStore.user.id);
+
   return (
     <div className={style["chat-window"]}>
       <div className={style["chat-window__dialog-header"]}>
@@ -63,7 +49,7 @@ export const ChatWindow = observer(() => {
           style={{ backgroundImage: `url(/img/blank-avatar.png)` }}
         />
         <div className={style["chat-window__opponent-info"]}>
-          <h6>{getChatDisplayName()}</h6>
+          <h6>{displayName}</h6>
           <span>
             {activeChat.participants.length > 0
               ? `${activeChat.participants.length} участников`

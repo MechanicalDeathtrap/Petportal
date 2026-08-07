@@ -17,6 +17,8 @@ type AuthorizationProps = {
 export const Login = () => {
   const [isMessageOpen, setMessageOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [pendingEmail, setPendingEmail] = useState("");
+  const [resendStatus, setResendStatus] = useState("");
   const navigate = useNavigate();
 
   const validationSchema = Yup.object().shape({
@@ -91,9 +93,19 @@ export const Login = () => {
               "Некорректные данные. Проверьте введенные значения.",
             );
             break;
-          case 401:
-            setErrorMessage("Неверный email или пароль.");
+          case 401: {
+            const serverMsg =
+              (error.response?.data as { Message?: string; message?: string })?.Message ||
+              (error.response?.data as { Message?: string; message?: string })?.message ||
+              "Неверный email или пароль.";
+            setErrorMessage(serverMsg);
+            if (serverMsg.toLowerCase().includes("подтвердите email")) {
+              setPendingEmail(values.email);
+            } else {
+              setPendingEmail("");
+            }
             break;
+          }
           case 500:
             setErrorMessage("Ошибка сервера. Попробуйте позже.");
             break;
@@ -121,6 +133,20 @@ export const Login = () => {
       setMessageTimer();
     }
   }, [isMessageOpen]);
+
+  const resendConfirmation = async () => {
+    if (!pendingEmail) return;
+    setResendStatus("Отправляем…");
+    try {
+      await fetch(
+        `${API_BASE_URL}${API_BASE_PATH}/Authorization/ResendConfirmationEmail?email=${encodeURIComponent(pendingEmail)}`,
+        { method: "POST", credentials: "include" }
+      );
+      setResendStatus("Письмо отправлено повторно. Проверьте почту.");
+    } catch {
+      setResendStatus("Не удалось отправить письмо. Попробуйте позже.");
+    }
+  };
 
   return (
     <div className={styles["authorization__form-side"]}>
@@ -163,7 +189,7 @@ export const Login = () => {
                 <Field type="checkbox" name="rememberMe" />
                 Запомнить меня
               </label>
-              <Link to="/forgot-password">Забыли пароль?</Link>
+              <Link to="/forget-password">Забыли пароль?</Link>
             </div>
             <Button
               type="submit"
@@ -179,6 +205,14 @@ export const Login = () => {
           <p className={styles["authorization__message--error"]}>
             {errorMessage}
           </p>
+          {pendingEmail && (
+            <p>
+              <button type="button" onClick={resendConfirmation}>
+                Отправить письмо подтверждения повторно
+              </button>
+            </p>
+          )}
+          {resendStatus && <p>{resendStatus}</p>}
         </div>
       )}
     </div>

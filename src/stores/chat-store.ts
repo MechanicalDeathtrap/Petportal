@@ -3,18 +3,54 @@ import { ChatRoom, ChatMessage } from "../types/chat-types";
 import { chatApiService } from "../services/chat-api";
 import { userStore } from "./user-store";
 
+const BASE_TITLE = "PetPortal";
+const RESPOND_SYSTEM_RE = /откликнулся на ваш проект\.?$/i;
+
+export function isSystemChatMessage(message: string): boolean {
+  return RESPOND_SYSTEM_RE.test(message.trim());
+}
+
+export function getChatPeerName(chat: ChatRoom, currentUserId: string): string {
+  const participants = chat.participants ?? chat.userIds ?? [];
+  const names = chat.participantNames ?? {};
+
+  if (participants.length === 1) {
+    const selfName = names[participants[0]]
+      || `${userStore.user.firstName} ${userStore.user.lastName}`.trim();
+    return selfName || "Вы";
+  }
+
+  if (participants.length === 2) {
+    const otherId = participants.find((id) => id !== currentUserId);
+    if (otherId) {
+      return names[otherId] || "Пользователь";
+    }
+  }
+
+  // Групповой / fallback: имя не из сырого id комнаты
+  if (chat.name && !chat.name.startsWith("Отклик ·") && !chat.name.startsWith("Команда ·")) {
+    return chat.name;
+  }
+
+  const other = participants.find((id) => id !== currentUserId);
+  if (other && names[other]) return names[other];
+  return "Чат";
+}
+
 export class ChatStore {
   chats: ChatRoom[] = [];
   messages: Record<string, ChatMessage[]> = {};
   activeChatId: string | null = null;
   isLoading: boolean = false;
   error: string | null = null;
+  totalUnread: number = 0;
+  private titleFlashTimer: ReturnType<typeof setInterval> | null = null;
+  private originalTitle = BASE_TITLE;
 
   constructor() {
     makeAutoObservable(this);
   }
 
-  // Загрузка чатов пользователя
   async loadChatRooms() {
     if (!userStore.user.id) return;
 
@@ -24,83 +60,184 @@ export class ChatStore {
     try {
       const chats = await chatApiService.getChatRooms(userStore.user.id);
       this.setChats(chats);
+      void import("../services/chat-realtime").then((m) =>
+        m.chatRealtimeService.joinAllRooms()
+      );
     } catch (error) {
-      this.setError(error instanceof Error ? error.message : 'Ошибка загрузки чатов');
+      this.setError(error instanceof Error ? error.message : "Ошибка загрузки чатов");
     } finally {
       this.setLoading(false);
     }
   }
 
-  // Загрузка сообщений для конкретного чата
   async loadMessages(roomId: string) {
     this.setLoading(true);
     this.setError(null);
 
     try {
-      // Загружаем все сообщения для чата
       const messages = await chatApiService.getMessages(roomId);
       this.setMessages(roomId, messages);
+      this.markChatRead(roomId);
     } catch (error) {
-      this.setError(error instanceof Error ? error.message : 'Ошибка загрузки сообщений');
+      this.setError(error instanceof Error ? error.message : "Ошибка загрузки сообщений");
     } finally {
       this.setLoading(false);
     }
   }
 
-  // Отправка сообщения
   async sendMessage(roomId: string, message: string) {
     if (!userStore.user.id) return;
 
     try {
-      // Формируем payload для отправки
       const messagePayload = {
         chatRoomId: roomId,
         message,
         senderId: userStore.user.id,
-        senderName: userStore.user.firstName || "Вы",
+        senderName:
+          `${userStore.user.firstName} ${userStore.user.lastName}`.trim() || "Вы",
       };
 
-      // Отправляем сообщение на сервер
       const newMessage = await chatApiService.sendMessage(messagePayload);
 
-      // Создаём локальное сообщение с правильными данными
       const localMessage: ChatMessage = {
         id: newMessage.id || `local-${Date.now()}`,
         chatRoomId: roomId,
-        senderId: userStore.user.id, // Используем ID текущего пользователя
-        senderName: userStore.user.firstName || "Вы", // Используем имя текущего пользователя
-        message: message, // Используем исходный текст сообщения
-        sentAt: newMessage.sentAt, // Используем время от сервера
-        isRead: false
+        senderId: userStore.user.id,
+        senderName:
+          newMessage.senderName ||
+          `${userStore.user.firstName} ${userStore.user.lastName}`.trim() ||
+          "Вы",
+        message: newMessage.message || message,
+        sentAt: newMessage.sentAt || new Date().toISOString(),
+        isRead: true,
       };
 
-      // Добавляем новое сообщение в список
-      runInAction(() => {
-        if (!this.messages[roomId]) {
-          this.messages[roomId] = [];
-        }
-        this.messages[roomId].push(localMessage);
-
-        // Обновляем последнее сообщение в чате
-        const chatIndex = this.chats.findIndex(chat => chat.id === roomId);
-        if (chatIndex !== -1) {
-          this.chats[chatIndex].lastMessage = message;
-          this.chats[chatIndex].lastMessageTime = newMessage.sentAt;
-      }});
+      this.appendMessage(localMessage, { fromSelf: true });
     } catch (error) {
-      console.error('Ошибка отправки сообщения:', error);
-      this.setError(error instanceof Error ? error.message : 'Ошибка отправки сообщения');
+      console.error("Ошибка отправки сообщения:", error);
+      this.setError(error instanceof Error ? error.message : "Ошибка отправки сообщения");
     }
   }
 
-  // Создание нового чата
-  async createChatRoom(name: string, userIds: string[]) {
+  handleIncomingMessage(raw: ChatMessage) {
+    if (!raw) return;
 
-    // Проверяем, есть ли уже такой чат в текущем состоянии
+    const message: ChatMessage = {
+      id: raw.id,
+      chatRoomId: raw.chatRoomId,
+      senderId: raw.senderId,
+      senderName: raw.senderName || "Пользователь",
+      message: raw.message,
+      sentAt: this.normalizeTimestamp(raw.sentAt),
+      isRead: false,
+    };
+
+    const fromSelf = message.senderId === userStore.user.id;
+    this.appendMessage(message, { fromSelf });
+  }
+
+  private appendMessage(message: ChatMessage, opts: { fromSelf: boolean }) {
+    const roomId = message.chatRoomId;
+    if (!roomId) return;
+
+    runInAction(() => {
+      if (!this.messages[roomId]) {
+        this.messages[roomId] = [];
+      }
+
+      if (this.messages[roomId].some((m) => m.id === message.id)) {
+        return;
+      }
+
+      this.messages[roomId].push({
+        ...message,
+        sentAt: this.normalizeTimestamp(message.sentAt),
+      });
+
+      let chat = this.chats.find((c) => c.id === roomId);
+      if (!chat) {
+        // Новый чат (например, отклик) — подтянем список
+        void this.loadChatRooms();
+        chat = {
+          id: roomId,
+          name: "",
+          participants: [],
+          lastMessage: message.message,
+          lastMessageTime: message.sentAt,
+          unreadCount: opts.fromSelf ? 0 : 1,
+        };
+        this.chats = [chat, ...this.chats];
+      } else {
+        chat.lastMessage = message.message;
+        chat.lastMessageTime = message.sentAt;
+      }
+
+      const isViewingThisChat =
+        this.activeChatId === roomId &&
+        typeof window !== "undefined" &&
+        window.location.pathname.startsWith("/chat") &&
+        !document.hidden;
+
+      if (!opts.fromSelf && !isViewingThisChat) {
+        chat.unreadCount = (chat.unreadCount || 0) + 1;
+        this.recalcTotalUnread();
+        this.flashTabTitle(message.senderName || "Новое сообщение");
+      } else if (!opts.fromSelf && isViewingThisChat) {
+        this.markChatRead(roomId);
+      }
+    });
+  }
+
+  markChatRead(roomId: string) {
+    const chat = this.chats.find((c) => c.id === roomId);
+    if (chat && chat.unreadCount) {
+      chat.unreadCount = 0;
+      this.recalcTotalUnread();
+    }
+    if (this.totalUnread === 0) {
+      this.stopTitleFlash();
+    }
+    void chatApiService.markRoomAsRead(roomId).catch(() => {
+      /* ignore */
+    });
+  }
+
+  private recalcTotalUnread() {
+    this.totalUnread = this.chats.reduce((sum, c) => sum + (c.unreadCount || 0), 0);
+    if (this.totalUnread === 0) {
+      this.stopTitleFlash();
+    }
+  }
+
+  private flashTabTitle(preview: string) {
+    if (typeof document === "undefined") return;
+    this.stopTitleFlash();
+    this.originalTitle = document.title || BASE_TITLE;
+    let showAlt = true;
+    document.title = `(${this.totalUnread}) Новое сообщение`;
+    this.titleFlashTimer = setInterval(() => {
+      document.title = showAlt
+        ? `(${this.totalUnread}) ${preview}`
+        : this.originalTitle;
+      showAlt = !showAlt;
+    }, 1200);
+  }
+
+  stopTitleFlash() {
+    if (this.titleFlashTimer) {
+      clearInterval(this.titleFlashTimer);
+      this.titleFlashTimer = null;
+    }
+    if (typeof document !== "undefined") {
+      document.title = this.originalTitle || BASE_TITLE;
+    }
+  }
+
+  async createChatRoom(name: string, userIds: string[]) {
     const existing = this.chats.find(
-      chat =>
+      (chat) =>
         chat.participants.length === userIds.length &&
-        chat.participants.every(id => userIds.includes(id))
+        chat.participants.every((id) => userIds.includes(id))
     );
     if (existing) {
       this.setActiveChatId(existing.id);
@@ -112,140 +249,120 @@ export class ChatStore {
         name,
         userIds,
       });
-      this.chats.push(newRoom);
+      this.chats.push(this.normalizeRoom(newRoom));
+      void import("../services/chat-realtime").then((m) =>
+        m.chatRealtimeService.joinRoom(newRoom.id)
+      );
       return newRoom;
     } catch (error) {
-      console.error('Ошибка создания чата:', error);
+      console.error("Ошибка создания чата:", error);
 
       const errorMessage = error instanceof Error ? error.message : String(error);
 
-      // Если ошибка 409 (чат уже существует) — загружаем чаты и активируем существующий
-      if (errorMessage.includes('409')) {
-        console.log('Чат уже существует, загружаем чаты с сервера...');
+      if (errorMessage.includes("409")) {
         try {
           await this.loadChatRooms();
           const loadedChat = this.chats.find(
-            chat =>
+            (chat) =>
               chat.participants.length === userIds.length &&
-              chat.participants.every(id => userIds.includes(id))
+              chat.participants.every((id) => userIds.includes(id))
           );
           if (loadedChat) {
             this.setActiveChatId(loadedChat.id);
             return loadedChat;
           }
         } catch (loadError) {
-          console.error('Ошибка загрузки чатов:', loadError);
+          console.error("Ошибка загрузки чатов:", loadError);
         }
       }
 
-      this.setError(error instanceof Error ? error.message : 'Ошибка создания чата');
+      this.setError(error instanceof Error ? error.message : "Ошибка создания чата");
       throw error;
     }
   }
 
-  // Создание чата с самим собой для тестирования
   async createSelfChat() {
     if (!userStore.user.id) return;
 
     try {
-      const selfChat = await this.createChatRoom("Чат с собой", [userStore.user.id]);
-      return selfChat;
+      return await this.createChatRoom("Чат с собой", [userStore.user.id]);
     } catch (error) {
-      console.error('Ошибка создания чата с собой:', error);
+      console.error("Ошибка создания чата с собой:", error);
     }
   }
 
-  // Удаление сообщения
   async deleteMessage(messageId: string, roomId: string) {
     try {
       await chatApiService.deleteMessage(messageId);
 
-      // Удаляем сообщение из локального состояния
       if (this.messages[roomId]) {
         this.messages[roomId] = this.messages[roomId].filter(
-          message => message.id !== messageId
+          (message) => message.id !== messageId
         );
       }
     } catch (error) {
-      this.setError(error instanceof Error ? error.message : 'Ошибка удаления сообщения');
+      this.setError(error instanceof Error ? error.message : "Ошибка удаления сообщения");
     }
   }
 
-  setChats(chats: ChatRoom[]) {
-
-    // Приводим участников к единому виду
-    const normalizedChats = chats.map(chat => ({
+  private normalizeRoom(chat: ChatRoom): ChatRoom {
+    return {
       ...chat,
       participants: chat.participants ?? chat.userIds ?? [],
-    }));
+      participantNames: chat.participantNames ?? {},
+      unreadCount: chat.unreadCount ?? 0,
+    };
+  }
 
-    // Убираем дубликаты по ID
+  setChats(chats: ChatRoom[]) {
+    const normalizedChats = chats.map((chat) => this.normalizeRoom(chat));
+
     const uniqueChats = normalizedChats.filter(
-      (chat, index, self) => index === self.findIndex(c => c.id === chat.id)
+      (chat, index, self) => index === self.findIndex((c) => c.id === chat.id)
     );
 
-    // Убираем дубликаты по составу участников
-    const deduplicatedChats = uniqueChats.filter((chat, index, self) => {
-      const chatUserIdsSorted = [...chat.participants].sort();
-      return index === self.findIndex(otherChat => {
-        const otherUserIdsSorted = [...otherChat.participants].sort();
-        return (
-          chatUserIdsSorted.length === otherUserIdsSorted.length &&
-          chatUserIdsSorted.every((id, i) => id === otherUserIdsSorted[i])
-        );
-      });
-    });
-
-    // Фильтруем чаты по текущему пользователю
-    const userChats = deduplicatedChats.filter(chat =>
+    const userChats = uniqueChats.filter((chat) =>
       chat.participants.includes(userStore.user.id)
     );
 
-    this.chats = userChats;
+    // Сохраняем локальные unread при перезагрузке списка
+    const prevUnread = new Map(this.chats.map((c) => [c.id, c.unreadCount || 0]));
+    this.chats = userChats.map((c) => ({
+      ...c,
+      unreadCount: prevUnread.get(c.id) ?? c.unreadCount ?? 0,
+    }));
+    this.recalcTotalUnread();
   }
-
 
   setMessages(roomId: string, messages: ChatMessage[]) {
-    // Маппим сообщения от сервера к нашему формату
-    const mappedMessages = messages.map(msg => ({
+    const mappedMessages = messages.map((msg) => ({
       ...msg,
-      timestamp: msg.sentAt, // Используем sentAt если есть, иначе timestamp
-      roomId: msg.chatRoomId, // Используем chatRoomId если есть, иначе roomId
+      senderName: msg.senderName || "Пользователь",
+      sentAt: this.normalizeTimestamp(msg.sentAt),
     }));
 
-    // Сортируем сообщения по времени (от старых к новым)
     const sortedMessages = mappedMessages.sort((a, b) => {
-      const dateA = new Date(a.timestamp).getTime();
-      const dateB = new Date(b.timestamp).getTime();
-      return dateA - dateB;
+      return new Date(a.sentAt).getTime() - new Date(b.sentAt).getTime();
     });
 
-    // Убеждаемся, что timestamp в правильном формате
-    const normalizedMessages = sortedMessages.map(msg => ({
-      ...msg,
-      timestamp: this.normalizeTimestamp(msg.timestamp)
-    }));
-
-    this.messages[roomId] = normalizedMessages;
+    this.messages[roomId] = sortedMessages;
   }
 
-  // Нормализация timestamp для корректного отображения
   private normalizeTimestamp(timestamp: string): string {
     try {
       const date = new Date(timestamp);
       if (isNaN(date.getTime())) {
-        // Если timestamp некорректный, используем текущее время
         return new Date().toISOString();
       }
       return date.toISOString();
     } catch {
-      // В случае ошибки парсинга используем текущее время
       return new Date().toISOString();
     }
   }
 
   setActiveChatId(id: string) {
     this.activeChatId = id;
+    this.markChatRead(id);
   }
 
   setLoading(loading: boolean) {
@@ -256,16 +373,16 @@ export class ChatStore {
     this.error = error;
   }
 
-  // Getters
   get activeChat() {
-    return this.activeChatId ? this.chats.find(chat => chat.id === this.activeChatId) : null;
+    return this.activeChatId
+      ? this.chats.find((chat) => chat.id === this.activeChatId)
+      : null;
   }
 
   get activeChatMessages() {
     return this.activeChatId ? this.messages[this.activeChatId] || [] : [];
   }
 
-  // Очистка состояния
   clearError() {
     this.error = null;
   }
@@ -274,6 +391,8 @@ export class ChatStore {
     this.chats = [];
     this.messages = {};
     this.activeChatId = null;
+    this.totalUnread = 0;
+    this.stopTitleFlash();
   }
 }
 

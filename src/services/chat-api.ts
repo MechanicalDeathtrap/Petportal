@@ -66,6 +66,12 @@ class ChatApiService {
       method: 'DELETE',
     });
   }
+
+  async markRoomAsRead(roomId: string): Promise<void> {
+    return this.request<void>(`/chat/rooms/${roomId}/read`, {
+      method: 'POST',
+    });
+  }
 }
 
 export const chatApiService = new ChatApiService(); 

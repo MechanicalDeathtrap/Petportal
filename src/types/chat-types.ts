@@ -2,7 +2,9 @@ export type ChatRoom = {
   id: string;
   name: string;
   participants: string[];
-  userIds?: string[]; // добавлено для поддержки маппинга с бэкенда
+  userIds?: string[];
+  /** userId → display name */
+  participantNames?: Record<string, string>;
   lastMessage?: string;
   lastMessageTime?: string;
   unreadCount?: number;

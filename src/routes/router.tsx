@@ -9,6 +9,7 @@ import { Projects } from "../pages/projects/projects.tsx";
 import { Registration } from "../components/auth/registration/registration.tsx";
 import { Login } from "../components/auth/login/login.tsx";
 import { PasswordRecovery } from "../components/auth/password-recovery/password-recovery.tsx";
+import { VerifyEmail } from "../components/auth/verify-email/verify-email.tsx";
 import { AccountLayout } from "../components/account/account-layout/account-layout.tsx";
 import { Auth } from "../pages/authorization/auth.tsx";
 import { Account } from "../pages/account/account.tsx";
@@ -50,6 +51,7 @@ export const router = createBrowserRouter(
         <Route path="/registration" element={<Registration />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forget-password" element={<PasswordRecovery />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
       </Route>
     </>,
   ),
