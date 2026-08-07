@@ -85,6 +85,11 @@
       overflow-y: scroll
       z-index: 10
 
+      // список ролей разбит на темы — ему нужно больше места
+      &--grouped
+        max-height: 40vh
+        min-width: 260px
+
       &::-webkit-scrollbar
         width: 10px
         background-color: $background-white
@@ -115,3 +120,22 @@
 
       &:hover
         background: $background-grey
+
+    // Заголовок тематической группы ролей
+    &__group-label
+      position: sticky
+      top: 0
+      z-index: 1
+      background-color: $background-white
+      font-size: 12px
+      font-weight: 600
+      letter-spacing: 0.04em
+      text-transform: uppercase
+      color: $text-secondary-color
+      padding: 8px 17px 2px
+      cursor: default
+      user-select: none
+      // заголовки липкие: перенос на две строки ломает их наложение друг на друга
+      white-space: nowrap
+      overflow: hidden
+      text-overflow: ellipsis

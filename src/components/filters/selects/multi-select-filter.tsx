@@ -6,7 +6,6 @@
     Select,
     SelectChangeEvent,
   } from "@mui/material";
-  import { useState } from "react";
   import styles from "./select-filter.module.sass";
   import { tags , labelToIdMap} from "../../../data/tags";
   import { useFilterContext } from "../../../context/filter-context";

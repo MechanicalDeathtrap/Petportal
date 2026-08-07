@@ -38,7 +38,31 @@
 .dropdown-menu li
   padding: 8px 16px
   cursor: pointer
+  display: flex
+  align-items: center
+  justify-content: space-between
+  gap: 12px
+  color: $filter-color
+  font-size: 15px
 
 .dropdown-menu li:hover,
 .dropdown-menu li.selected
   background-color: #f0f0f0
+
+.dropdown-menu li.selected
+  font-weight: 600
+
+// Стрелка направления сортировки
+.direction-arrow
+  flex-shrink: 0
+  color: $filter-color
+  transition: transform 0.15s ease-in-out
+
+  &--asc
+    transform: rotate(180deg)
+
+.dropdown-menu li:not(.selected) .direction-arrow
+  opacity: 0.35
+
+.dropdown-menu li.selected .direction-arrow
+  color: $primary-color

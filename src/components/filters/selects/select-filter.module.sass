@@ -50,3 +50,44 @@
 
   & :global(.MuiChip-label)
     font-family: Inter, sans-serif
+
+  &__menu-list
+    padding-bottom: 0 !important
+
+  &__group-label
+    font-family: Inter, sans-serif
+    @include fontSettings(12px, 600)
+    letter-spacing: 0.04em
+    text-transform: uppercase
+    color: $text-secondary-color !important
+    background-color: $background-white !important
+    line-height: 28px !important
+    padding-top: 4px !important
+    padding-bottom: 0 !important
+    // заголовки групп липкие: если один из них перенесётся на две строки,
+    // следующий перекроет только свою высоту и лишняя строка вылезет из-под него
+    white-space: nowrap
+    overflow: hidden
+    text-overflow: ellipsis
+
+  &__search
+    position: sticky
+    bottom: 0
+    z-index: 100
+    display: flex
+    padding: 8px 10px
+    background-color: $background-white
+    border-top: 0.75px solid $border-color
+
+  &__search-input
+    width: 100%
+    padding: 3px 10px
+    border-radius: 15px
+    border: 0.75px solid $border-color
+    font-family: Inter, sans-serif
+    font-size: 14px
+    color: $filter-color
+
+    & input::placeholder
+      color: $text-secondary-color
+      opacity: 1

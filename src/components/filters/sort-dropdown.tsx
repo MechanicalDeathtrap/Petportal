@@ -1,39 +1,109 @@
 import styles from "./sort-dropdown.module.sass";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+export type SortDirection = "asc" | "desc";
+
+export type SortState = {
+  value: string;
+  direction: SortDirection;
+};
 
 interface SortOption {
   label: string;
   value: string;
+  /** Направление, которое применяется при первом выборе опции. */
+  defaultDirection: SortDirection;
 }
 
 const sortOptions: SortOption[] = [
-  { label: "По дате публикации", value: "date" },
-  { label: "По бюджету", value: "budget" },
-  { label: "По сроку приема заявок", value: "applyingdeadline" },
-  { label: "По дедлайну проекта", value: "deadline" },
-
+  { label: "По дате публикации", value: "date", defaultDirection: "desc" },
+  { label: "По бюджету", value: "budget", defaultDirection: "desc" },
+  { label: "По сроку приема заявок", value: "applyingdeadline", defaultDirection: "asc" },
+  { label: "По дедлайну проекта", value: "deadline", defaultDirection: "asc" },
 ];
 
-export const SortDropdown = ({ onSortChange }: { onSortChange: (value: string) => void }) => {
+export const DEFAULT_SORT: SortState = {
+  value: sortOptions[0].value,
+  direction: sortOptions[0].defaultDirection,
+};
+
+const directionHint: Record<SortDirection, string> = {
+  asc: "по возрастанию",
+  desc: "по убыванию",
+};
+
+/** Стрелка направления сортировки: вниз — по убыванию, вверх — по возрастанию. */
+const DirectionArrow = ({ direction }: { direction: SortDirection }) => (
+  <svg
+    className={`${styles["direction-arrow"]} ${direction === "asc" ? styles["direction-arrow--asc"] : ""}`}
+    xmlns="http://www.w3.org/2000/svg"
+    width="10"
+    height="10"
+    viewBox="0 0 10 10"
+    fill="none"
+    aria-hidden="true"
+  >
+    <path
+      d="M5 1V9M5 9L1.5 5.5M5 9L8.5 5.5"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+export const SortDropdown = ({
+  onSortChange,
+}: {
+  onSortChange: (sort: SortState) => void;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<SortOption>(sortOptions[0]);
+  const [direction, setDirection] = useState<SortDirection>(
+    sortOptions[0].defaultDirection
+  );
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!dropdownRef.current?.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isOpen]);
 
   const handleSelect = (option: SortOption) => {
+    // повторный клик по уже выбранной опции разворачивает сортировку
+    const nextDirection: SortDirection =
+      option.value === selected.value
+        ? direction === "asc"
+          ? "desc"
+          : "asc"
+        : option.defaultDirection;
+
     setSelected(option);
-    onSortChange(option.value);
+    setDirection(nextDirection);
+    onSortChange({ value: option.value, direction: nextDirection });
     setIsOpen(false);
   };
 
   return (
-    <div className={styles.dropdown}>
+    <div className={styles.dropdown} ref={dropdownRef}>
       <button
         type="button"
         className={styles["filter-button"]}
         onClick={() => setIsOpen(!isOpen)}
       >
         <span>{selected.label}</span>
+        <DirectionArrow direction={direction} />
         <svg
-          xmlns="http://www.w3.org/2000/svg" 
+          xmlns="http://www.w3.org/2000/svg"
           width="7"
           height="10"
           viewBox="0 0 7 10"
@@ -55,17 +125,26 @@ export const SortDropdown = ({ onSortChange }: { onSortChange: (value: string) =
 
       {isOpen && (
         <ul className={styles["dropdown-menu"]}>
-          {sortOptions.map((option) => (
-            <li
-              key={option.value}
-              onClick={() => handleSelect(option)}
-              className={
-                selected.value === option.value ? styles.selected : ""
-              }
-            >
-              {option.label}
-            </li>
-          ))}
+          {sortOptions.map((option) => {
+            const isSelected = selected.value === option.value;
+            const optionDirection = isSelected ? direction : option.defaultDirection;
+
+            return (
+              <li
+                key={option.value}
+                onClick={() => handleSelect(option)}
+                className={isSelected ? styles.selected : ""}
+                title={
+                  isSelected
+                    ? `Нажмите ещё раз, чтобы отсортировать ${directionHint[optionDirection === "asc" ? "desc" : "asc"]}`
+                    : `Сортировать ${directionHint[optionDirection]}`
+                }
+              >
+                <span>{option.label}</span>
+                <DirectionArrow direction={optionDirection} />
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>

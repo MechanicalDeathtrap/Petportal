@@ -2,6 +2,11 @@ import style from "./tags-input.module.sass";
 import { useField, useFormikContext } from "formik";
 import { useState, useEffect, useRef } from "react";
 
+export type SuggestionGroup = {
+  label: string;
+  items: string[];
+};
+
 type TagsInputProps = {
   availableTags: string[]
   name: string;
@@ -10,6 +15,11 @@ type TagsInputProps = {
   suggestions: string[];
   setSuggestions: (val: string[]) => void;
   error: string | string[];
+  /**
+   * Необязательная разбивка подсказок на тематические подсписки.
+   * Если не передана — список выводится плоским, как раньше.
+   */
+  groupSuggestions?: (suggestions: string[]) => SuggestionGroup[];
 };
 
 export const TagsInput = ({
@@ -19,7 +29,8 @@ export const TagsInput = ({
                             suggestions,
                             setSuggestions,
                             error,
-                            availableTags
+                            availableTags,
+                            groupSuggestions
                           }: TagsInputProps) => {
   const [field] = useField<string[]>(name);
   const { setFieldValue } = useFormikContext();
@@ -85,6 +96,10 @@ export const TagsInput = ({
       setInputTag("");
     }
   };
+
+  const suggestionGroups: SuggestionGroup[] = groupSuggestions
+    ? groupSuggestions(suggestions)
+    : [{ label: "", items: suggestions }];
 
   const handleContainerClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -157,20 +172,34 @@ export const TagsInput = ({
                     }}
                   />
                 </div>
-                <ul className={style["tags-input__suggestions-list"]}>
-                  {suggestions.map((s) => (
-                    <li
-                      key={`suggestion-${s}`}
-                      onMouseDown={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleAddTag(s);
-                      }}
-                      className={style["tags-input__suggestion"]}
-                    >
-                      {s}
-                    </li>
-                  ))}
+                <ul
+                  className={`${style["tags-input__suggestions-list"]} ${groupSuggestions ? style["tags-input__suggestions-list--grouped"] : ""}`}
+                >
+                  {suggestionGroups.flatMap((group) => [
+                    ...(group.label
+                      ? [
+                          <li
+                            key={`group-${group.label}`}
+                            className={style["tags-input__group-label"]}
+                          >
+                            {group.label}
+                          </li>,
+                        ]
+                      : []),
+                    ...group.items.map((s) => (
+                      <li
+                        key={`suggestion-${group.label}-${s}`}
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleAddTag(s);
+                        }}
+                        className={style["tags-input__suggestion"]}
+                      >
+                        {s}
+                      </li>
+                    )),
+                  ])}
                   {suggestions.length === 0 && (
                     <li className={style["tags-input__suggestion"]}></li>
                   )}

@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import qs from "qs";
 import { useFilterContext } from "../../../context/filter-context.tsx";
 import { IsCommercialProjectFilter } from "../../filters/aside-filters.tsx";
+import { SortDirection } from "../../filters/sort-dropdown.tsx";
 import { API_BASE_URL, API_BASE_PATH } from "../../../config/api";
 
 
@@ -17,6 +18,7 @@ interface ProjectListProps {
   searchQuery: string;
   needToFetch: boolean;
   sort: string;
+  sortDirection: SortDirection;
   setNeedToFetch: (arg0: boolean) => void;
 }
 
@@ -25,6 +27,7 @@ export const ProjectList = ({
   searchQuery,
   needToFetch,
   sort,
+  sortDirection,
   setNeedToFetch
 }: ProjectListProps) => {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -43,11 +46,18 @@ export const ProjectList = ({
             SearchElement: searchQuery || undefined,
             Page: nextPage || undefined,
             SortItem: sort || "date",
-            SortOrder: false, // false = по убыванию (новизна / больший бюджет сверху)
+            // true = по возрастанию, false = по убыванию
+            SortOrder: sortDirection === "asc",
             [`Filters.RoleId`]: filters.roleId || undefined,
             // [`Filters.Deadline`]: filters.terms || undefined,
             [`Filters.StateOfProject`]: filters.terms !== null && filters.terms !== undefined ? filters.terms : undefined,
-            [`Filters.IsCommercial`]: filters.isCommercial  === IsCommercialProjectFilter.YES ? true : false || undefined,
+            // "Не указано" (пустая строка) => фильтр не отправляем
+            [`Filters.IsCommercial`]:
+              filters.isCommercial === IsCommercialProjectFilter.YES
+                ? true
+                : filters.isCommercial === IsCommercialProjectFilter.NO
+                  ? false
+                  : undefined,
             ['Filters.Tags']: filters.tags || undefined
           },
                 paramsSerializer: {
@@ -86,13 +96,15 @@ export const ProjectList = ({
   }, [needToFetch]);
 
   useEffect(() => {
-    fetchProjects(0).then((response) => {
+    // при смене поиска/сортировки/фильтров список загружается заново с первой страницы
+    setCurrentPage(1);
+    fetchProjects(1).then((response) => {
       if (response) {
         setProjects(response.data.projects);
         setProjectCount(response.data.projectsCount);
       }
-    }); 
-  }, [searchQuery, sort, triggerFetch]);
+    });
+  }, [searchQuery, sort, sortDirection, triggerFetch]);
 
   // useEffect(() => {  
   //   fetchProjects();

@@ -1,11 +1,10 @@
 import styles from "./catalogue.module.sass";
 import { SearchBar } from "../search bar/search-bar.tsx";
-import { SortDropdown } from "../filters/sort-dropdown.tsx";
+import { DEFAULT_SORT, SortDropdown, SortState } from "../filters/sort-dropdown.tsx";
 
 import { ProjectList } from "../projects/project-list/project-list.tsx";
 import { Button } from "../button/button.tsx";
 import { useState } from "react";
-import { useFilterContext } from "../../context/filter-context.tsx";
 
 export type ProjectFilters = {
   role: string;
@@ -20,7 +19,7 @@ export const Catalogue = ( ) => {
   const saved = sessionStorage.getItem("projectSearchQuery");
   return saved || "";
 });
-  const [sort, setSort] = useState("date");
+  const [sort, setSort] = useState<SortState>(DEFAULT_SORT);
   const [needToFetch, setNeedToFetch] = useState(false);
 
 
@@ -34,7 +33,8 @@ export const Catalogue = ( ) => {
         <SortDropdown onSortChange={setSort}/>
         <ProjectList
           searchQuery={searchQuery}
-          sort={sort}
+          sort={sort.value}
+          sortDirection={sort.direction}
           needToFetch={needToFetch}
           setNeedToFetch={() => setNeedToFetch(false)}
         />

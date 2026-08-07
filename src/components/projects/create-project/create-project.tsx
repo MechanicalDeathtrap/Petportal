@@ -7,6 +7,7 @@ import { Button } from "../../button/button.tsx";
 import { TagsInput } from "../../tags-input/tags-input.tsx";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL, API_BASE_PATH } from "../../../config/api";
+import { groupRoleNames } from "../../../data/role-categories.ts";
 
 type CatalogueRole = { id: string; name: string };
 
@@ -104,6 +105,7 @@ export const CreateProject = () => {
     stateOfProject: StateOfProject.Open,
     isBusinessProject: false,
     avatarImageBase64: "",
+    avatarUrl: "",
     budget: 0,
     tags: [],
     executors: [],
@@ -318,6 +320,7 @@ const handleSubmit = async (values: Project, { setSubmitting }: { setSubmitting:
                 <p className={style["create-project__field-description"]}>Укажите, кого вы ищите</p>
                 <TagsInput
                   availableTags={executorSuggestions}
+                  groupSuggestions={groupRoleNames}
                   name="executors"
                   inputTag={inputExecutor}
                   setInputTag={setInputExecutor}
