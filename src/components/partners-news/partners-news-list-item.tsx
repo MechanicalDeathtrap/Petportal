@@ -1,24 +1,23 @@
 import styles from "./partners-news-list-item.module.sass";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export const PartnersNewsListItem = () => {
+  const { t } = useTranslation();
   return (
     <div className={styles["partner-news-item"]}>
       <span className={styles["partner-news-item__date"]}>
-        29 Ноября, 2024, Яндекс
+        {t("home.news.sampleDate")}
       </span>
       <div>
         <div className={styles["partner-news-item__main-info"]}>
-          <h6>Всё ещё не хватает специалистов?</h6>
-          <p>
-            Координатор абитуриентов КФУ поговорила о перспективах развития IT:
-            Развитие неоднозначно, но...
-          </p>
+          <h6>{t("home.news.sampleTitle")}</h6>
+          <p>{t("home.news.sampleText")}</p>
         </div>
         <button className={styles["partner-news-item__more-button"]}>
           {/*TODO линк к новости*/}
           <Link to="/">
-            <span>Подробнее</span>
+            <span>{t("home.news.more")}</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="12"

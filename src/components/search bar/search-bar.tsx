@@ -1,5 +1,6 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import styles from "./search-bar.module.sass";
+import { useTranslation } from "react-i18next";
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
@@ -8,6 +9,7 @@ interface SearchBarProps {
 const SEARCH_STORAGE_KEY = "projectSearchQuery";
 
 export const SearchBar = ({ onSearch }: SearchBarProps) => {  
+  const { t } = useTranslation();
   const [searchString, setSearchString] = useState("");
 
   useEffect(() => {
@@ -51,7 +53,7 @@ export const SearchBar = ({ onSearch }: SearchBarProps) => {
       >
         <input
           type="text"
-          placeholder="Искать проекты"
+          placeholder={t("catalogue.searchPlaceholder")}
           value={searchString}
           onChange={handleChange}
         />

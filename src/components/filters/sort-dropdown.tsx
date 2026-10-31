@@ -1,5 +1,6 @@
 import styles from "./sort-dropdown.module.sass";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export type SortDirection = "asc" | "desc";
 
@@ -8,28 +9,29 @@ export type SortState = {
   direction: SortDirection;
 };
 
+type SortLabelKey =
+  | "sort.byDate"
+  | "sort.byBudget"
+  | "sort.byApplyingDeadline"
+  | "sort.byDeadline";
+
 interface SortOption {
-  label: string;
+  labelKey: SortLabelKey;
   value: string;
   /** Направление, которое применяется при первом выборе опции. */
   defaultDirection: SortDirection;
 }
 
 const sortOptions: SortOption[] = [
-  { label: "По дате публикации", value: "date", defaultDirection: "desc" },
-  { label: "По бюджету", value: "budget", defaultDirection: "desc" },
-  { label: "По сроку приема заявок", value: "applyingdeadline", defaultDirection: "asc" },
-  { label: "По дедлайну проекта", value: "deadline", defaultDirection: "asc" },
+  { labelKey: "sort.byDate", value: "date", defaultDirection: "desc" },
+  { labelKey: "sort.byBudget", value: "budget", defaultDirection: "desc" },
+  { labelKey: "sort.byApplyingDeadline", value: "applyingdeadline", defaultDirection: "asc" },
+  { labelKey: "sort.byDeadline", value: "deadline", defaultDirection: "asc" },
 ];
 
 export const DEFAULT_SORT: SortState = {
   value: sortOptions[0].value,
   direction: sortOptions[0].defaultDirection,
-};
-
-const directionHint: Record<SortDirection, string> = {
-  asc: "по возрастанию",
-  desc: "по убыванию",
 };
 
 /** Стрелка направления сортировки: вниз — по убыванию, вверх — по возрастанию. */
@@ -58,6 +60,7 @@ export const SortDropdown = ({
 }: {
   onSortChange: (sort: SortState) => void;
 }) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<SortOption>(sortOptions[0]);
   const [direction, setDirection] = useState<SortDirection>(
@@ -100,7 +103,7 @@ export const SortDropdown = ({
         className={styles["filter-button"]}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span>{selected.label}</span>
+        <span>{t(selected.labelKey)}</span>
         <DirectionArrow direction={direction} />
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -136,11 +139,13 @@ export const SortDropdown = ({
                 className={isSelected ? styles.selected : ""}
                 title={
                   isSelected
-                    ? `Нажмите ещё раз, чтобы отсортировать ${directionHint[optionDirection === "asc" ? "desc" : "asc"]}`
-                    : `Сортировать ${directionHint[optionDirection]}`
+                    ? t("sort.clickAgain", {
+                        direction: t(optionDirection === "asc" ? "sort.desc" : "sort.asc"),
+                      })
+                    : t("sort.sortBy", { direction: t(`sort.${optionDirection}`) })
                 }
               >
-                <span>{option.label}</span>
+                <span>{t(option.labelKey)}</span>
                 <DirectionArrow direction={optionDirection} />
               </li>
             );

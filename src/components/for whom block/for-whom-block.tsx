@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
+import { Trans, useTranslation } from "react-i18next";
 import { Button } from "../button/button.tsx";
 import styles from "./for-whom-block.module.sass";
 
 export const ForWhomBlock = () => {
+  const { t } = useTranslation();
   return (
     <section className={styles["for-whom"]}>
       {/*<img src="/src/assets/img/блюрные-кружки.png" alt="" />*/}
@@ -10,20 +12,17 @@ export const ForWhomBlock = () => {
         <div className={styles["for-whom__first-info"]}>
           <div>
             <h1 className={styles["for-whom__first-info-heading"]}>
-              Для больших и маленьких
+              {t("home.forWhom.bigAndSmallHeading")}
             </h1>
             <p>
-              Вы крупная компания, которой нужно быстро <br /> воплотить идею
-              или скромный энтузиаст,
-              <br /> который хочет осуществить свою мечту?
-              <br /> Место найдется для каждого.
+              <Trans i18nKey="home.forWhom.bigAndSmallText" />
             </p>
           </div>
           {/*TODO линк к проектам*/}
           <Link to="/">
             <Button
               type="button"
-              text={"Создать проект"}
+              text={t("home.forWhom.createProject")}
               style={"blue-button"}
             />
           </Link>
@@ -62,19 +61,15 @@ export const ForWhomBlock = () => {
           <div>
             <div>
               <h1 className={styles["for-whom__second-info-heading"]}>
-                Для самых талантливых
+                {t("home.forWhom.talentedHeading")}
               </h1>
-              <p>
-                Решайте актуальные для бизнеса задачи, проявите себя в реальной
-                работе в бизнес-команде и открывайте для себя новые карьерные
-                перспективы.
-              </p>
+              <p>{t("home.forWhom.talentedText")}</p>
             </div>
             <div className={styles["for-whom__second-info-button"]}>
               <Link to="/projects">
                 <Button
                   type="button"
-                  text={"Найти проект"}
+                  text={t("home.forWhom.findProject")}
                   style={"white-button"}
                 />
               </Link>

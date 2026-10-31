@@ -3,6 +3,7 @@ import { Field, Form, Formik } from "formik";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../../button/button.tsx";
 import * as Yup from "yup";
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { API_BASE_URL, API_BASE_PATH } from "../../../config/api";
@@ -15,6 +16,7 @@ type AuthorizationProps = {
 };
 
 export const Login = () => {
+  const { t } = useTranslation();
   const [isMessageOpen, setMessageOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [pendingEmail, setPendingEmail] = useState("");
@@ -23,15 +25,12 @@ export const Login = () => {
 
   const validationSchema = Yup.object().shape({
     email: Yup.string()
-      .email("Некорректная почта. Она должна содержать знак @")
-      .required("Введите почту"),
+      .email(t("auth.validation.emailInvalid"))
+      .required(t("auth.validation.emailRequired")),
     password: Yup.string()
-      .min(
-        8,
-        "Пароль должен содержать минимум 8 символов, включая минимум одну заглавную букву, одну цифру",
-      )
-      .max(30, "Слишком длинный пароль")
-      .required("Введите пароль"),
+      .min(8, t("auth.validation.passwordRule"))
+      .max(30, t("auth.validation.passwordTooLong"))
+      .required(t("auth.validation.passwordRequired")),
   });
 
   const initialValues = {
@@ -89,35 +88,33 @@ export const Login = () => {
 
         switch (status) {
           case 400:
-            setErrorMessage(
-              "Некорректные данные. Проверьте введенные значения.",
-            );
+            setErrorMessage(t("auth.errors.invalidData"));
             break;
           case 401: {
             const serverMsg =
               (error.response?.data as { Message?: string; message?: string })?.Message ||
               (error.response?.data as { Message?: string; message?: string })?.message ||
-              "Неверный email или пароль.";
-            setErrorMessage(serverMsg);
+              "";
+            // бэкенд отвечает по-русски, поэтому показываем свой текст на текущем языке
             if (serverMsg.toLowerCase().includes("подтвердите email")) {
+              setErrorMessage(t("auth.login.emailNotConfirmed"));
               setPendingEmail(values.email);
             } else {
+              setErrorMessage(t("auth.login.invalidCredentials"));
               setPendingEmail("");
             }
             break;
           }
           case 500:
-            setErrorMessage("Ошибка сервера. Попробуйте позже.");
+            setErrorMessage(t("auth.errors.server"));
             break;
           default:
-            setErrorMessage("Произошла ошибка при авторизации.");
+            setErrorMessage(t("auth.login.failed"));
         }
       } else if (axios.isAxiosError(error) && error.request) {
-        setErrorMessage(
-          "Сервер недоступен. Проверьте подключение к интернету.",
-        );
+        setErrorMessage(t("auth.errors.unavailable"));
       } else {
-        setErrorMessage("Произошла непредвиденная ошибка.");
+        setErrorMessage(t("auth.errors.unexpected"));
       }
 
       setMessageOpen(true);
@@ -136,21 +133,21 @@ export const Login = () => {
 
   const resendConfirmation = async () => {
     if (!pendingEmail) return;
-    setResendStatus("Отправляем…");
+    setResendStatus(t("auth.login.resending"));
     try {
       await fetch(
         `${API_BASE_URL}${API_BASE_PATH}/Authorization/ResendConfirmationEmail?email=${encodeURIComponent(pendingEmail)}`,
         { method: "POST", credentials: "include" }
       );
-      setResendStatus("Письмо отправлено повторно. Проверьте почту.");
+      setResendStatus(t("auth.login.resent"));
     } catch {
-      setResendStatus("Не удалось отправить письмо. Попробуйте позже.");
+      setResendStatus(t("auth.login.resendFailed"));
     }
   };
 
   return (
     <div className={styles["authorization__form-side"]}>
-      <h1>Войти в профиль</h1>
+      <h1>{t("auth.login.heading")}</h1>
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}
@@ -162,7 +159,7 @@ export const Login = () => {
               <Field
                 name="email"
                 type="email"
-                placeholder="Электронная почта"
+                placeholder={t("auth.fields.email")}
                 className={styles["authorization__form-field"]}
               />
               {errors.email && touched.email && (
@@ -174,7 +171,7 @@ export const Login = () => {
               <Field
                 name="password"
                 type="password"
-                placeholder="Пароль"
+                placeholder={t("auth.fields.password")}
                 className={styles["authorization__form-field"]}
               />
               {errors.password && touched.password && (
@@ -187,14 +184,14 @@ export const Login = () => {
             <div className={styles["authorization__options"]}>
               <label>
                 <Field type="checkbox" name="rememberMe" />
-                Запомнить меня
+                {t("auth.login.rememberMe")}
               </label>
-              <Link to="/forget-password">Забыли пароль?</Link>
+              <Link to="/forget-password">{t("auth.login.forgotPassword")}</Link>
             </div>
             <Button
               type="submit"
               style="blue-button-header"
-              text="Продолжить"
+              text={t("common.continue")}
             />
           </Form>
         )}
@@ -208,7 +205,7 @@ export const Login = () => {
           {pendingEmail && (
             <p>
               <button type="button" onClick={resendConfirmation}>
-                Отправить письмо подтверждения повторно
+                {t("auth.login.resend")}
               </button>
             </p>
           )}

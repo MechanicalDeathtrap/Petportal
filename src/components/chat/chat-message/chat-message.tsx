@@ -1,7 +1,9 @@
 import style from "./chat-message.module.sass";
 import { ChatMessage as ChatMessageType } from "../../../types/chat-types";
 import { userStore } from "../../../stores/user-store";
-import { isSystemChatMessage } from "../../../stores/chat-store";
+import { formatSystemChatMessage, isSystemChatMessage } from "../../../stores/chat-store";
+import { useTranslation } from "react-i18next";
+import { getDateLocale } from "../../../i18n/index.ts";
 import { observer } from "mobx-react-lite";
 
 type MessageProps = {
@@ -9,6 +11,8 @@ type MessageProps = {
 };
 
 export const ChatMessage = observer(({ message }: MessageProps) => {
+  // подписка на смену языка: даты и системные сообщения форматируются заново
+  useTranslation();
   const isSystem = isSystemChatMessage(message.message);
   const isMyMessage = !isSystem && message.senderId === userStore.user.id;
 
@@ -17,14 +21,14 @@ export const ChatMessage = observer(({ message }: MessageProps) => {
       const date = new Date(timestamp);
 
       if (isNaN(date.getTime())) {
-        return new Date().toLocaleString("ru-RU", {
+        return new Date().toLocaleString(getDateLocale(), {
           day: "2-digit",
           month: "2-digit",
           hour: "2-digit",
           minute: "2-digit"
         });
       }
-      return date.toLocaleString("ru-RU", {
+      return date.toLocaleString(getDateLocale(), {
         day: "2-digit",
         month: "2-digit",
         hour: "2-digit",
@@ -38,7 +42,7 @@ export const ChatMessage = observer(({ message }: MessageProps) => {
   if (isSystem) {
     return (
       <div className={style["chat-message--system"]}>
-        <p>{message.message}</p>
+        <p>{formatSystemChatMessage(message.message)}</p>
         <span className={style["chat-message__time--system"]}>
           {formatTime(message.sentAt)}
         </span>

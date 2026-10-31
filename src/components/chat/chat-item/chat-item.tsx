@@ -1,7 +1,14 @@
 import style from "./chat-item.module.sass";
 import { ChatRoom } from "../../../types/chat-types";
 import { observer } from "mobx-react-lite";
-import { chatStore, getChatPeerName } from "../../../stores/chat-store";
+import {
+  chatStore,
+  formatSystemChatMessage,
+  getChatPeerName,
+  isSystemChatMessage,
+} from "../../../stores/chat-store";
+import { useTranslation } from "react-i18next";
+import { getDateLocale } from "../../../i18n/index.ts";
 import { userStore } from "../../../stores/user-store";
 
 type ChatItemProps = {
@@ -9,6 +16,7 @@ type ChatItemProps = {
 };
 
 export const ChatItem = observer(({ chat }: ChatItemProps) => {
+  const { t } = useTranslation();
   const isActive = chatStore.activeChatId === chat.id;
 
   const handleClick = () => {
@@ -21,7 +29,7 @@ export const ChatItem = observer(({ chat }: ChatItemProps) => {
     try {
       const date = new Date(timestamp);
       if (isNaN(date.getTime())) return "";
-      return date.toLocaleString("ru-RU", {
+      return date.toLocaleString(getDateLocale(), {
         day: "2-digit",
         month: "2-digit",
         hour: "2-digit",
@@ -32,12 +40,17 @@ export const ChatItem = observer(({ chat }: ChatItemProps) => {
     }
   };
 
-  const lastMessage =
+  const rawLastMessage =
     chat.lastMessage ||
     (() => {
       const msgs = chatStore.messages[chat.id];
-      return msgs?.length ? msgs[msgs.length - 1].message : "Нет сообщений";
+      return msgs?.length ? msgs[msgs.length - 1].message : "";
     })();
+  const lastMessage = !rawLastMessage
+    ? t("chat.noMessages")
+    : isSystemChatMessage(rawLastMessage)
+      ? formatSystemChatMessage(rawLastMessage)
+      : rawLastMessage;
 
   return (
     <div

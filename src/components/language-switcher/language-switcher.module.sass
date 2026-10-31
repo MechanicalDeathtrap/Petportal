@@ -1,0 +1,34 @@
+@import "/src/assets/colors/colors.sass"
+
+.language-switcher
+  display: inline-flex
+  align-items: center
+  padding: 2px
+  border: 1px solid $primary-color
+  border-radius: 15px
+  font-family: Inter, sans-serif
+
+  &__option
+    min-width: 36px
+    padding: 6px 10px
+    border: none
+    border-radius: 13px
+    font-size: 13px
+    font-weight: 600
+    line-height: 1
+    color: $primary-color
+    background-color: transparent
+    cursor: pointer
+    transition: background-color 0.3s, color 0.3s
+
+    &:hover
+      background-color: rgba($primary-color, 0.1)
+
+    &:focus-visible
+      outline: 2px solid $primary-color
+      outline-offset: 2px
+
+  &__option--active, &__option--active:hover
+    color: $background-white
+    background-color: $primary-color
+    cursor: default

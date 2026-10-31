@@ -1,5 +1,6 @@
 import style from "./my-projects.module.sass";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ProjectCard } from "../../projects/project-card/project-card.tsx";
 import { EmptyStateMessage } from "../empty-state-message/empty-state-message.tsx";
 import axios from "axios";
@@ -7,6 +8,7 @@ import { Project, StateOfProject } from "../../../types/project-type.ts";
 import { API_BASE_URL, API_BASE_PATH } from "../../../config/api";
 
 export const MyProjects = () => {
+  const { t } = useTranslation();
   const [myProjects, setMyProjects] = useState<Project[]>([]);
   const [myProjectCount, setMyProjectCount] = useState(0);
   const [archivingId, setArchivingId] = useState<string | null>(null);
@@ -17,7 +19,7 @@ export const MyProjects = () => {
   const handleMyProjects = (projects: Project[]) => setMyProjects(projects);
 
   const archiveProject = async (projectId: string) => {
-    if (!window.confirm("Перевести проект в архив? Вернуть его обратно нельзя.")) {
+    if (!window.confirm(t("projects.archive.confirm"))) {
       return;
     }
 
@@ -37,7 +39,7 @@ export const MyProjects = () => {
       );
     } catch (error) {
       console.error("Ошибка при переводе проекта в архив:", error);
-      alert("Не удалось перевести проект в архив. Попробуйте ещё раз.");
+      alert(t("projects.archive.failedRetry"));
     } finally {
       setArchivingId(null);
     }
@@ -95,17 +97,17 @@ export const MyProjects = () => {
 
   return (
     <section>
-      {myProjectCount === 0 && <EmptyStateMessage heading="Проекты" />}
+      {myProjectCount === 0 && <EmptyStateMessage variant="projects" />}
       {myProjectCount > 0 && (
         <div className={style["my-project-list__container"]}>
-          <h2>Мои проекты: {myProjectCount}</h2>
+          <h2>{t("account.myProjects.count", { count: myProjectCount })}</h2>
           <button
             type="button"
             onClick={() => setOldestFirst((prev) => !prev)}
             className={`${style["my-project-list__filter-old"]} ${oldestFirst ? style["my-project-list__filter-old--reversed"] : ""}`}
-            title="Переключить порядок сортировки"
+            title={t("account.myProjects.toggleSort")}
           >
-            {oldestFirst ? "Сначала старые" : "Сначала новые"}
+            {oldestFirst ? t("account.myProjects.oldestFirst") : t("account.myProjects.newestFirst")}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="7"

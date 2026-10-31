@@ -6,11 +6,16 @@ import { useEffect, useState } from "react";
 import { Button } from "../../button/button.tsx";
 import { TagsInput } from "../../tags-input/tags-input.tsx";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { API_BASE_URL, API_BASE_PATH } from "../../../config/api";
-import { groupRoleNames } from "../../../data/role-categories.ts";
+import {
+  getRoleGroupLabel,
+  getRoleLabel,
+  groupRoleNames,
+} from "../../../data/role-categories.ts";
 import {
   getMaxApplyingDeadline,
-  MAX_APPLYING_DEADLINE_MESSAGE,
+  getMaxApplyingDeadlineMessage,
   toDateInputValue,
 } from "../../../utils/applying-deadline.ts";
 
@@ -44,6 +49,7 @@ type PlacementQuota = {
 };
 
 export const CreateProject = () => {
+  const { t } = useTranslation();
   const [charCounts, setCharCounts] = useState<Record<string, number>>({
     name: 0,
     description: 0,
@@ -118,12 +124,12 @@ export const CreateProject = () => {
 
   const validationSchema = Yup.object().shape({
     name: Yup.string()
-      .min(8, "Название должно содержать минимум 8 символов")
-      .required("Введите название проекта"),
+      .min(8, t("projects.validation.nameMin"))
+      .required(t("projects.validation.nameRequired")),
 
     description: Yup.string()
-      .min(20, "Опишите проект более подробно!")
-      .required("Введите описание проекта"),
+      .min(20, t("projects.validation.descriptionMin"))
+      .required(t("projects.validation.descriptionRequired")),
 
     teamDescription: Yup.string().nullable().notRequired(),
     requirements: Yup.string().nullable().notRequired(),
@@ -134,10 +140,10 @@ export const CreateProject = () => {
         String(originalValue).trim() === "" ? undefined : value
       )
       .notRequired()
-      .min(0, "Бюджет не может быть отрицательным")
+      .min(0, t("projects.validation.budgetNegative"))
       .test(
         "no-leading-zero",
-        "Бюджет не должен начинаться с нуля",
+        t("projects.validation.budgetLeadingZero"),
         function (value) {
           if (value === undefined || value === null) return true;
           const original = this.originalValue?.toString();
@@ -146,18 +152,18 @@ export const CreateProject = () => {
       ),
 
     tags: Yup.array().of(Yup.string()),
-    executors: Yup.array().of(Yup.string()).min(1, "Добавьте хотя бы одного исполнителя"),
+    executors: Yup.array().of(Yup.string()).min(1, t("projects.validation.executorsMin")),
 
     applyingDeadline: Yup.date()
-      .typeError("Укажите крайний срок приёма заявок")
-      .min(startOfToday(), "Дата не может быть в прошлом")
-      .max(maxApplyingDeadline, MAX_APPLYING_DEADLINE_MESSAGE)
-      .required("Укажите крайний срок приёма заявок"),
+      .typeError(t("projects.validation.applyingDeadlineRequired"))
+      .min(startOfToday(), t("projects.validation.dateInPast"))
+      .max(maxApplyingDeadline, getMaxApplyingDeadlineMessage)
+      .required(t("projects.validation.applyingDeadlineRequired")),
 
     deadline: Yup.date()
-      .typeError("Укажите срок выполнения")
-      .min(Yup.ref("applyingDeadline"), "Срок выполнения должен быть позже срока приёма заявок")
-      .required("Укажите срок выполнения"),
+      .typeError(t("projects.validation.deadlineRequired"))
+      .min(Yup.ref("applyingDeadline"), t("projects.validation.deadlineAfterApplying"))
+      .required(t("projects.validation.deadlineRequired")),
   });
 
   const handleCharCount = (
@@ -218,11 +224,12 @@ const handleSubmit = async (values: Project, { setSubmitting }: { setSubmitting:
 
     if (!response.ok) {
       const bodyText = await response.text();
-      let message = `Не удалось создать проект (ошибка ${response.status}).`;
+      let message = t("projects.create.failedWithStatus", { status: response.status });
+      // бэкенд сообщает о превышении лимита текстом на русском
       if (bodyText.includes("лимит")) {
-        message = "Вы превысили лимит проектов.";
+        message = t("projects.create.limitExceeded");
       } else if (response.status === 401) {
-        message = "Нужна авторизация. Войдите в аккаунт и попробуйте снова.";
+        message = t("projects.create.authRequired");
       }
       throw new Error(message);
     }
@@ -246,7 +253,7 @@ const handleSubmit = async (values: Project, { setSubmitting }: { setSubmitting:
 
   } catch (error) {
     console.error("Ошибка при создании проекта:", error);
-    setSubmitError(error instanceof Error ? error.message : "Не удалось создать проект. Проверьте данные и попробуйте снова.");
+    setSubmitError(error instanceof Error ? error.message : t("projects.create.failed"));
   } finally {
     setSubmitting(false);
     setIsSubmitting(false);
@@ -260,12 +267,15 @@ const handleSubmit = async (values: Project, { setSubmitting }: { setSubmitting:
   return (
     <section className={style["create-project"]}>
       <div>
-        <h2>Публикация проекта</h2>
+        <h2>{t("projects.create.heading")}</h2>
         {quota && (
           <p className={style["create-project__quota"]}>
             {quota.nextProjectRequiresPayment
-              ? `Бесплатный лимит исчерпан (${quota.freeProjectsLimit}/${quota.freeProjectsLimit}). Следующее размещение — платное.`
-              : `Бесплатных размещений осталось: ${quota.freeProjectsRemaining} из ${quota.freeProjectsLimit}`}
+              ? t("projects.create.quotaExhausted", { limit: quota.freeProjectsLimit })
+              : t("projects.create.quotaRemaining", {
+                  remaining: quota.freeProjectsRemaining,
+                  limit: quota.freeProjectsLimit,
+                })}
           </p>
         )}
         <Formik
@@ -278,8 +288,8 @@ const handleSubmit = async (values: Project, { setSubmitting }: { setSubmitting:
           {({ errors, touched, setFieldValue, values, submitCount }) => (
             <Form className={style["create-project__form"]}>
               <label>
-                Название проекта
-                <Field maxlength={100} name="name" placeholder="Кратко опишите задачу" className={style["create-project__form-field"]}
+                {t("projects.form.name")}
+                <Field maxlength={100} name="name" placeholder={t("projects.form.namePlaceholder")} className={style["create-project__form-field"]}
                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                          handleCharCount(e, "name", setFieldValue)
                        }/>
@@ -290,8 +300,8 @@ const handleSubmit = async (values: Project, { setSubmitting }: { setSubmitting:
               </label>
 
               <label>
-                Описание задания
-                <Field maxlength={300} as="textarea" name="description" placeholder="Развернуто опишите задачу"
+                {t("projects.form.description")}
+                <Field maxlength={300} as="textarea" name="description" placeholder={t("projects.form.descriptionPlaceholder")}
                        className={style["create-project__form-field"]}
                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                          handleCharCount(e, "description", setFieldValue)
@@ -303,8 +313,8 @@ const handleSubmit = async (values: Project, { setSubmitting }: { setSubmitting:
               </label>
 
               <label>
-                Теги
-                <p className={style["create-project__field-description"]}>Укажите теги, которые характеризуют ваш проект</p>
+                {t("projects.form.tags")}
+                <p className={style["create-project__field-description"]}>{t("projects.form.tagsHint")}</p>
                 <TagsInput
                   availableTags= {stackTags}
                   name="tags"
@@ -321,11 +331,13 @@ const handleSubmit = async (values: Project, { setSubmitting }: { setSubmitting:
               </label>
 
               <label>
-                Исполнители
-                <p className={style["create-project__field-description"]}>Укажите, кого вы ищите</p>
+                {t("projects.form.executors")}
+                <p className={style["create-project__field-description"]}>{t("projects.form.executorsHint")}</p>
                 <TagsInput
                   availableTags={executorSuggestions}
                   groupSuggestions={groupRoleNames}
+                  getLabel={getRoleLabel}
+                  getGroupLabel={getRoleGroupLabel}
                   name="executors"
                   inputTag={inputExecutor}
                   setInputTag={setInputExecutor}
@@ -340,8 +352,8 @@ const handleSubmit = async (values: Project, { setSubmitting }: { setSubmitting:
               </label>
 
               <label>
-                Описание команды
-                <Field maxlength={300} as="textarea" name="teamDescription" placeholder="Опишите состав и формат работы команды"
+                {t("projects.form.teamDescription")}
+                <Field maxlength={300} as="textarea" name="teamDescription" placeholder={t("projects.form.teamDescriptionPlaceholder")}
                        className={style["create-project__form-field"]}
                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                          handleCharCount(e, "teamDescription", setFieldValue)
@@ -353,9 +365,9 @@ const handleSubmit = async (values: Project, { setSubmitting }: { setSubmitting:
               </label>
 
               <label>
-                Ожидание от исполнителя
+                {t("projects.form.requirements")}
                 <Field maxlength={300} as="textarea" name="requirements"
-                       placeholder="Опишите, какими компетенциями должен обладать исполнитель"
+                       placeholder={t("projects.form.requirementsPlaceholder")}
                        className={style["create-project__form-field"]}
                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                          handleCharCount(e, "requirements", setFieldValue)
@@ -367,9 +379,9 @@ const handleSubmit = async (values: Project, { setSubmitting }: { setSubmitting:
               </label>
 
               <label>
-                Формат результата
+                {t("projects.form.result")}
                 <Field maxlength={300} as="textarea" name="result"
-                       placeholder="Опишите, в каком виде вы хотите получить результат"
+                       placeholder={t("projects.form.resultPlaceholder")}
                        className={style["create-project__form-field"]}
                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                          handleCharCount(e, "result", setFieldValue)
@@ -381,7 +393,7 @@ const handleSubmit = async (values: Project, { setSubmitting }: { setSubmitting:
               </label>
 
               <label>
-                Крайний срок приёма заявок
+                {t("projects.form.applyingDeadline")}
                 <Field
                   type="date"
                   name="applyingDeadline"
@@ -394,7 +406,7 @@ const handleSubmit = async (values: Project, { setSubmitting }: { setSubmitting:
               </label>
 
               <label>
-                Сроки выполнения
+                {t("projects.form.deadline")}
                 <Field type="date" name="deadline" className={style["create-project__form-field create-project__date-input"]}/>
                 {showError(errors as any, touched as any, submitCount, "deadline") && (
                   <div className={style["create-project__form--error-no-floating"]}>{errors.deadline}</div>
@@ -402,11 +414,11 @@ const handleSubmit = async (values: Project, { setSubmitting }: { setSubmitting:
               </label>
 
               <label>
-                Бюджет проекта
+                {t("projects.form.budget")}
                 <Field
                   type="number"
                   name="budget"
-                  placeholder="100₽"
+                  placeholder={t("projects.form.budgetPlaceholder")}
                   min={0}
                   className={style["create-project__form-field"]}
                   disabled={values.isBusinessProject}
@@ -431,7 +443,7 @@ const handleSubmit = async (values: Project, { setSubmitting }: { setSubmitting:
                       if (e.target.checked) setFieldValue("budget", "");
                     }}
                   />
-                  <label>По договорённости</label>
+                  <label>{t("projects.form.negotiable")}</label>
                 </div>
               </label>
 
@@ -445,7 +457,7 @@ const handleSubmit = async (values: Project, { setSubmitting }: { setSubmitting:
                 <Button
                   type="submit"
                   style="blue-button-header"
-                  text={isSubmitting ? "Публикуем..." : "Опубликовать"}
+                  text={isSubmitting ? t("projects.create.publishing") : t("projects.create.publish")}
                   disabled={isSubmitting}
                 />
               </div>

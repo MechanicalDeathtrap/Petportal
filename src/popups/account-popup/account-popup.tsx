@@ -4,10 +4,12 @@ import { authStore } from "../../stores/auth-store.ts";
 import { popupStore } from "../../stores/popups-store.ts";
 import { userStore } from "../../stores/user-store.ts";
 import { observer } from "mobx-react-lite";
+import { useTranslation } from "react-i18next";
 import { deleteAuthCookie } from "../../utils/cookies.ts";
 import { logout } from "../../utils/logout.ts";
 
 export const AccountPopup = observer(() => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const user = userStore.user;
   const userAvatar = user.avatarUrl || "/img/blank-avatar.png";
@@ -36,13 +38,13 @@ export const AccountPopup = observer(() => {
           type="button"
           className={styles["account-popup__go-to-account-button"]}
         >
-          <Link to="/account">Перейти в личный кабинет</Link>
+          <Link to="/account">{t("account.menu.goToCabinet")}</Link>
         </button>
         <div>
           <ul className={styles["account-popup__links-list"]}>
             <li className={styles["account-popup__list-item"]}>
               <img src="/img/Opened%20Folder.svg" alt="folder-icon" />
-              <Link to="/account/my-projects">Мои проекты</Link>
+              <Link to="/account/my-projects">{t("account.menu.myProjects")}</Link>
             </li>
             <li
               className={[
@@ -51,7 +53,7 @@ export const AccountPopup = observer(() => {
               ].join(" ")}
             >
               <img src="/img/Rating.svg" alt="rating-icon" />
-              <Link to="/account/my-reviews">Отзывы</Link>
+              <Link to="/account/my-reviews">{t("account.menu.reviews")}</Link>
             </li>
             <li
               className={[
@@ -60,7 +62,7 @@ export const AccountPopup = observer(() => {
               ].join(" ")}
             >
               <img src="/img/Bookmark.svg" alt="bookmark-icon" />
-              <Link to="/account/favourites">Избранное</Link>
+              <Link to="/account/favourites">{t("account.menu.favourites")}</Link>
             </li>
             <li
               className={[
@@ -69,12 +71,12 @@ export const AccountPopup = observer(() => {
               ].join(" ")}
             >
               <img src="/img/Settings.svg" alt="setting-icon" />
-              <Link to="/account/settings">Настройки</Link>
+              <Link to="/account/settings">{t("account.menu.settings")}</Link>
             </li>
             <li className={styles["account-popup__list-item"]}>
               <img src="/img/Logout%20Rounded.svg" alt="logout-icon" />
               <button onClick={exitFromProfile} type="button">
-                Выйти
+                {t("common.logout")}
               </button>
             </li>
           </ul>

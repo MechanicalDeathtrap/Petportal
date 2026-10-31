@@ -5,8 +5,10 @@ import { DEFAULT_SORT, SortDropdown, SortState } from "../filters/sort-dropdown.
 import { ProjectList } from "../projects/project-list/project-list.tsx";
 import { Button } from "../button/button.tsx";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export const Catalogue = ( ) => {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState(() => {
   const saved = sessionStorage.getItem("projectSearchQuery");
   return saved || "";
@@ -34,7 +36,7 @@ export const Catalogue = ( ) => {
       <Button
         type="button"
         style={"blue-button-projects"}
-        text={"Показать ещё"}
+        text={t("catalogue.showMore")}
         onClick={() => setNeedToFetch(true)}
       />
     </section>

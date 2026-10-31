@@ -1,3 +1,5 @@
+import i18n from "../i18n/index.ts";
+
 export type Project = {
   id: string;
   name: string;
@@ -46,4 +48,4 @@ export const isArchived = (state?: StateOfProject): boolean =>
   state === StateOfProject.Archived;
 
 export const getStateLabel = (state?: StateOfProject): string =>
-  isArchived(state) ? "В архиве" : "Идёт набор";
+  i18n.t(isArchived(state) ? "projects.state.archived" : "projects.state.recruiting");

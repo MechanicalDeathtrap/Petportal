@@ -8,6 +8,9 @@ import axios from "axios";
 import { userStore } from "../../stores/user-store.ts";
 import { API_BASE_URL, API_BASE_PATH } from "../../config/api";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { lazyT } from "../../i18n/index.ts";
+import { getRoleLabel } from "../../data/role-categories.ts";
 
 type ProjectResponse = {
   radios: string;
@@ -21,12 +24,13 @@ type ProjectResponseModalProps = {
 };
 
 const validationSchema = Yup.object().shape({
-  radios: Yup.string().required("Выберите хотя бы одну роль"),
+  radios: Yup.string().required(lazyT("respondModal.roleRequired")),
   comment: Yup.string().optional(),
 });
 
 export const ProjectResponseModal = forwardRef(
   ({ onClose, projectId, roles }: ProjectResponseModalProps, ref) => {
+    const { t } = useTranslation();
     const [success, setSuccess] = useState(false);
     const navigate = useNavigate();
 
@@ -42,7 +46,7 @@ export const ProjectResponseModal = forwardRef(
       const userId = userStore.user.id;
 
       if (!userId) {
-        alert("Пользователь не авторизован");
+        alert(t("respondModal.notAuthorized"));
         setSubmitting(false);
         return;
       }
@@ -70,28 +74,31 @@ export const ProjectResponseModal = forwardRef(
         if (response.status === 200 || response.status === 201) {
           setSuccess(true);
         } else {
-          alert("Не удалось отправить отклик. Попробуйте позже.");
+          alert(t("respondModal.failed"));
         }
       } catch (error: unknown) {
         console.error("Ошибка при отправке отклика:", error);
 
         if (axios.isAxiosError(error)) {
           if (error.response?.status === 409) {
-            alert("Вы уже откликнулись на этот проект.");
+            alert(t("respondModal.alreadyResponded"));
           } else if (error.response?.status === 400) {
-            const msg =
-              typeof error.response.data === "string"
-                ? error.response.data
-                : "Некорректные данные. Попробуйте снова.";
-            alert(msg);
+            // бэкенд отвечает текстом на русском; узнаём известный случай по нему
+            const serverText =
+              typeof error.response.data === "string" ? error.response.data : "";
+            alert(
+              serverText.includes("собственный проект")
+                ? t("respondModal.ownProject")
+                : t("respondModal.invalidData"),
+            );
           } else if (error.response?.status === 401) {
-            alert("Нужна авторизация.");
+            alert(t("respondModal.authRequired"));
             navigate("/login");
           } else {
-            alert("Ошибка сети или сервера. Попробуйте позже.");
+            alert(t("respondModal.networkError"));
           }
         } else {
-          alert("Произошла неизвестная ошибка.");
+          alert(t("respondModal.unknownError"));
         }
       } finally {
         setSubmitting(false);
@@ -115,11 +122,11 @@ export const ProjectResponseModal = forwardRef(
               </svg>
             </div>
             <p className={style["project-response__success-text"]}>
-              Вы успешно откликнулись
+              {t("respondModal.success")}
             </p>
             <div className={style["project-response__success-actions"]}>
               <Button
-                text="Перейти в чат"
+                text={t("respondModal.goToChat")}
                 style="blue-button-header"
                 type="button"
                 onClick={() => {
@@ -128,7 +135,7 @@ export const ProjectResponseModal = forwardRef(
                 }}
               />
               <Button
-                text="Закрыть"
+                text={t("common.close")}
                 style="grey-button"
                 type="button"
                 onClick={onClose}
@@ -153,7 +160,7 @@ export const ProjectResponseModal = forwardRef(
       <Box ref={ref}>
         <div className={style["project-response"]}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Какую роль вы бы хотели занять?
+            {t("respondModal.heading")}
           </Typography>
 
           <Formik
@@ -183,7 +190,7 @@ export const ProjectResponseModal = forwardRef(
                         />
                       )}
                     </Field>
-                    {role}
+                    {getRoleLabel(role)}
                   </label>
                 ))}
 
@@ -195,20 +202,20 @@ export const ProjectResponseModal = forwardRef(
 
                 <div className={style["project-response__textarea-container"]}>
                   <Typography variant="h6" component="h2">
-                    Комментарий к отклику
+                    {t("respondModal.comment")}
                   </Typography>
                   <Field
                     as="textarea"
                     className={style["project-response__textarea"]}
                     name="comment"
                     id="comment"
-                    placeholder="Если у вас есть что сказать..."
+                    placeholder={t("respondModal.commentPlaceholder")}
                     disabled={isSubmitting}
                   />
                 </div>
 
                 <Button
-                  text={isSubmitting ? "Отправка..." : "Отправить отклик"}
+                  text={isSubmitting ? t("respondModal.submitting") : t("respondModal.submit")}
                   style="blue-button-header"
                   type="submit"
                 />

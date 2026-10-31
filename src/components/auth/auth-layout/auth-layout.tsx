@@ -1,8 +1,10 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { Button } from "../../button/button.tsx";
 import styles from "./auth-layout.module.sass";
+import { useTranslation } from "react-i18next";
 
 export const AuthLayout = () => {
+  const { t } = useTranslation();
   const location = useLocation();
   const isRegistration = location.pathname === "/registration";
 
@@ -28,16 +30,16 @@ export const AuthLayout = () => {
       <Outlet />
       <div className={styles["authorization__suggest-auth-side"]}>
         <div>
-          <h1>{isRegistration ? "Есть профиль?" : "Впервые здесь?"}</h1>
+          <h1>{isRegistration ? t("auth.layout.haveAccount") : t("auth.layout.firstTime")}</h1>
           <p>
             {isRegistration
-              ? "Войдите в аккаунт и найдите среди тысяч тот проект, который подходит именно вам"
-              : "Зарегистрируйтесь и найдите среди тысяч тот проект, который подходит именно вам "}
+              ? t("auth.layout.loginText")
+              : t("auth.layout.registerText")}
           </p>
           <Link to={isRegistration ? "/login" : "/registration"}>
             <Button
               type="button"
-              text={isRegistration ? "Войти" : "Регистрация"}
+              text={isRegistration ? t("common.login") : t("auth.layout.register")}
               style="white-auth-button"
             />
           </Link>

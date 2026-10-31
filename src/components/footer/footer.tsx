@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import styles from "./footer.module.sass";
 
 export const Footer = () => {
+  const { t } = useTranslation();
   return (
     <footer className={styles.footer}>
       <div className={styles["footer__logo-and-contacts"]}>
@@ -26,13 +28,13 @@ export const Footer = () => {
         </div>
         <div className={styles["footer__contacts"]}>
           <ul className={styles["footer__contacts-list"]}>
-            <h3 className={styles["footer__list-header"]}>Связаться с нами</h3>
+            <h3 className={styles["footer__list-header"]}>{t("footer.contactUs")}</h3>
             <li className={styles["footer__list-item"]}>@telegram</li>
             <li className={styles["footer__list-item"]}>+7 (999) 9999999</li>
             <li className={styles["footer__list-item"]}>contact@pet.org</li>
           </ul>
           <div className={styles["footer__messengers"]}>
-            <h3 className={styles["footer__list-header"]}>Наши соцсети</h3>
+            <h3 className={styles["footer__list-header"]}>{t("footer.socials")}</h3>
             <ul className={styles["footer__messengers-list"]}>
               <li className={styles["footer__messengers-list-item"]}>
                 <a href="">
@@ -133,15 +135,15 @@ export const Footer = () => {
             </ul>
           </div>
           <ul className={styles["footer__legal-entities-contacts-list"]}>
-            <h3 className={styles["footer__list-header"]}>Юридическим лицам</h3>
+            <h3 className={styles["footer__list-header"]}>{t("footer.forBusiness")}</h3>
             <li className={styles["footer__list-item"]}>
               <a className={styles["footer__list-link"]} href="">
-                Условия сотрудничества
+                {t("footer.partnershipTerms")}
               </a>
             </li>
             <li className={styles["footer__list-item"]}>
               <a className={styles["footer__list-link"]} href="">
-                Новости компании
+                {t("footer.companyNews")}
               </a>
             </li>
           </ul>
@@ -149,22 +151,22 @@ export const Footer = () => {
       </div>
       <div className={styles["footer__copyright-and-links"]}>
         <small className={styles["footer__copyright"]}>
-          © PetPortal, 2024. Все права защищены.
+          {t("footer.copyright")}
         </small>
         <ul className={styles["footer__links-list"]}>
           <li className={styles["footer__links-list-item"]}>
             <Link className={styles["footer__list-link"]} to="/">
-              О нас
+              {t("footer.aboutUs")}
             </Link>
           </li>
           <li className={styles["footer__links-list-item"]}>
             <a className={styles["footer__list-link"]} href="">
-              Пользовательское соглашение
+              {t("footer.userAgreement")}
             </a>
           </li>
           <li className={styles["footer__links-list-item"]}>
             <a className={styles["footer__list-link"]} href="">
-              FAQ
+              {t("footer.faq")}
             </a>
           </li>
         </ul>

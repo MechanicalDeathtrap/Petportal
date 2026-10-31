@@ -3,9 +3,11 @@ import style from "./chat-side-list.module.sass";
 import { observer } from "mobx-react-lite";
 import { chatStore } from "../../../stores/chat-store.ts";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { userStore } from "../../../stores/user-store.ts";
 
 export const ChatsSideList = observer(() => {
+  const { t } = useTranslation();
   useEffect(() => {
     // Загружаем чаты при монтировании компонента
     const loadChats = async () => {
@@ -21,7 +23,7 @@ export const ChatsSideList = observer(() => {
     return (
       <aside className={style["chat-side-list"]}>
         <div className={style["chat-side-list__loading"]}>
-          <p>Загрузка чатов...</p>
+          <p>{t("chat.loadingChats")}</p>
         </div>
       </aside>
     );
@@ -31,9 +33,9 @@ export const ChatsSideList = observer(() => {
     return (
       <aside className={style["chat-side-list"]}>
         <div className={style["chat-side-list__error"]}>
-          <p>Ошибка: {chatStore.error}</p>
+          <p>{t("chat.error", { message: chatStore.error })}</p>
           <button onClick={() => chatStore.loadChatRooms()}>
-            Попробовать снова
+            {t("common.retry")}
           </button>
         </div>
       </aside>
@@ -44,7 +46,7 @@ export const ChatsSideList = observer(() => {
     return (
       <aside className={style["chat-side-list"]}>
         <div className={style["chat-side-list__empty"]}>
-          <p>У вас пока нет чатов</p>
+          <p>{t("chat.noChats")}</p>
         </div>
       </aside>
     );

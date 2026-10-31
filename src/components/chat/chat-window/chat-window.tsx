@@ -5,8 +5,10 @@ import { observer } from "mobx-react-lite";
 import { chatStore, getChatPeerName } from "../../../stores/chat-store.ts";
 import { userStore } from "../../../stores/user-store.ts";
 import { useEffect, useRef } from "react";
+import { Trans, useTranslation } from "react-i18next";
 
 export const ChatWindow = observer(() => {
+  const { t } = useTranslation();
   const activeChat = chatStore.activeChat;
   const messages = chatStore.activeChatMessages;
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -31,8 +33,7 @@ export const ChatWindow = observer(() => {
       >
         <div className={style["chat-window__no-dialog-message"]}>
           <p>
-            Вы ещё не выбрали диалог. <br />
-            Нажмите на один из них, чтобы начать общение.{" "}
+            <Trans i18nKey="chat.noDialogSelected" />
           </p>
         </div>
       </section>
@@ -52,8 +53,8 @@ export const ChatWindow = observer(() => {
           <h6>{displayName}</h6>
           <span>
             {activeChat.participants.length > 0
-              ? `${activeChat.participants.length} участников`
-              : "Нет участников"
+              ? t("chat.participants", { count: activeChat.participants.length })
+              : t("chat.noParticipants")
             }
           </span>
         </div>
@@ -64,11 +65,11 @@ export const ChatWindow = observer(() => {
       >
         {chatStore.isLoading ? (
           <div className={style["chat-window__loading"]}>
-            <p>Загрузка сообщений...</p>
+            <p>{t("chat.loadingMessages")}</p>
           </div>
         ) : messages.length === 0 ? (
           <div className={style["chat-window__empty"]}>
-            <p>Нет сообщений в этом чате</p>
+            <p>{t("chat.emptyChat")}</p>
           </div>
         ) : (
           <>

@@ -4,6 +4,7 @@ import { Project } from "../../../types/project-type.ts";
 import { ProjectsDto } from "../../../types/projects-dto-type.ts";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import qs from "qs";
 import { useFilterContext } from "../../../context/filter-context.tsx";
 import { IsCommercialProjectFilter } from "../../filters/aside-filters.tsx";
@@ -30,6 +31,7 @@ export const ProjectList = ({
   sortDirection,
   setNeedToFetch
 }: ProjectListProps) => {
+  const { t } = useTranslation();
   const [projects, setProjects] = useState<Project[]>([]);
   const [projectCount, setProjectCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -111,12 +113,12 @@ export const ProjectList = ({
 
   return (
     <div className={styles["project-list"]}>
-      <h2>Проектов найдено: {`${projectCount}`}</h2>
+      <h2>{t("projects.found", { total: projectCount })}</h2>
 
-      {isLoading && <div>Загрузка...</div>}
+      {isLoading && <div>{t("common.loading")}</div>}
 
       {!isLoading && projects.length === 0 && (
-        <div>По вашему запросу ничего не найдено</div>
+        <div>{t("projects.nothingFound")}</div>
       )}
 
       <ul>

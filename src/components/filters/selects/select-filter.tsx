@@ -7,6 +7,7 @@ import {
   SelectChangeEvent,
   Select,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import styles from "./select-filter.module.sass";
 
 export type SelectGroup = {
@@ -64,13 +65,22 @@ type Props = {
   searchPlaceholder?: string;
   /** Пункты, которые видны всегда — даже если поиск ничего не нашёл. */
   pinnedItems?: string[];
+  /** Подпись пункта, если она отличается от значения (например, перевод). */
+  getItemLabel?: (item: string) => string;
+  /** Подпись заголовка группы, если она отличается от её названия. */
+  getGroupLabel?: (label: string) => string;
 };
 
+const identity = (value: string) => value;
+
 export const SelectFilter = (props: Props) => {
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
 
   const query = search.trim().toLowerCase();
   const { groups: groupsProp, menuItems, pinnedItems } = props;
+  const itemLabel = props.getItemLabel ?? identity;
+  const groupLabel = props.getGroupLabel ?? identity;
 
   const groups = useMemo<SelectGroup[]>(
     () => groupsProp ?? [{ label: "", items: menuItems ?? [] }],
@@ -86,11 +96,12 @@ export const SelectFilter = (props: Props) => {
       .map((group) => ({
         label: group.label,
         items: group.items.filter(
-          (item) => pinned.includes(item) || item.toLowerCase().includes(query)
+          (item) =>
+            pinned.includes(item) || itemLabel(item).toLowerCase().includes(query)
         ),
       }))
       .filter((group) => group.items.length > 0);
-  }, [groups, query, pinnedItems]);
+  }, [groups, query, pinnedItems, itemLabel]);
 
   const options: ReactNode[] = [];
 
@@ -109,7 +120,7 @@ export const SelectFilter = (props: Props) => {
           key={`group-${group.label}`}
           className={styles["select__group-label"]}
         >
-          {group.label}
+          {groupLabel(group.label)}
         </ListSubheader>
       );
     }
@@ -117,7 +128,7 @@ export const SelectFilter = (props: Props) => {
     group.items.forEach((item) => {
       options.push(
         <MenuItem key={`${group.label}-${item}`} value={item}>
-          {item}
+          {itemLabel(item)}
         </MenuItem>
       );
     });
@@ -147,7 +158,7 @@ export const SelectFilter = (props: Props) => {
             return (
               <span>
                 {props.placeholder}
-                {selected ? `: ${selected}` : ""}
+                {selected ? `: ${itemLabel(selected)}` : ""}
               </span>
             );
           }}
@@ -171,7 +182,7 @@ export const SelectFilter = (props: Props) => {
             <MenuSearchBox
               key="__search__"
               value={search}
-              placeholder={props.searchPlaceholder || "Поиск"}
+              placeholder={props.searchPlaceholder || t("common.search")}
               onChange={setSearch}
             />
           )}

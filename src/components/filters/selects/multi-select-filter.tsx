@@ -9,8 +9,10 @@
   import styles from "./select-filter.module.sass";
   import { tags , labelToIdMap} from "../../../data/tags";
   import { useFilterContext } from "../../../context/filter-context";
+  import { useTranslation } from "react-i18next";
 
   export const MultiSelectFilter = () => {
+    const { t } = useTranslation();
     const { tempFilters, setTempFilters } = useFilterContext();
     const selectedTags = tempFilters.tags.map(
       (id) => tags[id as keyof typeof tags]
@@ -54,7 +56,7 @@
           }}
           renderValue={(selected) =>
             selected.length === 0 ? (
-              <em>Теги</em>
+              <em>{t("filters.tags")}</em>
             ) : (
               <Box
                 className={styles["select__chip-box"]}

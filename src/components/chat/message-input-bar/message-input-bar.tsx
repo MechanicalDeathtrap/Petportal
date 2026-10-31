@@ -2,12 +2,14 @@ import { Field, Form, Formik } from "formik";
 import style from "./message-input-bar.module.sass";
 import { observer } from "mobx-react-lite";
 import { chatStore } from "../../../stores/chat-store";
+import { useTranslation } from "react-i18next";
 
 type MessageProps = {
   message: string;
 };
 
 export const MessageInputBar = observer(() => {
+  const { t } = useTranslation();
   const initialValues = {
     message: "",
   };
@@ -39,7 +41,7 @@ export const MessageInputBar = observer(() => {
     return (
       <div className={style["message-input-bar"]}>
         <div className={style["message-input-bar__disabled"]}>
-          <p>Выберите чат для отправки сообщения</p>
+          <p>{t("chat.selectChat")}</p>
         </div>
       </div>
     );
@@ -61,7 +63,7 @@ export const MessageInputBar = observer(() => {
                 id="message"
                 name="message"
                 type="text"
-                placeholder="Написать сообщение"
+                placeholder={t("chat.messagePlaceholder")}
                 className={style["message-input-bar__form-field"]}
                 disabled={isSubmitting}
               />

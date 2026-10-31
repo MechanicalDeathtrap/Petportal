@@ -1,6 +1,8 @@
+import { useTranslation } from "react-i18next";
 import styles from "./main-banner.module.sass";
 
 export const MainBanner = () => {
+  const { t } = useTranslation();
   return (
     <section className={styles["main-banner"]}>
       <div className={styles["main-banner__main-image-container_darkening"]}>
@@ -14,17 +16,17 @@ export const MainBanner = () => {
       </div>
       <h1 className={styles["main-banner__main-heading"]}>
         <span className={styles["main-banner__main-heading_highlighted"]}>
-          объединяем{" "}
+          {t("home.banner.unite")}{" "}
         </span>
-        талантливых разработчиков, помогаем им
+        {t("home.banner.talentedDevelopers")}
         <span className={styles["main-banner__main-heading_highlighted"]}>
           {" "}
-          развиваться
+          {t("home.banner.grow")}
         </span>{" "}
-        и
+        {t("home.banner.and")}
         <span className={styles["main-banner__main-heading_highlighted"]}>
           {" "}
-          творить
+          {t("home.banner.create")}
         </span>
       </h1>
     </section>

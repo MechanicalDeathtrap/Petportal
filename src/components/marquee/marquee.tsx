@@ -1,4 +1,5 @@
 import Marquee from "react-fast-marquee";
+import { useTranslation } from "react-i18next";
 import styles from "./marquee.module.sass";
 
 type Props = {
@@ -7,6 +8,7 @@ type Props = {
 };
 
 export const MarqueeText = (props: Props) => {
+  const { t } = useTranslation();
   return (
     <Marquee
       pauseOnHover={true}
@@ -15,7 +17,7 @@ export const MarqueeText = (props: Props) => {
       speed={20}
     >
       <p className={`${styles[props.styleName]} ${styles["marquee"]}`}>
-        &nbsp;объединяй&nbsp; осуществляй&nbsp; создавай&nbsp;
+        {t("home.marquee")}
       </p>
     </Marquee>
   );

@@ -1,44 +1,63 @@
 import style from "./empty-state-message.module.sass";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+
+type EmptyStateVariant =
+  | "projects"
+  | "favourites"
+  | "reviews"
+  | "responses"
+  | "error";
 
 type emptyStateProps = {
-  heading: string;
+  variant: EmptyStateVariant;
 };
 
 export const EmptyStateMessage = (props: emptyStateProps) => {
-  const chooseText = (heading: string) => {
-    switch (heading) {
-      case "Проекты":
-        return (
-          "На данный момент у вас нет активных проектов." +
-          "\n" +
-          "Присоединяйтесь к командам или создайте свой проект, чтобы начать работу."
-        );
-      case "Избранное":
-        return (
-          "На данный момент вы еще не добавили ни одного проекта в избранное." +
-          "\n" +
-          "Сохраняйте интересные проекты, чтобы быстро находить их в будущем."
-        );
-      case "Отзывы":
-        return (
-          "Пока что у вас нет оставленных отзывов." +
-          "\n" +
-          "Начните участвовать в проектах, чтобы получить первые оценки."
-        );
+  const { t } = useTranslation();
+
+  const content = () => {
+    switch (props.variant) {
+      case "projects":
+        return {
+          heading: t("account.emptyState.projectsHeading"),
+          text: t("account.emptyState.projectsText"),
+        };
+      case "favourites":
+        return {
+          heading: t("account.emptyState.favouritesHeading"),
+          text: t("account.emptyState.favouritesText"),
+        };
+      case "reviews":
+        return {
+          heading: t("account.emptyState.reviewsHeading"),
+          text: t("account.emptyState.reviewsText"),
+        };
+      case "responses":
+        return {
+          heading: t("account.emptyState.responsesHeading"),
+          text: t("account.emptyState.fallbackText"),
+        };
       default:
-        return "Текст сообщения потерялся. Обновите страницу";
+        return {
+          heading: t("account.emptyState.errorHeading"),
+          text: t("account.emptyState.fallbackText"),
+        };
     }
   };
 
+  const { heading, text } = content();
+
   return (
     <div className={style["empty-state"]}>
-      <h2>{props.heading}</h2>
-      <p>{chooseText(props.heading)}</p>
+      <h2>{heading}</h2>
+      <p>{text}</p>
       <div>
-        <Link to="/projects">К проектам</Link>
-        {props.heading === "Проекты" && (
-          <Link to="/account/create-project">Создать проект</Link>
+        <Link to="/projects">{t("account.emptyState.toProjects")}</Link>
+        {props.variant === "projects" && (
+          <Link to="/account/create-project">
+            {t("account.emptyState.createProject")}
+          </Link>
         )}
       </div>
     </div>

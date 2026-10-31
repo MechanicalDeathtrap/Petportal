@@ -1,5 +1,6 @@
 import styles from "../project-card/project-card.module.sass";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Project } from "../../../types/project-type.ts";
 import { formatDate } from "../../../utils/format-date.ts";
 import { getStateLabel, StateOfProject } from "../../../types/project-type.ts";
@@ -39,6 +40,7 @@ const ArchiveIcon = () => (
 );
 
 export const ProjectCard = ({ project, onArchive, isArchiving }: ProjectCardProps) => {
+  const { t } = useTranslation();
   const avatarUrl = project.avatarImageBase64 || "/img/blank-avatar.png";
 
   const archived = project.stateOfProject === StateOfProject.Archived;
@@ -97,18 +99,18 @@ export const ProjectCard = ({ project, onArchive, isArchiving }: ProjectCardProp
           <ul className={styles["project-card__main-info-list"]}>
             <li>
               {" "}
-              Сроки работы:
+              {t("projects.card.deadline")}
               <span>{formatDate(project.deadline)}</span>
             </li>
             {project.isBusinessProject && (
               <li>
-                Бюджет:
+                {t("projects.card.budget")}
                 <span>{project.budget}</span>
               </li>
             )}
             <li>  
               {" "}
-              Приём заявок:
+              {t("projects.card.applyingDeadline")}
               <span>{formatDate(project.applyingDeadline)}</span>
             </li>
           </ul>
@@ -127,10 +129,10 @@ export const ProjectCard = ({ project, onArchive, isArchiving }: ProjectCardProp
               className={styles["project-card__archive-button"]}
               onClick={handleArchiveClick}
               disabled={isArchiving}
-              title="Перевести проект в архив"
+              title={t("projects.archive.title")}
             >
               <ArchiveIcon />
-              {isArchiving ? "Переносим..." : "В архив"}
+              {isArchiving ? t("projects.archive.inProgress") : t("projects.archive.action")}
             </button>
           )}
         </div>{" "}

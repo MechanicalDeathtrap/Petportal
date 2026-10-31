@@ -9,42 +9,44 @@ import axios from "axios";
 import { CabinetSettings } from "../../../types/user-data";
 import { Link, useNavigate } from "react-router-dom";
 import { API_BASE_URL, API_BASE_PATH } from "../../../config/api";
+import { useTranslation } from "react-i18next";
+import { lazyT } from "../../../i18n/index.ts";
 
 // Валидация формы
 const validationSchema = Yup.object().shape({
-  firstName: Yup.string().required("Имя обязательно"),
-  lastName: Yup.string().required("Фамилия обязательна"),
-  country: Yup.string().required("Страна обязательна"),
-  town: Yup.string().required("Город обязателен"),
+  firstName: Yup.string().required(lazyT("account.settingsValidation.firstNameRequired")),
+  lastName: Yup.string().required(lazyT("account.settingsValidation.lastNameRequired")),
+  country: Yup.string().required(lazyT("account.settingsValidation.countryRequired")),
+  town: Yup.string().required(lazyT("account.settingsValidation.townRequired")),
   phoneNumber: Yup.string().optional(),
   telegram: Yup.string().optional(),
   education: Yup.array().of(
     Yup.object().shape({
-      university: Yup.string().required("Укажите университет"),
-      specialization: Yup.string().required("Укажите специальность"),
+      university: Yup.string().required(lazyT("account.settingsValidation.universityRequired")),
+      specialization: Yup.string().required(lazyT("account.settingsValidation.specializationRequired")),
       releaseYear: Yup.number()
-        .positive("Год должен быть положительным")
-        .required("Укажите год выпуска"),
+        .positive(lazyT("account.settingsValidation.yearPositive"))
+        .required(lazyT("account.settingsValidation.releaseYearRequired")),
     }),
   ),
   experience: Yup.array().of(
     Yup.object().shape({
-      workPlace: Yup.string().required("Укажите место работы"),
-      workPosition: Yup.string().required("Укажите должность"),
+      workPlace: Yup.string().required(lazyT("account.settingsValidation.workPlaceRequired")),
+      workPosition: Yup.string().required(lazyT("account.settingsValidation.workPositionRequired")),
       workYears: Yup.number()
-        .positive("Количество лет должно быть положительным")
-        .required("Укажите продолжительность"),
+        .positive(lazyT("account.settingsValidation.yearsPositive"))
+        .required(lazyT("account.settingsValidation.durationRequired")),
     }),
   ),
   stack: Yup.array().of(
     Yup.object().shape({
       programmingLanguage: Yup.string().required(
-        "Укажите язык программирования",
+        lazyT("account.settingsValidation.languageRequired"),
       ),
-      programmingLevel: Yup.string().required("Выберите уровень"),
+      programmingLevel: Yup.string().required(lazyT("account.settingsValidation.levelRequired")),
       programmingYears: Yup.number()
-        .positive("Количество лет должно быть положительным")
-        .required("Укажите продолжительность"),
+        .positive(lazyT("account.settingsValidation.yearsPositive"))
+        .required(lazyT("account.settingsValidation.durationRequired")),
     }),
   ),
 });
@@ -55,6 +57,7 @@ interface Props {
 }
 
 export const MyCabinetSettings = observer(({ onSave, onClose }: Props) => {
+  const { t } = useTranslation();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [initialData, setInitialData] = useState<CabinetSettings | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -114,7 +117,7 @@ export const MyCabinetSettings = observer(({ onSave, onClose }: Props) => {
   }, []);
 
   if (!initialData) {
-    return <div>Загрузка...</div>;
+    return <div>{t("common.loading")}</div>;
   }
 
   // Обработчик изменения аватара
@@ -218,10 +221,10 @@ export const MyCabinetSettings = observer(({ onSave, onClose }: Props) => {
               className={`${style["my-cabinet__info-section"]} ${style["my-cabinet__flex"]}`}
             >
               <div className={style["my-cabinet__main-info-fields"]}>
-                <h3>Личная информация</h3>
+                <h3>{t("account.settingsForm.personalInfo")}</h3>
                 <Field
                   name="firstName"
-                  placeholder="Имя"
+                  placeholder={t("account.settingsForm.firstName")}
                   className={style["my-cabinet__form-field"]}
                 />
                 {errors.firstName && touched.firstName ? (
@@ -231,7 +234,7 @@ export const MyCabinetSettings = observer(({ onSave, onClose }: Props) => {
                 ) : null}
                 <Field
                   name="lastName"
-                  placeholder="Фамилия"
+                  placeholder={t("account.settingsForm.lastName")}
                   className={style["my-cabinet__form-field"]}
                 />
                 {errors.lastName && touched.lastName ? (
@@ -241,7 +244,7 @@ export const MyCabinetSettings = observer(({ onSave, onClose }: Props) => {
                 ) : null}
                 <Field
                   name="country"
-                  placeholder="Страна проживания"
+                  placeholder={t("account.settingsForm.country")}
                   className={style["my-cabinet__form-field"]}
                 />
                 {errors.country && touched.country ? (
@@ -251,7 +254,7 @@ export const MyCabinetSettings = observer(({ onSave, onClose }: Props) => {
                 ) : null}
                 <Field
                   name="town"
-                  placeholder="Город проживания"
+                  placeholder={t("account.settingsForm.town")}
                   className={style["my-cabinet__form-field"]}
                 />
                 {errors.town && touched.town ? (
@@ -277,18 +280,18 @@ export const MyCabinetSettings = observer(({ onSave, onClose }: Props) => {
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                 >
-                  Загрузить фото
+                  {t("account.settingsForm.uploadPhoto")}
                 </button>
               </div>
             </section>
 
             {/* Контактная информация */}
             <section className={style["my-cabinet__info-section"]}>
-              <h3>Контактная информация</h3>
+              <h3>{t("account.settingsForm.contacts")}</h3>
               <Field
                 name="phoneNumber"
                 type="tel"
-                placeholder="Номер телефона"
+                placeholder={t("account.settingsForm.phone")}
                 className={`${style["my-cabinet__form-field"]} ${style["my-cabinet__contact-field"]}`}
               />
               <Field
@@ -301,7 +304,7 @@ export const MyCabinetSettings = observer(({ onSave, onClose }: Props) => {
 
             {/* Образование */}
             <section className={style["my-cabinet__info-section"]}>
-              <h3>Образование</h3>
+              <h3>{t("account.settingsForm.education")}</h3>
               <FieldArray name="education">
                 {({ push }) => {
                   const visibleEducations = values.education.filter(
@@ -320,17 +323,17 @@ export const MyCabinetSettings = observer(({ onSave, onClose }: Props) => {
                           >
                             <Field
                               name={`education[${realIndex}].university`}
-                              placeholder="Вуз"
+                              placeholder={t("account.settingsForm.university")}
                               className={style["my-cabinet__form-field"]}
                             />
                             <Field
                               name={`education[${realIndex}].specialization`}
-                              placeholder="Специальность"
+                              placeholder={t("account.settingsForm.specialization")}
                               className={style["my-cabinet__form-field"]}
                             />
                             <Field
                               name={`education[${realIndex}].releaseYear`}
-                              placeholder="Год выпуска"
+                              placeholder={t("account.settingsForm.releaseYear")}
                               className={style["my-cabinet__form-field"]}
                             />
                             <button
@@ -343,7 +346,7 @@ export const MyCabinetSettings = observer(({ onSave, onClose }: Props) => {
                               }
                               className={style["my-cabinet__remove-button"]}
                             >
-                              Удалить
+                              {t("common.delete")}
                             </button>
                           </div>
                         );
@@ -360,7 +363,7 @@ export const MyCabinetSettings = observer(({ onSave, onClose }: Props) => {
                           })
                         }
                       >
-                        Добавить вуз
+                        {t("account.settingsForm.addUniversity")}
                       </button>
                     </>
                   );
@@ -370,7 +373,7 @@ export const MyCabinetSettings = observer(({ onSave, onClose }: Props) => {
 
             {/* Опыт работы */}
             <section className={style["my-cabinet__info-section"]}>
-              <h3>Опыт работы</h3>
+              <h3>{t("account.settingsForm.experience")}</h3>
               <FieldArray name="experience">
                 {({ push }) => {
                   const visibleExperiences = values.experience.filter(
@@ -389,17 +392,17 @@ export const MyCabinetSettings = observer(({ onSave, onClose }: Props) => {
                           >
                             <Field
                               name={`experience[${realIndex}].workPlace`}
-                              placeholder="Место работы"
+                              placeholder={t("account.settingsForm.workPlace")}
                               className={style["my-cabinet__form-field"]}
                             />
                             <Field
                               name={`experience[${realIndex}].workPosition`}
-                              placeholder="Должность"
+                              placeholder={t("account.settingsForm.workPosition")}
                               className={style["my-cabinet__form-field"]}
                             />
                             <Field
                               name={`experience[${realIndex}].workYears`}
-                              placeholder="Продолжительность (в годах)"
+                              placeholder={t("account.settingsForm.workYears")}
                               type="number"
                               className={style["my-cabinet__form-field"]}
                               min="0"
@@ -414,7 +417,7 @@ export const MyCabinetSettings = observer(({ onSave, onClose }: Props) => {
                               }
                               className={style["my-cabinet__remove-button"]}
                             >
-                              Удалить
+                              {t("common.delete")}
                             </button>
                           </div>
                         );
@@ -431,7 +434,7 @@ export const MyCabinetSettings = observer(({ onSave, onClose }: Props) => {
                           })
                         }
                       >
-                        Добавить опыт работы
+                        {t("account.settingsForm.addExperience")}
                       </button>
                     </>
                   );
@@ -441,7 +444,7 @@ export const MyCabinetSettings = observer(({ onSave, onClose }: Props) => {
 
             {/* Стек */}
             <section className={style["my-cabinet__info-section"]}>
-              <h3>Мой стек</h3>
+              <h3>{t("account.settingsForm.myStack")}</h3>
               <FieldArray name="stack">
                 {({ push }) => {
                   const visibleStacks = values.stack.filter((s) => s.isActive);
@@ -458,7 +461,7 @@ export const MyCabinetSettings = observer(({ onSave, onClose }: Props) => {
                           >
                             <Field
                               name={`stack[${realIndex}].programmingLanguage`}
-                              placeholder="Язык"
+                              placeholder={t("account.settingsForm.language")}
                               className={style["my-cabinet__form-field"]}
                             />
                             <Field
@@ -475,7 +478,7 @@ export const MyCabinetSettings = observer(({ onSave, onClose }: Props) => {
                             <Field
                               name={`stack[${realIndex}].programmingYears`}
                               type="number"
-                              placeholder="Продолжительность"
+                              placeholder={t("account.settingsForm.duration")}
                               className={style["my-cabinet__form-field"]}
                             />
                             <button
@@ -488,7 +491,7 @@ export const MyCabinetSettings = observer(({ onSave, onClose }: Props) => {
                               }
                               className={style["my-cabinet__remove-button"]}
                             >
-                              Удалить
+                              {t("common.delete")}
                             </button>
                           </div>
                         );
@@ -505,7 +508,7 @@ export const MyCabinetSettings = observer(({ onSave, onClose }: Props) => {
                           })
                         }
                       >
-                        Добавить стек
+                        {t("account.settingsForm.addStack")}
                       </button>
                     </>
                   );
@@ -519,13 +522,13 @@ export const MyCabinetSettings = observer(({ onSave, onClose }: Props) => {
                 <Button  onClick={onClose}
                   type="reset"
                   style="white-small-button"
-                  text="Отменить"
+                  text={t("common.cancel")}
                 />
               </Link>
               <Button
                 type="submit"
                 style="blue-button-header"
-                text="Сохранить"
+                text={t("common.save")}
               />
             </div>
           </Form>

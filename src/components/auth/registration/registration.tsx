@@ -3,6 +3,7 @@ import { Field, Form, Formik } from "formik";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../../button/button.tsx";
 import * as Yup from "yup";
+import { Trans, useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { API_BASE_URL, API_BASE_PATH } from "../../../config/api";
@@ -17,6 +18,7 @@ type RegistrationProps = {
 };
 
 export const Registration = () => {
+  const { t } = useTranslation();
   const [isMessageOpen, setMessageOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
@@ -25,27 +27,24 @@ export const Registration = () => {
 
   const validationSchema = Yup.object().shape({
     firstName: Yup.string()
-      .min(3, "Имя должно содержать не менее 3 символов")
-      .max(30, "Слишком длинное имя")
-      .required("Введите имя"),
+      .min(3, t("auth.validation.firstNameMin"))
+      .max(30, t("auth.validation.firstNameMax"))
+      .required(t("auth.validation.firstNameRequired")),
     lastName: Yup.string()
-      .min(2, "Фамилия должна содержать не менее 2 символов")
-      .max(30, "Слишком длинная фамилия")
-      .required("Введите фамилию"),
+      .min(2, t("auth.validation.lastNameMin"))
+      .max(30, t("auth.validation.lastNameMax"))
+      .required(t("auth.validation.lastNameRequired")),
     email: Yup.string()
-      .email("Некорректная почта. Она должна содержать знак @")
-      .required("Введите почту"),
+      .email(t("auth.validation.emailInvalid"))
+      .required(t("auth.validation.emailRequired")),
     password: Yup.string()
-      .min(
-        8,
-        "Пароль должен содержать минимум 8 символов, включая минимум одну заглавную букву, одну цифру",
-      )
-      .max(30, "Слишком длинный пароль")
-      .required("Введите пароль"),
+      .min(8, t("auth.validation.passwordRule"))
+      .max(30, t("auth.validation.passwordTooLong"))
+      .required(t("auth.validation.passwordRequired")),
     confirmPassword: Yup.string()
-      .oneOf([Yup.ref("password")], "Пароли не совпадают")
-      .required("Повторите пароль"),
-    acceptTerms: Yup.boolean().oneOf([true], "Примите условия").required(),
+      .oneOf([Yup.ref("password")], t("auth.validation.passwordsMismatch"))
+      .required(t("auth.validation.confirmPasswordRequired")),
+    acceptTerms: Yup.boolean().oneOf([true], t("auth.validation.acceptTerms")).required(),
   });
 
   const initialValues = {
@@ -83,27 +82,23 @@ export const Registration = () => {
         const status = error.response?.status;
         switch (status) {
           case 400:
-            setErrorMessage(
-              "Некорректные данные. Проверьте введенные значения.",
-            );
+            setErrorMessage(t("auth.errors.invalidData"));
             break;
           case 409:
-            setErrorMessage("Аккаунт с такой почтой уже существует.");
+            setErrorMessage(t("auth.registration.emailTaken"));
             break;
           case 500:
-            setErrorMessage("Ошибка сервера. Попробуйте позже.");
+            setErrorMessage(t("auth.errors.server"));
             break;
           default:
-            setErrorMessage("Произошла ошибка при регистрации.");
+            setErrorMessage(t("auth.registration.failed"));
         }
       } else if (axios.isAxiosError(error) && error.request) {
         // Ошибка сети (например, сервер недоступен)
-        setErrorMessage(
-          "Сервер недоступен. Проверьте подключение к интернету.",
-        );
+        setErrorMessage(t("auth.errors.unavailable"));
       } else {
         // Другие ошибки
-        setErrorMessage("Произошла непредвиденная ошибка.");
+        setErrorMessage(t("auth.errors.unexpected"));
       }
 
       setMessageOpen(true);
@@ -122,17 +117,20 @@ export const Registration = () => {
 
   return (
     <div className={styles["authorization__form-side"]}>
-      <h1>Регистрация</h1>
+      <h1>{t("auth.registration.heading")}</h1>
       {registrationSuccess ? (
         <div>
           <p>
-            Аккаунт создан. Мы отправили письмо на <strong>{registeredEmail}</strong>.
-            Перейдите по ссылке в письме, чтобы подтвердить почту и войти.
+            <Trans
+              i18nKey="auth.registration.success"
+              values={{ email: registeredEmail }}
+              components={{ strong: <strong /> }}
+            />
           </p>
           <Button
             type="button"
             style="blue-button-header"
-            text="Перейти ко входу"
+            text={t("auth.registration.goToLogin")}
             onClick={() => navigate("/login")}
           />
         </div>
@@ -148,7 +146,7 @@ export const Registration = () => {
               <Field
                 name="firstName"
                 type="text"
-                placeholder="Имя"
+                placeholder={t("auth.fields.firstName")}
                 className={styles["authorization__form-field"]}
               />
               {errors.firstName && touched.firstName && (
@@ -160,7 +158,7 @@ export const Registration = () => {
               <Field
                 name="lastName"
                 type="text"
-                placeholder="Фамилия"
+                placeholder={t("auth.fields.lastName")}
                 className={styles["authorization__form-field"]}
               />
               {errors.lastName && touched.lastName && (
@@ -172,7 +170,7 @@ export const Registration = () => {
               <Field
                 name="email"
                 type="email"
-                placeholder="Электронная почта"
+                placeholder={t("auth.fields.email")}
                 className={styles["authorization__form-field"]}
               />
               {errors.email && touched.email && (
@@ -184,7 +182,7 @@ export const Registration = () => {
               <Field
                 name="password"
                 type="password"
-                placeholder="Пароль"
+                placeholder={t("auth.fields.password")}
                 className={styles["authorization__form-field"]}
               />
               {errors.password && touched.password && (
@@ -196,7 +194,7 @@ export const Registration = () => {
               <Field
                 name="confirmPassword"
                 type="password"
-                placeholder="Повторите пароль"
+                placeholder={t("auth.fields.confirmPassword")}
                 className={styles["authorization__form-field"]}
               />
               {errors.confirmPassword && touched.confirmPassword && (
@@ -217,21 +215,23 @@ export const Registration = () => {
                   className={styles["authorization__form-checkbox-input"]}
                 />
                 <p>
-                  Я принимаю
-                  <Link
-                    to="/"
-                    className={styles["authorization__form-checkbox-link"]}
-                  >
-                    {" "}
-                    политику конфеденциальности{" "}
-                  </Link>
-                  и{" "}
-                  <Link
-                    to="/"
-                    className={styles["authorization__form-checkbox-link"]}
-                  >
-                    правила пользования сервисом
-                  </Link>
+                  <Trans
+                    i18nKey="auth.registration.acceptTerms"
+                    components={{
+                      privacy: (
+                        <Link
+                          to="/"
+                          className={styles["authorization__form-checkbox-link"]}
+                        />
+                      ),
+                      rules: (
+                        <Link
+                          to="/"
+                          className={styles["authorization__form-checkbox-link"]}
+                        />
+                      ),
+                    }}
+                  />
                   <span style={{ color: "red" }}>*</span>
                   {errors.acceptTerms && touched.acceptTerms && (
                     <div
@@ -247,7 +247,7 @@ export const Registration = () => {
             <Button
               type="submit"
               style="blue-button-header"
-              text="Продолжить"
+              text={t("common.continue")}
             />
           </Form>
         )}

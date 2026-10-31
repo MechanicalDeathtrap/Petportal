@@ -1,3 +1,5 @@
+import i18n from "../i18n/index.ts";
+
 /** Максимальный срок приёма заявок — два месяца с момента публикации объявления. */
 export const MAX_APPLYING_PERIOD_MONTHS = 2;
 
@@ -24,5 +26,8 @@ export const getMaxApplyingDeadline = (publishedAt?: string | null): Date => {
   return limit;
 };
 
-export const MAX_APPLYING_DEADLINE_MESSAGE =
-  `Срок приёма заявок — не больше ${MAX_APPLYING_PERIOD_MONTHS} месяцев с момента публикации`;
+/** Функция, а не строка: yup вызывает её при валидации, поэтому текст берётся на текущем языке. */
+export const getMaxApplyingDeadlineMessage = () =>
+  i18n.t("projects.validation.applyingDeadlineMax", {
+    months: MAX_APPLYING_PERIOD_MONTHS,
+  });

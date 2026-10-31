@@ -11,8 +11,10 @@ import { formatDate } from "../../../utils/format-date.ts";
 import { userStore } from "../../../stores/user-store.ts";
 import { authStore } from "../../../stores/auth-store.ts";
 import { observer } from "mobx-react-lite";
+import { useTranslation } from "react-i18next";
 
 export const ProjectInfo = observer(() => {
+  const { t } = useTranslation();
   const { projectId } = useParams() as { projectId: string };
   const [proj, setProj] = useState<Project>({} as Project);
   const [isModalOpen, setModalOpen] = useState(false);
@@ -84,7 +86,7 @@ export const ProjectInfo = observer(() => {
       }
     } catch (error) {
       console.error("Ошибка избранного:", error);
-      alert("Не удалось обновить избранное. Войдите в аккаунт и попробуйте снова.");
+      alert(t("projects.info.favouriteFailed"));
     }
   };
 
@@ -92,6 +94,10 @@ export const ProjectInfo = observer(() => {
     getProject();
     getIsFavouriteProject();
   }, [projectId]);
+
+  const favouriteLabel = isFavourite
+    ? t("projects.info.removeFromFavourites")
+    : t("projects.info.addToFavourites");
 
   const tagLabel = (tag: { id?: string; name?: string } | string) =>
     typeof tag === "string" ? tag : tag?.name ?? "";
@@ -114,26 +120,26 @@ export const ProjectInfo = observer(() => {
                   fill="#8C8C8C"
                 />
               </svg>
-              <span>Назад</span>
+              <span>{t("common.back")}</span>
             </button>
             <div>
               <p>
                 {archived ? (
-                  <>Проект в архиве</>
+                  <>{t("projects.info.archived")}</>
                 ) : isOwner ? (
                   // владелец может поправить срок приёма заявок прямо отсюда
                   <button
                     type="button"
                     className={style["applying-deadline"]}
                     onClick={() => navigate(`/projects/${projectId}/edit`)}
-                    title="Изменить срок приёма заявок"
+                    title={t("projects.info.editApplyingDeadline")}
                   >
-                    Прием заявок до{" "}
+                    {t("projects.info.applyingUntil")}{" "}
                     <span>{formatDate(proj?.applyingDeadline)}</span>
                   </button>
                 ) : (
                   <>
-                    Прием заявок до{" "}
+                    {t("projects.info.applyingUntil")}{" "}
                     <span>{formatDate(proj?.applyingDeadline)}</span>
                   </>
                 )}
@@ -141,8 +147,8 @@ export const ProjectInfo = observer(() => {
               <button
                 onClick={postToFavourites}
                 type="button"
-                aria-label={isFavourite ? "Убрать из избранного" : "В избранное"}
-                title={isFavourite ? "Убрать из избранного" : "В избранное"}
+                aria-label={favouriteLabel}
+                title={favouriteLabel}
               >
                 <svg
                   className={`${style["project-info__favourite-button-icon"]} ${
@@ -189,47 +195,47 @@ export const ProjectInfo = observer(() => {
               </ul>
 
               <div className={style["project-info__task-info"]}>
-                <h3>Описание задания:</h3>
+                <h3>{t("projects.info.description")}</h3>
                 <p>{proj.description}</p>
               </div>
 
-              <h3>Основные требования:</h3>
+              <h3>{t("projects.info.mainRequirements")}</h3>
 
               <div>
-                <h3>Состав исполнителей:</h3>
+                <h3>{t("projects.info.team")}</h3>
                 <p>{proj.teamDescription}</p>
               </div>
 
               <div>
-                <h3>Ожидания от команды исполнителей:</h3>
+                <h3>{t("projects.info.expectations")}</h3>
                 <p>{proj.requirements}</p>
               </div>
 
               <div>
-                <h3>Формат результата:</h3>
+                <h3>{t("projects.info.resultFormat")}</h3>
                 <p>{proj.result}</p>
               </div>
               <div className={style["project-info__deadline"]}>
                 <h3>
-                  Сроки выполнения: <span>{formatDate(proj.deadline)}</span>
+                  {t("projects.info.deadline")} <span>{formatDate(proj.deadline)}</span>
                 </h3>
               </div>
               <div className={style["project-info__budget"]}>
                 <h3>
-                  Бюджет проекта: <span>{proj.budget}</span>
+                  {t("projects.info.budget")} <span>{proj.budget}</span>
                 </h3>
               </div>
 
               {isOwner ? (
                 <Button
-                  text="Изменить"
+                  text={t("common.edit")}
                   style="blue-button-header"
                   type="button"
                   onClick={() => navigate(`/projects/${projectId}/edit`)}
                 />
               ) : (
                 <Button
-                  text={archived ? "Набор закрыт" : "Откликнуться"}
+                  text={archived ? t("projects.info.recruitmentClosed") : t("projects.info.respond")}
                   style="blue-button-header"
                   type="button"
                   disabled={archived}
@@ -256,7 +262,7 @@ export const ProjectInfo = observer(() => {
                   (role) =>
                     role.customRoleName ||
                     role.systemRoleName ||
-                    "Неизвестная роль",
+                    t("roles.unknown"),
                 )
               : []
           }

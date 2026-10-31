@@ -4,20 +4,32 @@ import { InputFilters } from "./input-filters.tsx";
 import { MultiSelectFilter } from "./selects/multi-select-filter.tsx";
 import { SelectChangeEvent } from "@mui/material";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { useFilterContext } from "../../context/filter-context.tsx";
-import { groupRoleNames, OTHER_ROLE_NAME } from "../../data/role-categories.ts";
+import {
+  getRoleGroupLabel,
+  getRoleLabel,
+  groupRoleNames,
+  OTHER_ROLE_NAME,
+} from "../../data/role-categories.ts";
 import { Button } from "../button/button.tsx";
 
+// Значения хранятся в сохранённых фильтрах, поэтому остаются прежними; на экране — перевод.
 export enum IsCommercialProjectFilter {
   YES = "Да",
   NO = "Нет",
 }
 
-/** Пункт, сбрасывающий фильтр в «любое значение». */
-export const NOT_SPECIFIED_LABEL = "Не указано";
-
 export const AsideFilters = () => {
+  const { t } = useTranslation();
   const { tempFilters, setTempFilters, applyFilters, resetFilters, roles } = useFilterContext();
+
+  const commercialLabel = (value: string) =>
+    value === IsCommercialProjectFilter.YES
+      ? t("common.yes")
+      : value === IsCommercialProjectFilter.NO
+        ? t("common.no")
+        : value;
 
   const handleChangeRole = (e: SelectChangeEvent<string>) => {
     const selectedName = e.target.value;
@@ -46,11 +58,13 @@ export const AsideFilters = () => {
     <aside className={styles["filters"]}>
         <SelectFilter
           sizeStyle="big"
-          placeholder="Роль"
+          placeholder={t("filters.role")}
           groups={roleGroups}
-          emptyOptionLabel={NOT_SPECIFIED_LABEL}
+          getItemLabel={getRoleLabel}
+          getGroupLabel={getRoleGroupLabel}
+          emptyOptionLabel={t("filters.notSpecified")}
           searchable
-          searchPlaceholder="Поиск роли"
+          searchPlaceholder={t("filters.roleSearch")}
           pinnedItems={[OTHER_ROLE_NAME]}
           value={tempFilters.roleId
             ? roles.find(role => role.id === tempFilters.roleId)?.name || ""
@@ -63,14 +77,15 @@ export const AsideFilters = () => {
         />
         <SelectFilter
           sizeStyle="big"
-          placeholder="Коммерческий"
-          emptyOptionLabel={NOT_SPECIFIED_LABEL}
+          placeholder={t("filters.commercial")}
+          emptyOptionLabel={t("filters.notSpecified")}
           menuItems={[IsCommercialProjectFilter.YES, IsCommercialProjectFilter.NO]}
+          getItemLabel={commercialLabel}
           value={tempFilters.isCommercial}
           onChange={handleChangeCommercial}
         />
       <div>
-        Бюджет
+        {t("filters.budget")}
         <InputFilters />
       </div>
       <MultiSelectFilter />
@@ -81,7 +96,7 @@ export const AsideFilters = () => {
           checked={tempFilters.showArchived}
           onChange={(e) => setTempFilters({ showArchived: e.target.checked })}
         />
-        Показать архивные
+        {t("filters.showArchived")}
       </label>
 
       <div className={styles["buttons"]}>
@@ -89,7 +104,7 @@ export const AsideFilters = () => {
           <Button
             type="button"
             style="grey-button"
-            text="Сбросить фильтры"
+            text={t("filters.reset")}
             onClick={resetFilters}
           />
         </div>
@@ -99,7 +114,7 @@ export const AsideFilters = () => {
             style="blue-button-header"
             onClick={applyFilters}
             type="submit"
-            text="Применить"
+            text={t("filters.apply")}
           />
         </div>
       </div>

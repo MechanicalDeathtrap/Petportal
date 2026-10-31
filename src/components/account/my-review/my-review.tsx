@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { EmptyStateMessage } from "../empty-state-message/empty-state-message.tsx";
 import style from "./my-review.module.sass";
 
 export const MyReview = () => {
+  const { t } = useTranslation();
   const [reviewCount, setReviewCount] = useState(0);
   const imageUrlFromBackend = false;
 
@@ -23,10 +25,10 @@ export const MyReview = () => {
 
   return (
     <>
-      {reviewCount === 0 && <EmptyStateMessage heading="Отзывы" />}
+      {reviewCount === 0 && <EmptyStateMessage variant="reviews" />}
       {reviewCount > 0 && (
         <section className={style["my-review"]}>
-          <h3>Отзывы</h3>
+          <h3>{t("account.reviews.heading")}</h3>
           <div className={style["my-review__filters"]}>
             <span>
               <svg
@@ -57,7 +59,7 @@ export const MyReview = () => {
                   fill="currentColor"
                 />
               </svg>
-              По дате
+              {t("account.reviews.byDate")}
             </span>
             <span>
               <svg
@@ -89,7 +91,7 @@ export const MyReview = () => {
                   fill="currentColor"
                 />
               </svg>
-              По рейтингу
+              {t("account.reviews.byRating")}
             </span>
           </div>
           <ul className={style["my-review__reviews-list"]}>

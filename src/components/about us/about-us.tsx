@@ -1,11 +1,13 @@
 import styles from "./about-us.module.sass";
 import { MarqueeText } from "../marquee/marquee.tsx";
+import { useTranslation } from "react-i18next";
 
 export const AboutUs = () => {
+  const { t } = useTranslation();
   return (
     <section className={styles["about-us"]}>
       <div className={styles["about-us__container"]}>
-        <h1 className={styles["about-us__heading"]}>Что такое PetPortal?</h1>
+        <h1 className={styles["about-us__heading"]}>{t("home.aboutUs.heading")}</h1>
         <div className={styles["about-us__info"]}>
           <div className={styles["about-us__first-part-info"]}>
             <div>
@@ -25,12 +27,7 @@ export const AboutUs = () => {
                 />
               </svg>
             </div>
-            <p>
-              PetPortal - площадка для работодателей, HR&nbsp;специалистов, и
-              заказчиков проектов. Есть заказ? Разместите его на нашем сайте.
-              Платформа помогает в поиске новых сотрудников и аутсорсинга
-              IT-задач
-            </p>
+            <p>{t("home.aboutUs.forBusiness")}</p>
           </div>
           <div className={styles["about-us__second-part-info"]}>
             <div>
@@ -50,11 +47,7 @@ export const AboutUs = () => {
                 />
               </svg>
             </div>
-            <p>
-              PetPortal - площадка для объединения разработчиков и совместного
-              создания pet&nbsp;проектов. Широкий выбор проектов и умный
-              помощник PetAssist поможет каждому найти проект себе по душе
-            </p>
+            <p>{t("home.aboutUs.forDevelopers")}</p>
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import style from "./tags-input.module.sass";
 import { useField, useFormikContext } from "formik";
 import { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 export type SuggestionGroup = {
   label: string;
@@ -20,7 +21,13 @@ type TagsInputProps = {
    * Если не передана — список выводится плоским, как раньше.
    */
   groupSuggestions?: (suggestions: string[]) => SuggestionGroup[];
+  /** Подпись тега, если она отличается от значения (например, перевод). */
+  getLabel?: (tag: string) => string;
+  /** Подпись заголовка группы подсказок, если она отличается от её названия. */
+  getGroupLabel?: (label: string) => string;
 };
+
+const identity = (value: string) => value;
 
 export const TagsInput = ({
                             name,
@@ -30,8 +37,11 @@ export const TagsInput = ({
                             setSuggestions,
                             error,
                             availableTags,
-                            groupSuggestions
+                            groupSuggestions,
+                            getLabel = identity,
+                            getGroupLabel = identity,
                           }: TagsInputProps) => {
+  const { t } = useTranslation();
   const [field] = useField<string[]>(name);
   const { setFieldValue } = useFormikContext();
   const [inputVisible, setInputVisible] = useState(false);
@@ -79,8 +89,8 @@ export const TagsInput = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setInputTag(val);
-    const filtered = availableTags.filter((t) =>
-      t.toLowerCase().includes(val.toLowerCase())
+    const filtered = availableTags.filter((tag) =>
+      getLabel(tag).toLowerCase().includes(val.toLowerCase())
     );
     setSuggestions(filtered.length ? filtered : [val]);
   };
@@ -120,7 +130,7 @@ export const TagsInput = ({
               className={style["tags-input__tag"]}
               onMouseDown={(e) => e.stopPropagation()}
             >
-              {tag}
+              {getLabel(tag)}
               <button 
                 type="button"
                 onMouseDown={(e) => {
@@ -163,7 +173,7 @@ export const TagsInput = ({
                     type="text"
                     value={inputTag}
                     onChange={handleInputChange}
-                    placeholder="Введите тег"
+                    placeholder={t("tagsInput.placeholder")}
                     className={style["tags-input__input"]}
                     autoFocus
                     onMouseDown={(e) => e.stopPropagation()}
@@ -182,7 +192,7 @@ export const TagsInput = ({
                             key={`group-${group.label}`}
                             className={style["tags-input__group-label"]}
                           >
-                            {group.label}
+                            {getGroupLabel(group.label)}
                           </li>,
                         ]
                       : []),
@@ -196,7 +206,7 @@ export const TagsInput = ({
                         }}
                         className={style["tags-input__suggestion"]}
                       >
-                        {s}
+                        {getLabel(s)}
                       </li>
                     )),
                   ])}

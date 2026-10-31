@@ -8,11 +8,13 @@ import {
 import { UserData } from "../../../types/user-data.ts";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useState, useEffect } from "react";
+import { Trans, useTranslation } from "react-i18next";
 import { MyCabinetSettings } from "./my-cabinet-settings.tsx";
 import axios from "axios";
 import { API_BASE_URL, API_BASE_PATH } from "../../../config/api";
 
 export const MyCabinet = () => {
+  const { t } = useTranslation();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isSettingsOpen, setSettingsOpen] = useState(false);
   const [avatarBlobUrl, setAvatarBlobUrl] = useState<string | null>(null);
@@ -114,7 +116,7 @@ export const MyCabinet = () => {
   };
 
   if (!userData) {
-    return <div>Загрузка...</div>;
+    return <div>{t("common.loading")}</div>;
   }
 
   return (
@@ -138,14 +140,14 @@ export const MyCabinet = () => {
                   }
                 {quota && (
                   <>
-                    <p>Проектов создано: {quota.projectsCount}</p>
+                    <p>{t("account.cabinet.projectsCreated", { count: quota.projectsCount })}</p>
                     <p>
-                      Бесплатных размещений:{" "}
+                      {t("account.cabinet.freePlacements")}{" "}
                       {Math.min(quota.projectsCount, quota.freeProjectsLimit)} /{" "}
                       {quota.freeProjectsLimit}
                       {quota.freeProjectsRemaining > 0
-                        ? ` (осталось ${quota.freeProjectsRemaining})`
-                        : " (лимит исчерпан)"}
+                        ? t("account.cabinet.freeRemaining", { count: quota.freeProjectsRemaining })
+                        : t("account.cabinet.limitReached")}
                     </p>
                   </>
                 )}
@@ -154,46 +156,56 @@ export const MyCabinet = () => {
             </div>
             <div className={style["my-cabinet__contacts"]}>
               <p>
-                Номер телефона: <br />
-                <span>{userData.phoneNumber || "Не указано"}</span>
+                {t("account.cabinet.phone")} <br />
+                <span>{userData.phoneNumber || t("common.notSpecified")}</span>
               </p>
               <p>
-                Адрес почты: <br />
-                <span>{userData.email || "Не указано"}</span>
+                {t("account.cabinet.email")} <br />
+                <span>{userData.email || t("common.notSpecified")}</span>
               </p>
               <p>
-                Telegram: <br />
-                <span>{userData.telegram || "Не указано"}</span>
+                {t("account.cabinet.telegram")} <br />
+                <span>{userData.telegram || t("common.notSpecified")}</span>
               </p>
-              <button onClick={handleSettingsOpen}>Изменить профиль</button>
+              <button onClick={handleSettingsOpen}>{t("account.cabinet.editProfile")}</button>
             </div>
           </div>
           <div className={style["my-cabinet__about-myself"]}>
             <div>
-              <h3>О себе</h3>
-              <p>Тут можно будет отобразить описание, если оно появится</p>
+              <h3>{t("account.cabinet.about")}</h3>
+              <p>{t("account.cabinet.aboutPlaceholder")}</p>
             </div>
             <div>
-              <h3>Навыки</h3>
+              <h3>{t("account.cabinet.skills")}</h3>
               <p>
                 {userData.stack.map((s, idx) => (
                   <div key={idx}>
-                    {s.programmingLanguage} — {s.programmingYears} лет —
-                    Уровень: {s.programmingLevel}
+                    {s.programmingLanguage} —{" "}
+                    {t("common.years", { count: Number(s.programmingYears) })} —{" "}
+                    {t("account.cabinet.level", { level: s.programmingLevel })}
                   </div>
                 ))}
               </p>
             </div>
           </div>
           <div className={style["my-cabinet__registration-error"]}>
-            <h2>У вас непроверенные данные о компании, поэтому сервис работает с ограничениями.</h2>
-            <h3>Для подтверждения регистрации отправьте на почту <span>daukaevk@gmail.com</span>
-              &#160;один из следующих документов:</h3>
+            <h2>{t("account.cabinet.companyUnverified")}</h2>
+            <h3>
+              <Trans
+                i18nKey="account.cabinet.companyVerifyIntro"
+                values={{ email: "daukaevk@gmail.com" }}
+                components={{ email: <span /> }}
+              />
+            </h3>
             <ol className={style["my-cabinet__registration-error-list"]}>
-              <li>Свидетельство о государственной регистрации ЮЛ/ИП</li>
-              <li>Свидетельство о постановке на налоговый учёт ЮЛ/ИП</li>
-              <li>Лист записи ЕГРЮЛ/ЕГРИП, его можно получить в личном кабинете на <a
-                href="https://www.nalog.gov.ru/">nalog.gov.ru</a></li>
+              <li>{t("account.cabinet.companyDocRegistration")}</li>
+              <li>{t("account.cabinet.companyDocTax")}</li>
+              <li>
+                <Trans
+                  i18nKey="account.cabinet.companyDocRegistry"
+                  components={{ link: <a href="https://www.nalog.gov.ru/" /> }}
+                />
+              </li>
             </ol>
           </div>
           <Accordion className={style["my-cabinet__accordion"]}>
@@ -201,7 +213,7 @@ export const MyCabinet = () => {
               expandIcon={<ExpandMoreIcon />}
               className={style["my-cabinet__accordion-summary"]}
             >
-              <Typography component="h3">Образование</Typography>
+              <Typography component="h3">{t("account.cabinet.education")}</Typography>
             </AccordionSummary>
             <AccordionDetails
               className={style["my-cabinet__accordion-details"]}
@@ -220,7 +232,7 @@ export const MyCabinet = () => {
               expandIcon={<ExpandMoreIcon />}
               className={style["my-cabinet__accordion-summary"]}
             >
-              <Typography component="h3">Опыт работы</Typography>
+              <Typography component="h3">{t("account.cabinet.experience")}</Typography>
             </AccordionSummary>
             <AccordionDetails
               className={style["my-cabinet__accordion-details"]}
@@ -228,7 +240,8 @@ export const MyCabinet = () => {
               <Typography component="ol">
                 {userData.experience.map((exp, idx) => (
                   <li key={idx}>
-                    {exp.workPlace}, {exp.workPosition}, {exp.workYears} лет
+                    {exp.workPlace}, {exp.workPosition},{" "}
+                    {t("common.years", { count: Number(exp.workYears) })}
                   </li>
                 ))}
               </Typography>
@@ -241,7 +254,7 @@ export const MyCabinet = () => {
               expandIcon={<ExpandMoreIcon />}
               className={style["my-cabinet__accordion-summary"]}
             >
-              <Typography component="h3">Стек технологий</Typography>
+              <Typography component="h3">{t("account.cabinet.stack")}</Typography>
             </AccordionSummary>
             <AccordionDetails
               className={style["my-cabinet__accordion-details"]}
@@ -249,8 +262,11 @@ export const MyCabinet = () => {
               <Typography component="ol">
                 {userData.stack.map((stack, idx) => (
                   <li key={idx}>
-                    {stack.programmingLanguage}, уровень:{" "}
-                    {stack.programmingLevel}, опыт: {stack.programmingYears} лет
+                    {t("account.cabinet.stackItem", {
+                      language: stack.programmingLanguage,
+                      level: stack.programmingLevel,
+                      years: t("common.years", { count: Number(stack.programmingYears) }),
+                    })}
                   </li>
                 ))}
               </Typography>

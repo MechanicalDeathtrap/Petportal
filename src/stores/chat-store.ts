@@ -2,12 +2,19 @@ import { makeAutoObservable, runInAction } from "mobx";
 import { ChatRoom, ChatMessage } from "../types/chat-types";
 import { chatApiService } from "../services/chat-api";
 import { userStore } from "./user-store";
+import i18n from "../i18n/index.ts";
 
 const BASE_TITLE = "PetPortal";
 const RESPOND_SYSTEM_RE = /откликнулся на ваш проект\.?$/i;
 
 export function isSystemChatMessage(message: string): boolean {
   return RESPOND_SYSTEM_RE.test(message.trim());
+}
+
+/** Системное сообщение об отклике приходит с бэкенда по-русски — собираем его на текущем языке. */
+export function formatSystemChatMessage(message: string): string {
+  const name = message.trim().replace(RESPOND_SYSTEM_RE, "").trim();
+  return i18n.t("chat.respondedToYourProject", { name: name || i18n.t("chat.user") });
 }
 
 export function getChatPeerName(chat: ChatRoom, currentUserId: string): string {
@@ -17,13 +24,13 @@ export function getChatPeerName(chat: ChatRoom, currentUserId: string): string {
   if (participants.length === 1) {
     const selfName = names[participants[0]]
       || `${userStore.user.firstName} ${userStore.user.lastName}`.trim();
-    return selfName || "Вы";
+    return selfName || i18n.t("chat.you");
   }
 
   if (participants.length === 2) {
     const otherId = participants.find((id) => id !== currentUserId);
     if (otherId) {
-      return names[otherId] || "Пользователь";
+      return names[otherId] || i18n.t("chat.user");
     }
   }
 
@@ -34,7 +41,7 @@ export function getChatPeerName(chat: ChatRoom, currentUserId: string): string {
 
   const other = participants.find((id) => id !== currentUserId);
   if (other && names[other]) return names[other];
-  return "Чат";
+  return i18n.t("chat.defaultName");
 }
 
 export class ChatStore {
@@ -64,7 +71,7 @@ export class ChatStore {
         m.chatRealtimeService.joinAllRooms()
       );
     } catch (error) {
-      this.setError(error instanceof Error ? error.message : "Ошибка загрузки чатов");
+      this.setError(error instanceof Error ? error.message : i18n.t("chat.loadChatsFailed"));
     } finally {
       this.setLoading(false);
     }
@@ -79,7 +86,7 @@ export class ChatStore {
       this.setMessages(roomId, messages);
       this.markChatRead(roomId);
     } catch (error) {
-      this.setError(error instanceof Error ? error.message : "Ошибка загрузки сообщений");
+      this.setError(error instanceof Error ? error.message : i18n.t("chat.loadMessagesFailed"));
     } finally {
       this.setLoading(false);
     }
@@ -94,7 +101,7 @@ export class ChatStore {
         message,
         senderId: userStore.user.id,
         senderName:
-          `${userStore.user.firstName} ${userStore.user.lastName}`.trim() || "Вы",
+          `${userStore.user.firstName} ${userStore.user.lastName}`.trim() || i18n.t("chat.you"),
       };
 
       const newMessage = await chatApiService.sendMessage(messagePayload);
@@ -106,7 +113,7 @@ export class ChatStore {
         senderName:
           newMessage.senderName ||
           `${userStore.user.firstName} ${userStore.user.lastName}`.trim() ||
-          "Вы",
+          i18n.t("chat.you"),
         message: newMessage.message || message,
         sentAt: newMessage.sentAt || new Date().toISOString(),
         isRead: true,
@@ -115,7 +122,7 @@ export class ChatStore {
       this.appendMessage(localMessage, { fromSelf: true });
     } catch (error) {
       console.error("Ошибка отправки сообщения:", error);
-      this.setError(error instanceof Error ? error.message : "Ошибка отправки сообщения");
+      this.setError(error instanceof Error ? error.message : i18n.t("chat.sendFailed"));
     }
   }
 
@@ -126,7 +133,7 @@ export class ChatStore {
       id: raw.id,
       chatRoomId: raw.chatRoomId,
       senderId: raw.senderId,
-      senderName: raw.senderName || "Пользователь",
+      senderName: raw.senderName || i18n.t("chat.user"),
       message: raw.message,
       sentAt: this.normalizeTimestamp(raw.sentAt),
       isRead: false,
@@ -181,7 +188,7 @@ export class ChatStore {
       if (!opts.fromSelf && !isViewingThisChat) {
         chat.unreadCount = (chat.unreadCount || 0) + 1;
         this.recalcTotalUnread();
-        this.flashTabTitle(message.senderName || "Новое сообщение");
+        this.flashTabTitle(message.senderName || i18n.t("chat.newMessage"));
       } else if (!opts.fromSelf && isViewingThisChat) {
         this.markChatRead(roomId);
       }
@@ -214,7 +221,7 @@ export class ChatStore {
     this.stopTitleFlash();
     this.originalTitle = document.title || BASE_TITLE;
     let showAlt = true;
-    document.title = `(${this.totalUnread}) Новое сообщение`;
+    document.title = `(${this.totalUnread}) ${i18n.t("chat.newMessage")}`;
     this.titleFlashTimer = setInterval(() => {
       document.title = showAlt
         ? `(${this.totalUnread}) ${preview}`
@@ -276,7 +283,7 @@ export class ChatStore {
         }
       }
 
-      this.setError(error instanceof Error ? error.message : "Ошибка создания чата");
+      this.setError(error instanceof Error ? error.message : i18n.t("chat.createFailed"));
       throw error;
     }
   }
@@ -301,7 +308,7 @@ export class ChatStore {
         );
       }
     } catch (error) {
-      this.setError(error instanceof Error ? error.message : "Ошибка удаления сообщения");
+      this.setError(error instanceof Error ? error.message : i18n.t("chat.deleteFailed"));
     }
   }
 
@@ -337,7 +344,7 @@ export class ChatStore {
   setMessages(roomId: string, messages: ChatMessage[]) {
     const mappedMessages = messages.map((msg) => ({
       ...msg,
-      senderName: msg.senderName || "Пользователь",
+      senderName: msg.senderName || i18n.t("chat.user"),
       sentAt: this.normalizeTimestamp(msg.sentAt),
     }));
 

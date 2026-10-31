@@ -3,8 +3,10 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { deleteAuthCookie } from "../../../utils/cookies.ts";
 import { authStore } from "../../../stores/auth-store.ts";
+import { useTranslation } from "react-i18next";
 
 export const SideMenu = () => {
+  const { t } = useTranslation();
   const [path, setPath] = useState("None");
   const location = useLocation();
   const navigate = useNavigate();
@@ -66,7 +68,7 @@ export const SideMenu = () => {
                 <path d="M17.9951 17.0381C18.1826 17.0381 18.3682 17.0747 18.5414 17.1458C18.7145 17.2168 18.8719 17.321 19.0045 17.4523C19.137 17.5836 19.2421 17.7395 19.3139 17.9111C19.3856 18.0827 19.4225 18.2666 19.4225 18.4523H18.8516C18.8516 18.3409 18.8294 18.2306 18.7863 18.1276C18.7434 18.0247 18.6803 17.9311 18.6007 17.8523C18.5212 17.7735 18.4267 17.711 18.3229 17.6684C18.219 17.6257 18.1076 17.6038 17.9951 17.6038V17.0381Z" />
               </svg>
 
-              <span>Личный кабинет</span>
+              <span>{t("account.menu.cabinet")}</span>
             </button>
           </Link>
         </li>
@@ -94,7 +96,7 @@ export const SideMenu = () => {
                   strokeWidth="1.6"
                 />
               </svg>
-              <span>Мои проекты</span>
+              <span>{t("account.menu.myProjects")}</span>
             </button>
           </Link>
         </li>
@@ -122,7 +124,7 @@ export const SideMenu = () => {
                   strokeWidth="1.8"
                 />
               </svg>
-              <span>Отклики на проекты</span>
+              <span>{t("account.menu.responses")}</span>
             </button>
           </Link>
         </li>
@@ -150,7 +152,7 @@ export const SideMenu = () => {
                   strokeWidth="1.8"
                 />
               </svg>
-              <span>Отзывы</span>
+              <span>{t("account.menu.reviews")}</span>
             </button>
           </Link>
         </li>
@@ -173,7 +175,7 @@ export const SideMenu = () => {
                   strokeWidth="1.8"
                 />
               </svg>
-              <span>Избранное</span>
+              <span>{t("account.menu.favourites")}</span>
             </button>
           </Link>
         </li>
@@ -195,7 +197,7 @@ export const SideMenu = () => {
                   fill="currentColor"
                 />
               </svg>
-              <span>Настройки</span>
+              <span>{t("account.menu.settings")}</span>
             </button>
           </Link>
         </li>
@@ -219,7 +221,7 @@ export const SideMenu = () => {
               />
               <path d="M10 12H23.5" stroke="black" strokeWidth="1.6" />
             </svg>
-            <span>Выйти</span>
+            <span>{t("common.logout")}</span>
           </button>
         </li>
       </ul>

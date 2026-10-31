@@ -2,21 +2,31 @@ import styles from "../auth-layout/auth-layout.module.sass";
 import { Button } from "../../button/button.tsx";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { API_BASE_URL, API_BASE_PATH } from "../../../config/api";
 
+type VerifyMessageKey =
+  | "auth.verify.invalidLink"
+  | "auth.verify.expiredLink"
+  | "auth.verify.failed"
+  | "auth.verify.success"
+  | "auth.verify.networkError";
+
 export const VerifyEmail = () => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
   const userId = searchParams.get("userId");
   const navigate = useNavigate();
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
-  const [message, setMessage] = useState("");
+  // храним ключ, а не текст: сообщение переведётся и при смене языка
+  const [messageKey, setMessageKey] = useState<VerifyMessageKey | null>(null);
 
   useEffect(() => {
     const verify = async () => {
       if (!token || !userId) {
         setStatus("error");
-        setMessage("Некорректная ссылка подтверждения.");
+        setMessageKey("auth.verify.invalidLink");
         return;
       }
 
@@ -28,14 +38,18 @@ export const VerifyEmail = () => {
         const data = await res.json().catch(() => ({}));
         if (!res.ok) {
           setStatus("error");
-          setMessage(data.message || data.Message || "Не удалось подтвердить email.");
+          // бэкенд отвечает по-русски; отдельно узнаём только просроченную ссылку
+          const serverMsg: string = data.message || data.Message || "";
+          setMessageKey(
+            serverMsg.includes("истёк") ? "auth.verify.expiredLink" : "auth.verify.failed",
+          );
           return;
         }
         setStatus("success");
-        setMessage(data.message || data.Message || "Email успешно подтверждён.");
+        setMessageKey("auth.verify.success");
       } catch {
         setStatus("error");
-        setMessage("Ошибка сети. Попробуйте позже.");
+        setMessageKey("auth.verify.networkError");
       }
     };
 
@@ -44,24 +58,24 @@ export const VerifyEmail = () => {
 
   return (
     <div className={styles["authorization__form-side"]}>
-      <h1>Подтверждение email</h1>
-      {status === "loading" && <p>Подтверждаем вашу почту…</p>}
+      <h1>{t("auth.verify.heading")}</h1>
+      {status === "loading" && <p>{t("auth.verify.verifying")}</p>}
       {status === "success" && (
         <>
-          <p>{message}</p>
+          <p>{messageKey && t(messageKey)}</p>
           <Button
             type="button"
             style="blue-button-header"
-            text="Войти"
+            text={t("common.login")}
             onClick={() => navigate("/login")}
           />
         </>
       )}
       {status === "error" && (
         <>
-          <p className={styles["authorization__message--error"]}>{message}</p>
+          <p className={styles["authorization__message--error"]}>{messageKey && t(messageKey)}</p>
           <p>
-            <Link to="/login">Вернуться ко входу</Link>
+            <Link to="/login">{t("common.backToLogin")}</Link>
           </p>
         </>
       )}

@@ -1,3 +1,5 @@
+import i18n from "../i18n/index.ts";
+
 // Тематические группы ролей (специальностей) для фильтров и выбора роли.
 // Названия ролей должны совпадать с тем, что приходит из /Roles/AllRoles.
 
@@ -5,6 +7,17 @@ export const OTHER_ROLE_NAME = "Другое";
 
 /** Заголовок группы, куда попадают роли, не описанные в категориях. */
 export const UNCATEGORIZED_LABEL = "Прочее";
+
+/**
+ * Подпись роли в интерфейсе. Названия ролей из справочника и так на английском,
+ * переводится только системная роль "Другое". Значением остаётся исходное название.
+ */
+export const getRoleLabel = (roleName: string): string =>
+  roleName === OTHER_ROLE_NAME ? i18n.t("roles.other") : roleName;
+
+/** Подпись группы ролей: переводится только группа "Прочее". */
+export const getRoleGroupLabel = (groupLabel: string): string =>
+  groupLabel === UNCATEGORIZED_LABEL ? i18n.t("roles.uncategorized") : groupLabel;
 
 export type RoleCategory = {
   label: string;

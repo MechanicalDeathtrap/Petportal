@@ -4,12 +4,13 @@ import * as Yup from "yup";
 import { useEffect, useState } from "react";
 import { Button } from "../../button/button.tsx";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { API_BASE_URL, API_BASE_PATH } from "../../../config/api";
 import axios from "axios";
 import { Project, StateOfProject } from "../../../types/project-type.ts";
 import {
   getMaxApplyingDeadline,
-  MAX_APPLYING_DEADLINE_MESSAGE,
+  getMaxApplyingDeadlineMessage,
   toDateInputValue,
 } from "../../../utils/applying-deadline.ts";
 
@@ -20,16 +21,23 @@ const toDateInput = (value?: string) => {
   return d.toISOString().slice(0, 10);
 };
 
+type EditErrorKey =
+  | "projects.archive.failed"
+  | "projects.edit.loadFailed"
+  | "projects.edit.saveFailed";
+
 export const EditProject = () => {
+  const { t } = useTranslation();
   const { projectId } = useParams() as { projectId: string };
   const navigate = useNavigate();
   const [project, setProject] = useState<Project | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  // храним ключ, а не текст: сообщение переведётся и при смене языка
+  const [error, setError] = useState<EditErrorKey | null>(null);
   const [loading, setLoading] = useState(true);
   const [isArchiving, setIsArchiving] = useState(false);
 
   const archiveProject = async () => {
-    if (!window.confirm("Перевести проект в архив? Вернуть его обратно нельзя.")) {
+    if (!window.confirm(t("projects.archive.confirm"))) {
       return;
     }
 
@@ -44,7 +52,7 @@ export const EditProject = () => {
       navigate(`/projects/${projectId}`);
     } catch (e) {
       console.error(e);
-      setError("Не удалось перевести проект в архив");
+      setError("projects.archive.failed");
     } finally {
       setIsArchiving(false);
     }
@@ -56,17 +64,17 @@ export const EditProject = () => {
         withCredentials: true,
       })
       .then((res) => setProject(res.data))
-      .catch(() => setError("Не удалось загрузить проект"))
+      .catch(() => setError("projects.edit.loadFailed"))
       .finally(() => setLoading(false));
   }, [projectId]);
 
-  if (loading) return <section className={style["create-project"]}><div><p>Загрузка...</p></div></section>;
+  if (loading) return <section className={style["create-project"]}><div><p>{t("common.loading")}</p></div></section>;
   if (!project) {
     return (
       <section className={style["create-project"]}>
         <div>
-          <p>{error || "Проект не найден"}</p>
-          <Button text="Назад" style="grey-button" type="button" onClick={() => navigate(-1)} />
+          <p>{t(error ?? "projects.edit.notFound")}</p>
+          <Button text={t("common.back")} style="grey-button" type="button" onClick={() => navigate(-1)} />
         </div>
       </section>
     );
@@ -89,20 +97,24 @@ export const EditProject = () => {
   const maxApplyingDeadline = getMaxApplyingDeadline(project.createdDate);
 
   const validationSchema = Yup.object().shape({
-    name: Yup.string().min(8, "Минимум 8 символов").required("Введите название"),
-    description: Yup.string().min(20, "Опишите подробнее").required("Введите описание"),
+    name: Yup.string()
+      .min(8, t("projects.validation.nameMin"))
+      .required(t("projects.validation.nameRequired")),
+    description: Yup.string()
+      .min(20, t("projects.validation.descriptionMin"))
+      .required(t("projects.validation.descriptionRequired")),
     applyingDeadline: Yup.date()
-      .max(maxApplyingDeadline, MAX_APPLYING_DEADLINE_MESSAGE)
-      .required("Укажите срок приёма заявок"),
+      .max(maxApplyingDeadline, getMaxApplyingDeadlineMessage)
+      .required(t("projects.validation.applyingDeadlineRequired")),
     deadline: Yup.date()
-      .min(Yup.ref("applyingDeadline"), "Срок выполнения должен быть позже")
-      .required("Укажите срок выполнения"),
+      .min(Yup.ref("applyingDeadline"), t("projects.validation.deadlineAfterApplying"))
+      .required(t("projects.validation.deadlineRequired")),
   });
 
   return (
     <section className={style["create-project"]}>
       <div>
-        <h2>Редактирование проекта</h2>
+        <h2>{t("projects.edit.heading")}</h2>
         <Formik
           initialValues={initialValues}
           enableReinitialize
@@ -134,7 +146,7 @@ export const EditProject = () => {
               navigate(`/projects/${projectId}`);
             } catch (e) {
               console.error(e);
-              setError("Не удалось сохранить изменения");
+              setError("projects.edit.saveFailed");
             } finally {
               setSubmitting(false);
             }
@@ -143,33 +155,33 @@ export const EditProject = () => {
           {({ errors, touched, values, setFieldValue, isSubmitting }) => (
             <Form className={style["create-project__form"]}>
               <label>
-                Название проекта
+                {t("projects.form.name")}
                 <Field name="name" className={style["create-project__form-field"]} />
                 {errors.name && touched.name && (
                   <div className={style["create-project__form--error-no-floating"]}>{errors.name}</div>
                 )}
               </label>
               <label>
-                Описание задания
+                {t("projects.form.description")}
                 <Field as="textarea" name="description" className={style["create-project__form-field"]} />
                 {errors.description && touched.description && (
                   <div className={style["create-project__form--error-no-floating"]}>{errors.description}</div>
                 )}
               </label>
               <label>
-                Описание команды
+                {t("projects.form.teamDescription")}
                 <Field as="textarea" name="teamDescription" className={style["create-project__form-field"]} />
               </label>
               <label>
-                Ожидание от исполнителя
+                {t("projects.form.requirements")}
                 <Field as="textarea" name="requirements" className={style["create-project__form-field"]} />
               </label>
               <label>
-                Формат результата
+                {t("projects.form.result")}
                 <Field as="textarea" name="result" className={style["create-project__form-field"]} />
               </label>
               <label>
-                Крайний срок приёма заявок
+                {t("projects.form.applyingDeadline")}
                 <Field
                   type="date"
                   name="applyingDeadline"
@@ -178,11 +190,11 @@ export const EditProject = () => {
                 />
               </label>
               <label>
-                Сроки выполнения
+                {t("projects.form.deadline")}
                 <Field type="date" name="deadline" className={style["create-project__form-field"]} />
               </label>
               <label>
-                Бюджет проекта
+                {t("projects.form.budget")}
                 <Field
                   type="number"
                   name="budget"
@@ -199,13 +211,13 @@ export const EditProject = () => {
                       if (e.target.checked) setFieldValue("budget", 0);
                     }}
                   />
-                  <label>По договорённости</label>
+                  <label>{t("projects.form.negotiable")}</label>
                 </div>
               </label>
 
               {error && (
                 <div className={style["create-project__form--error-no-floating"]} role="alert">
-                  {error}
+                  {t(error)}
                 </div>
               )}
 
@@ -213,14 +225,14 @@ export const EditProject = () => {
                 <Button
                   type="button"
                   style="grey-button"
-                  text="Отмена"
+                  text={t("projects.edit.cancel")}
                   onClick={() => navigate(`/projects/${projectId}`)}
                 />
                 {project.stateOfProject !== StateOfProject.Archived && (
                   <Button
                     type="button"
                     style="grey-button"
-                    text={isArchiving ? "Переносим..." : "В архив"}
+                    text={isArchiving ? t("projects.archive.inProgress") : t("projects.archive.action")}
                     onClick={archiveProject}
                     disabled={isArchiving || isSubmitting}
                   />
@@ -228,7 +240,7 @@ export const EditProject = () => {
                 <Button
                   type="submit"
                   style="blue-button-header"
-                  text={isSubmitting ? "Сохраняем..." : "Сохранить"}
+                  text={isSubmitting ? t("common.saving") : t("common.save")}
                   disabled={isSubmitting}
                 />
               </div>

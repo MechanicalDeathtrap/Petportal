@@ -6,8 +6,10 @@ import { Project } from "../../../types/project-type.ts";
 import { ProjectCard } from "../../projects/project-card/project-card.tsx";
 import style from "../my-projects/my-projects.module.sass";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export const MyFavourites = () => {
+  const { t } = useTranslation();
   const [favourites, setFavourites] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -39,32 +41,32 @@ export const MyFavourites = () => {
       setFavourites((prev) => prev.filter((p) => p.id !== projectId));
     } catch (error) {
       console.error("Не удалось убрать из избранного:", error);
-      alert("Не удалось убрать из избранного");
+      alert(t("account.favourites.removeFailed"));
     }
   };
 
   if (loading) {
     return (
       <section>
-        <p>Загрузка избранного...</p>
+        <p>{t("account.favourites.loading")}</p>
       </section>
     );
   }
 
   return (
     <section>
-      {favourites.length === 0 && <EmptyStateMessage heading="Избранное" />}
+      {favourites.length === 0 && <EmptyStateMessage variant="favourites" />}
       {favourites.length > 0 && (
         <div className={style["my-project-list__container"]}>
-          <h2>Избранное: {favourites.length}</h2>
+          <h2>{t("account.favourites.count", { count: favourites.length })}</h2>
           <ul>
             {favourites.map((project) => (
               <li key={project.id}>
                 <ProjectCard project={project} />
                 <div style={{ display: "flex", gap: 12, marginTop: 8 }}>
-                  <Link to={`/projects/${project.id}`}>Открыть</Link>
+                  <Link to={`/projects/${project.id}`}>{t("common.open")}</Link>
                   <button type="button" onClick={() => removeFavourite(project.id)}>
-                    Убрать из избранного
+                    {t("account.favourites.remove")}
                   </button>
                 </div>
               </li>

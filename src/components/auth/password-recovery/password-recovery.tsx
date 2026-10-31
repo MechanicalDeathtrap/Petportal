@@ -4,6 +4,7 @@ import { Button } from "../../button/button.tsx";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import * as Yup from "yup";
+import { useTranslation } from "react-i18next";
 import { API_BASE_URL, API_BASE_PATH } from "../../../config/api";
 
 type emailProps = {
@@ -29,25 +30,23 @@ export const PasswordRecovery = () => {
     }
   }, [tokenFromUrl, userIdFromUrl]);
 
+  const { t } = useTranslation();
   const closeMessage = () => setMessageOpen(0);
   const handleMessage = (code: number) => setMessageOpen(code);
 
   const validationEmailSchema = Yup.object().shape({
     email: Yup.string()
-      .email("Некорректная почта. Она должна содержать знак @")
-      .required("Введите почту"),
+      .email(t("auth.validation.emailInvalid"))
+      .required(t("auth.validation.emailRequired")),
   });
   const validationPasswordSchema = Yup.object().shape({
     password: Yup.string()
-      .min(
-        8,
-        "Пароль должен содержать минимум 8 символов, включая минимум одну заглавную букву, одну цифру",
-      )
-      .max(30, "Слишком длинный пароль")
-      .required("Введите новый пароль"),
+      .min(8, t("auth.validation.passwordRule"))
+      .max(30, t("auth.validation.passwordTooLong"))
+      .required(t("auth.validation.newPasswordRequired")),
     confirmPassword: Yup.string()
-      .oneOf([Yup.ref("password")], "Пароли не совпадают")
-      .required("Повторите новый пароль"),
+      .oneOf([Yup.ref("password")], t("auth.validation.passwordsMismatch"))
+      .required(t("auth.validation.confirmNewPasswordRequired")),
   });
 
   useEffect(() => {
@@ -92,7 +91,7 @@ export const PasswordRecovery = () => {
         handleMessage(3);
         return;
       }
-      alert("Пароль успешно сменён");
+      alert(t("auth.recovery.changed"));
       navigate("/login");
     } catch {
       handleMessage(3);
@@ -103,14 +102,11 @@ export const PasswordRecovery = () => {
     <div
       className={`${styles["authorization__form-side"]} ${styles["authorization__forgotpasswd-container"]}`}
     >
-      <h1>Восстановление пароля</h1>
+      <h1>{t("auth.recovery.heading")}</h1>
 
       {step === 1 && (
         <>
-          <p>
-            Введите адрес электронной почты, указанный при создании аккаунта. На
-            него мы отправим ссылку для восстановления пароля.
-          </p>
+          <p>{t("auth.recovery.emailStepText")}</p>
           <Formik
             initialValues={{ email: "" }}
             onSubmit={sendEmail}
@@ -127,7 +123,7 @@ export const PasswordRecovery = () => {
                     id="email"
                     name="email"
                     type="email"
-                    placeholder="Электронная почта"
+                    placeholder={t("auth.fields.email")}
                     className={styles["authorization__form-field"]}
                   />
 
@@ -145,9 +141,9 @@ export const PasswordRecovery = () => {
                   <Button
                     type="submit"
                     style="blue-button-header"
-                    text="Продолжить"
+                    text={t("common.continue")}
                   />
-                  <Link to="/login">Назад</Link>
+                  <Link to="/login">{t("common.back")}</Link>
                 </div>
               </Form>
             )}
@@ -157,22 +153,16 @@ export const PasswordRecovery = () => {
 
       {step === 2 && (
         <>
-          <p>
-            Если аккаунт с такой почтой существует, мы отправили ссылку для
-            сброса пароля. Откройте письмо и перейдите по ссылке.
-          </p>
+          <p>{t("auth.recovery.sentText")}</p>
           <div className={styles["authorization__forget-password-buttons"]}>
-            <Link to="/login">Вернуться ко входу</Link>
+            <Link to="/login">{t("common.backToLogin")}</Link>
           </div>
         </>
       )}
 
       {step === 3 && (
         <>
-          <p>
-            Пароль должен содержать минимум 8 символов, включая одну заглавную
-            букву, одну цифру
-          </p>
+          <p>{t("auth.recovery.passwordRuleHint")}</p>
           <Formik
             initialValues={{ password: "", confirmPassword: "" }}
             onSubmit={sendPassword}
@@ -188,7 +178,7 @@ export const PasswordRecovery = () => {
                   id="password"
                   name="password"
                   type="password"
-                  placeholder="Пароль"
+                  placeholder={t("auth.fields.password")}
                   className={styles["authorization__form-field"]}
                 />
 
@@ -202,7 +192,7 @@ export const PasswordRecovery = () => {
                   id="confirmPassword"
                   name="confirmPassword"
                   type="password"
-                  placeholder="Повторите пароль"
+                  placeholder={t("auth.fields.confirmPassword")}
                   className={styles["authorization__form-field"]}
                 />
 
@@ -215,7 +205,7 @@ export const PasswordRecovery = () => {
                 <Button
                   type="submit"
                   style="blue-button-header"
-                  text="Сохранить пароль"
+                  text={t("auth.recovery.savePassword")}
                 />
               </Form>
             )}
@@ -226,7 +216,7 @@ export const PasswordRecovery = () => {
       {isMessageOpen === 1 && (
         <div className={styles["authorization__message"]}>
           <p className={styles["authorization__message--error"]}>
-            Не удалось отправить письмо. Попробуйте позже.
+            {t("auth.recovery.sendFailed")}
           </p>
         </div>
       )}
@@ -234,7 +224,7 @@ export const PasswordRecovery = () => {
       {isMessageOpen === 3 && (
         <div className={styles["authorization__message"]}>
           <p className={styles["authorization__message--error"]}>
-            Произошла ошибка при смене пароля. Ссылка могла устареть.
+            {t("auth.recovery.changeFailed")}
           </p>
         </div>
       )}

@@ -10,10 +10,13 @@ import { popupStore } from "../../stores/popups-store.ts";
 import { userStore } from "../../stores/user-store.ts";
 import { chatStore } from "../../stores/chat-store.ts";
 import { observer } from "mobx-react-lite";
+import { useTranslation } from "react-i18next";
 import { findAllCookies } from "../../utils/cookies.ts";
 import { fetchUserData } from "../../utils/fetch-user-data.ts";
+import { LanguageSwitcher } from "../language-switcher/language-switcher.tsx";
 
 export const Header = observer(() => {
+  const { t } = useTranslation();
   const [accountPopperAnchorEl, setAccountPopperAnchorEl] =
     useState<HTMLElement | null>(null);
   const [notificationPopperAnchorEl, setNotificationPopperAnchorEl] =
@@ -117,7 +120,7 @@ export const Header = observer(() => {
                 }`}
                 to="/"
               >
-                О нас
+                {t("header.aboutUs")}
               </Link>
               {path === "About us" ? (
                 <div className={styles.bottomLine}></div>
@@ -134,7 +137,7 @@ export const Header = observer(() => {
                 }`}
                 to="/projects"
               >
-                Проекты
+                {t("header.projects")}
               </Link>
               {path === "Projects" ? (
                 <div className={styles.bottomLine}></div>
@@ -151,7 +154,7 @@ export const Header = observer(() => {
                 }`}
                 to={resolveAuthPath()}
               >
-                Создать проект
+                {t("header.createProject")}
               </Link>
               {path === "Create project" ? (
                 <div className={styles.bottomLine}></div>
@@ -167,6 +170,7 @@ export const Header = observer(() => {
               <button
                 type="button"
                 className={styles.notificationsButton}
+                aria-label={t("header.notifications")}
                 onClick={(e) => {
                   togglePopperAnchorElement(e, "notification");
                   popupStore.toggleNotificationPopupOpen();
@@ -191,7 +195,11 @@ export const Header = observer(() => {
             </li>
             <li className={styles.headerButtonsList__messageWrap}>
               <Link to="/chat">
-                <button type="button" className={styles.headerButtonsList__messageBtn}>
+                <button
+                  type="button"
+                  className={styles.headerButtonsList__messageBtn}
+                  aria-label={t("header.messages")}
+                >
                   <svg
                     className={styles.headerButtonsList__messageIcon}
                     xmlns="http://www.w3.org/2000/svg"
@@ -228,7 +236,7 @@ export const Header = observer(() => {
             <img
               className={styles.userAvatar}
               src={userStore.user.avatarUrl || "/img/blank-avatar.png"}
-              alt="User avatar"
+              alt={t("header.userAvatar")}
               onError={(e) => {
                 (e.target as HTMLImageElement).src = "/img/blank-avatar.png";
               }}
@@ -236,9 +244,10 @@ export const Header = observer(() => {
             </button>
           ) : (
             <Link to="/login">
-              <Button type="button" style="blue-button-header" text="Войти" />
+              <Button type="button" style="blue-button-header" text={t("common.login")} />
             </Link>
           )}
+          <LanguageSwitcher />
         </div>
       </header>
       <ParentPopup
@@ -249,7 +258,7 @@ export const Header = observer(() => {
         onPopupClose={() => popupStore.toggleAccountPopupOpen()}
       />
       <ParentPopup
-        popup={NotificationPopup()}
+        popup={<NotificationPopup />}
         id="notifications-popup"
         anchorEl={notificationPopperAnchorEl}
         isOpen={popupStore.isNotificationPopupOpen}

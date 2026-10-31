@@ -1,6 +1,8 @@
+import { useTranslation } from "react-i18next";
 import styles from "./notification-popup.module.sass";
 
 export const NotificationPopup = () => {
+  const { t } = useTranslation();
   return (
     <div className={styles["notification-popup"]}>
       <ul className={styles["notification-popup__notification-list"]}>
@@ -19,12 +21,8 @@ export const NotificationPopup = () => {
               styles["notification-popup__notification-list-item-content"]
             }
           >
-            <h2>Заголовок уведы</h2>
-            <p>
-              Текст уведы очень большой, длинный и очень очень очень очень очень
-              очень очень очень очень очень очень очень очень очень
-              содержательный
-            </p>
+            <h2>{t("notifications.sampleTitle")}</h2>
+            <p>{t("notifications.sampleText")}</p>
           </div>
         </li>
         <li className={styles["notification-popup__notification-list-item"]}>
@@ -42,12 +40,8 @@ export const NotificationPopup = () => {
               styles["notification-popup__notification-list-item-content"]
             }
           >
-            <h2>Заголовок уведы</h2>
-            <p>
-              Текст уведы очень большой, длинный и очень очень очень очень очень
-              очень очень очень очень очень очень очень очень очень
-              содержательный
-            </p>
+            <h2>{t("notifications.sampleTitle")}</h2>
+            <p>{t("notifications.sampleText")}</p>
           </div>
         </li>
       </ul>
@@ -55,7 +49,7 @@ export const NotificationPopup = () => {
         type="button"
         className={styles["notification-popup__load-more-button"]}
       >
-        Посмотреть ещё
+        {t("notifications.showMore")}
       </button>
     </div>
   );

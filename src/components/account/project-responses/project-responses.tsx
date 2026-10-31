@@ -1,5 +1,7 @@
 import style from "./project-responses.module.sass"
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { getRoleLabel } from "../../../data/role-categories.ts";
 import { EmptyStateMessage } from "../empty-state-message/empty-state-message.tsx";
 import axios from "axios";
 import { respond } from "../../../types/respond-type.ts";
@@ -12,9 +14,17 @@ interface ResponseWithProject extends respond {
 
 
 export const ProjectResponses = () => {
+  const { t } = useTranslation();
   const [responses, setResponses] = useState<ResponseWithProject[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // ошибка пока не выводится текстом, только как пустое состояние
+  const [error, setError] = useState<
+    | "account.responses.userLoadFailed"
+    | "account.responses.authRequired"
+    | "account.responses.userNotFound"
+    | "account.responses.loadFailed"
+    | null
+  >(null);
 
   useEffect(() => {
     const fetchUserIdAndResponses = async () => {
@@ -31,7 +41,7 @@ export const ProjectResponses = () => {
         const userId = userResponse.data.id;
 
         if (!userId) {
-          setError("Не удалось получить данные пользователя");
+          setError("account.responses.userLoadFailed");
           setResponses([]);
           setLoading(false);
           return;
@@ -71,12 +81,12 @@ export const ProjectResponses = () => {
         setResponses(allResponses);
       } catch (err: any) {
         if (err.response?.status === 401) {
-          setError("Требуется авторизация");
+          setError("account.responses.authRequired");
         } else if (err.response?.status === 404) {
-          setError("Пользователь не найден");
+          setError("account.responses.userNotFound");
         } else {
           console.error("Ошибка при загрузке данных:", err);
-          setError("Не удалось загрузить отклики");
+          setError("account.responses.loadFailed");
         }
         setResponses([]);
       } finally {
@@ -87,10 +97,18 @@ export const ProjectResponses = () => {
     fetchUserIdAndResponses();
   }, []);
 
+  // статусы приходят с бэкенда на английском; неизвестные показываем как есть
+  const statusLabel = (status: string) =>
+    status === "Pending"
+      ? t("account.responses.statusPending")
+      : status === "Accepted"
+        ? t("account.responses.statusAccepted")
+        : status;
+
   if (error) {
     return (
       <section className={style["project-responses"]}>
-        <EmptyStateMessage heading="Ошибка" />
+        <EmptyStateMessage variant="error" />
       </section>
     );
   }
@@ -98,7 +116,7 @@ export const ProjectResponses = () => {
   if (loading) {
     return (
       <section className={style["project-responses"]}>
-        <p>Загрузка откликов...</p>
+        <p>{t("account.responses.loading")}</p>
       </section>
     );
   }
@@ -106,24 +124,28 @@ export const ProjectResponses = () => {
   return (
     <section className={style["project-responses"]}>
       {responses.length === 0 ? (
-        <EmptyStateMessage heading="Отклики на проекты" />
+        <EmptyStateMessage variant="responses" />
       ) : (
         <div className={style["project-responses__container"]}>
-          <h2>Отклики на ваши проекты: {responses.length}</h2>
+          <h2>{t("account.responses.count", { count: responses.length })}</h2>
 
           <ul className={style["project-responses__list"]}>
             {responses.map((response) => (
               <li key={response.id} className={style["project-responses__item"]}>
                 <div className={style["project-responses__header"]}>
                   <strong>{response.projectName}</strong>
-                  {response.role && <span>Роль: {response.role}</span>}
-                  {response.status && <span>Статус: {response.status}</span>}
+                  {response.role && (
+                    <span>{t("account.responses.role", { role: getRoleLabel(response.role) })}</span>
+                  )}
+                  {response.status && (
+                    <span>{t("account.responses.status", { status: statusLabel(response.status) })}</span>
+                  )}
                 </div>
                 <div className={style["project-responses__comment"]}>
-                  <p>{response.comment || "Без комментария"}</p>
+                  <p>{response.comment || t("account.responses.noComment")}</p>
                 </div>
                 <div className={style["project-responses__meta"]}>
-                  <small>Отклик ID: {response.id.substring(0, 8)}...</small>
+                  <small>{t("account.responses.responseId", { id: response.id.substring(0, 8) })}</small>
                   {response.status !== "Accepted" && (
                     <button
                       type="button"
@@ -143,11 +165,11 @@ export const ProjectResponses = () => {
                           );
                         } catch (err) {
                           console.error("Не удалось принять отклик", err);
-                          alert("Не удалось принять отклик");
+                          alert(t("account.responses.acceptFailed"));
                         }
                       }}
                     >
-                      Принять
+                      {t("account.responses.accept")}
                     </button>
                   )}
                 </div>
